@@ -11,7 +11,7 @@
 - git remote add origin [url] 添加关联的远端仓库
 - git pull
   - 拉取远端分支最新代码覆盖更新本地分支
-- git fetch -all
+- git fetch --all
   - 拉取远端仓库最新代码更新origin仓库，并不会破坏本地仓库
 - git rebase origin dev
   - rebase dev分支到当前分支
@@ -38,8 +38,14 @@
   - 返回最新的带'-production'字段的tag,例如 v3.6.17-20181219-production
 - git branch
   - 查看当前分支
+- git branch dev-press
+  - 新建分支 dev-press，但当前分支不会切换到dev-press分支
+- git branch dev-press origin/master
+  - 复制origin/master到新分支 dev-press，但当前分支不会切换到dev-press分支
 - git branch -d dev-press
   - 删除本地分支 dev-press
+- git branch -D dev-press
+  - 强行删除本地分支 dev-press
 - git push origin -d dev-press
   - 删除远端分支 dev-press
 - git checkout .
@@ -47,13 +53,17 @@
   - 慎用
 - git checkout dev-press
   - 切换到分支 dev-press
+- git checkout v0.1.0
+  - 切换到tag为v0.1.0的代码状态（不是分支，此时还需要git checkout -b 一个新分支出来并切换出来）
 - git checkout -b dev-press
-  - 新建分支 dev-press并复制当前分支到新分支，再切换到新分支
+  - 新建分支 dev-press并复制当前分支或tag到新分支，再切换到新分支
 - git push origin dev-press
   - 新建分支后使用，则推送本地分支到远端并创建远端dev-press分支
   - 末尾再加个`-u`参数则表示新建后关联分支
 - git checkout -b co-bug origin/debug
-  - 从远端分支拉取、新建并关联本地分支
+  - 从origin/debug分支拉取、新建并关联本地分支
+- git checkout -b co-bug v0.1.0
+  - 从v0.1.0复制新建co-bug分支，并切换当前分支到co-bug
 - git branch --set-upstream-to origin/debug co-bug
   - 关联远端分支debug和本地分支co-bug
   - --set-upstream-to 可以用 -u 替换
@@ -64,9 +74,9 @@
   - 用origin master分支强行覆盖当前分支
   - PS：危险操作，请先确定当前分支的代码是否全部丢弃
 - git reset --hard
-  - 退回到上一个commit
+  - 撤销到上一个commit
 - git reset --hard 7aba1ed57d8bdbc9274f8f2af61cd8ffc58a26f4
-  - 退回到某个commit （7aba1ed57d8bdbc9274f8f2af61cd8ffc58a26f4 ， 通过git log 查看 commit记录）
+  - 撤销到某个commit （7aba1ed57d8bdbc9274f8f2af61cd8ffc58a26f4 ， 通过git log 查看 commit记录）
 - git reset --soft 7aba1ed57d8bdbc9274f8f2af61cd8ffc58a26f4
   - 类似于hard，但是回退只清除commit信息，所有改动依旧保留，commit之后只生成一个commit
 - git clean -df

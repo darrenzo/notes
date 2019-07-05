@@ -362,6 +362,7 @@ draw();
 - 两种方法
   - `fillText(text, x, y [, maxWidth])` 在指定的 (x,y) 位置填充指定的文本，绘制的最大宽度是可选的
   - `strokeText(text, x, y [, maxWidth])` 在指定的 (x,y) 位置绘制文本边框，绘制的最大宽度是可选的
+  - y坐标是指文字的baseline位置
 
 ```js
 var ctx;
@@ -458,7 +459,7 @@ ctx.fillStyle=grd;
 ctx.fillRect(20,20,150,100);
 ```
 
-- createRadialGradient(x0,y0,r0,x1,y1,r1) 用法与线性渐变一致，本质是个环状区域
+- createRadialGradient(x0,y0,r0,x1,y1,r1) 用法与线性渐变一致，本质是个环状区域,可以用来绘制内外圆不同颜色的图形
   - x0：渐变的开始圆的 x 坐标
   - y0：渐变的开始圆的 y 坐标
   - r0：开始圆的半径
@@ -711,7 +712,7 @@ function draw(){
     var ctx = canvas.getContext("2d");
 
     ctx.beginPath();
-    ctx.arc(20, 20, 100, 0, Math.PI * 2);
+    ctx.arc(20, 20, 100, 0, Math.PI * 2); // 只有这个范围内绘制的canvas能看到
     ctx.clip();
     // 在 clip() 之后绘制矩形
     ctx.fillStyle = "pink";

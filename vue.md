@@ -1492,10 +1492,12 @@ router.beforeEach((to, from, next) => {
 
 ```js
 
-date() {
-    return {
-        count: this.$store.state.count,
-        num: this.$store.getters.num;
+computed: {
+    count(): {
+        return this.$store.state.count;
+    },
+    num(): {
+        return this.$store.getters.num;
     }
 },
 methods: {

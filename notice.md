@@ -182,3 +182,8 @@
 
 - 进行2D或者3D动画使用transform实际上是进行矩阵运算，对应的属性为transform: matrix(...)
 - transform: translate() 方法中如果使用了百分比，则如果目标元素高宽为奇数，容易出现先matrix值为小数，即导致内容文字模糊
+
+## 子元素需要监听父元素尺寸变化
+
+- 可以使用webAPI **MutationObserver** 构造函数进行配置，但是只能监听写在内联的style属性里的值变化
+- **npm install element-resize-detector** 支持监听父元素 css样式中的变化

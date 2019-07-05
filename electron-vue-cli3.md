@@ -73,7 +73,7 @@ const fileLocation = path.join(__static, 'myText.txt')
 
 ## 环境变量
 
-- 所有以 **VUE_APP_** 前缀的env变量都将在主进程和呈现程序进程中可用(从1.0.0-rc.4开始仅在主进程中可用)
+- 所有以 **VUE_APP_** 前缀的env变量都将在主进程和渲染程序进程中可用(从1.0.0-rc.4开始仅在主进程中可用)
 
 ## Build 命令工作原理
 
