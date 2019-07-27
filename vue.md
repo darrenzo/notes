@@ -4,7 +4,7 @@
 
 - npm install webpack -g
 - npm install vue-cli -g
-  - 最近版的脚手架需要先写在旧的脚手架，再用 npm install @vue/cli -g
+  - 安装最新版的脚手架前需要先卸载旧的脚手架，再用 npm install @vue/cli -g
 - 脚手架自动生成：不能用 bash
   - vue create hello-world
 - 不使用脚手架
@@ -21,7 +21,7 @@
 
 ## fastclick插件与某些插件冲突时，第三方插件阻止了默认的点击事件，自己代理点击事件，会被fastclick阻止，此时只需要在需要点击事件的元素上加上class="needclick"
 
-## vue-lazy使用： 在img标签上加上v-lazy="img.src"
+## 插件Vue-Lazyload使用： 在img标签上加上v-lazy="img.src"
 
 ## vue 渲染
 
@@ -103,14 +103,8 @@
             <!-- 对象语法结合计算属性 -->
             <div class="static" :class="classObj2"></div>
 
-            <!-- 数组语法 -->
-            <div :class="['static', activeClass, errorClass]"></div>
-
-            <!-- 此例始终添加 errorClass ，但是只有在 isActive 是 true 时添加 activeClass。 -->
-            <div :class="[isActive ? activeClass : '', errorClass]"></div>
-
-            <!-- 可以将多个对象绑定到数组中 -->
-            <div v-bind:class="[{ active: isActive }, errorClass]"></div>
+            <!-- 数组语法：  字符串， 变量， 对象， 三元运算式-->
+            <div :class="['static', errorClass, { active: isActive }, isActive ? activeClass : '']"></div>
         </div>
     </template>
     <script>
@@ -204,12 +198,14 @@
 - v-model绑定的是表单的value值
 - v-model 会忽略所有表单元素的 value、checked、selected 特性的初始值。因为它会选择 Vue 实例数据来作为具体的值。你应该通过 JavaScript 在组件的 data 选项中声明初始值。
 - 对于要求 IME (如中文、日语、韩语等) (IME 意为“输入法”)的语言，你会发现 v-model 不会在 ime 输入中得到更新。如果你也想实现更新，请使用 input 事件。
+- 当被遍历生成的元素为表单元素时，v-model不能直接绑定 (item, index) in arr 中的item， 得使用arr[index]
 
 ```html
     <template>
         <div id="app">
             <p>{{ message }}</p>
             <input v-model="message">
+            <!-- 相当于 <input :value="message" @input="message = $event.target.value" /> -->
         </div>
     </template>
     <script>
@@ -314,7 +310,7 @@ computed: {
 
 - 给select标签加上multiple属性
 - data里绑定的属性应该是个数组 data() { return { selected: [] } }
-- 数据要绑定到一个数组,即使写引号，选中数据依旧会新建中括号在显示数据
+- 数据要绑定到一个数组,即使写引号，选中数据依旧会新建中括号再显示数据
 
 ### select应用，动态选项
 
@@ -381,8 +377,8 @@ computed: {
             <p>{{ message }}</p>
                 <button v-on:click="reverseMessage">逆转消息</button>
                 <!-- 简写 @click -->
-                <!-- 传参 -->
-                <button @click="say(msg)"></button>
+                <!-- 传参 $event是原生事件对象-->
+                <button @click="say(msg, $event)"></button>
             </div>
     </template>
     <script>
@@ -395,10 +391,11 @@ computed: {
                     }
                 },
                 methods: {
-                    reverseMessage: function () {
-                        this.message = this.message.split(' ').reverse().join('')
+                    reverseMessage: function (event) {
+                        this.message = this.message.split(' ').reverse().join('');
+                        console.log(event.target);
                     },
-                    say: function (message) {
+                    say: function (message, event) {
                         alert(message)
                     }
                 }
@@ -419,7 +416,7 @@ computed: {
 
 ## 键值修饰符
 
-- <input @keyup.13="submit"> 只有在 keyCode 是 13 时调用 vm.submit()
+- `<input @keyup.13="submit">` 只有在 keyCode 是 13 时调用 vm.submit()
 - keyCode别名
   - @keyup.enter
   - @keyup.tab
@@ -434,7 +431,7 @@ computed: {
 
 ## 修饰键
 
-- 修饰键比正常的按键不同；修饰键和 keyup 事件一起用时，事件引发时必须按下正常的按键。换一种说法：如果要引发 keyup.ctrl，必须按下 ctrl 时释放其他的按键；单单释放 ctrl 不会引发事件。
+- 修饰键与正常的按键不同；修饰键和 keyup 事件一起用时，事件引发时必须按下正常的按键。换一种说法：如果要引发 keyup.ctrl，必须按下 ctrl 时释放其他的按键；单单释放 ctrl 不会引发事件。
 - .ctrl
 - .alt
 - .shift
@@ -881,7 +878,15 @@ methods: {
                         type: String,
                         default: ''
                     },
-                    childObj: Object
+                    childObj: Object,
+                    options: {
+                        type: Object as () => Record<string, string>,
+                        default: () => ({})
+                    },
+                    timelineData: {
+                        type: Array as () => string[],
+                        default: () => []
+                    }
                 },
                 methods: {
                     showProps() {
@@ -1083,7 +1088,7 @@ new Vue({
 - 如 created、mounted、updated、destroyed等，钩子的 this 指向调用它的 Vue 实例。
 - 不要在选项属性或回调上使用箭头函数，比如 created: () => console.log(this.a) 或 vm.$watch('a', newValue => this.myMethod()。因为箭头函数是和父级上下文绑定在一起的，this 不会是如你所预期的 Vue 实例，且 this.a 或 this.myMethod 也会是未定义的。
 - beforeCreate() {}
-  - 在实例初始化之后，data、watcher、methods之前。 $route对象存在，可以进行重定向
+  - 在实例初始化之后，data、watch、methods之前。 $route对象存在，可以进行重定向
 - created() {}
   - 在实例已经创建完成之后被调用. data、watcher、methods配置完成，$el挂载之前
 - beforeMount() {}
@@ -1128,7 +1133,7 @@ new Vue({
 ## vue-router 路由
 
 - Vue工程中，路由的作用是通过不同的`url`映射到不同的视图，支持`hash`模式和`history`模式，默认为`hash`模式。
-- 参数或查询的改变并不会触发进入/离开的导航守卫
+- 参数(query)或查询(search)的改变并不会触发进入/离开的导航守卫
 - `hash`模式：通过`url`的`hash`值来模拟完整的`path`。
 - `history`模式：通过`history.pushState`在浏览器中创建一条新的历史纪录，从而可以无需刷新页面进行跳转。可以避免显示复杂的URL
   - 你要在服务端增加一个覆盖所有情况的候选资源：如果 URL 匹配不到任何静态资源，则应该返回同一个 index.html 页面，这个页面就是你 app 依赖的页面
@@ -1193,7 +1198,7 @@ const router = new VueRouter({
             redirect: {name: index}
         }
         {
-            product: '/product/',
+            path: '/product/',
             name: 'product',
             component: Product,
             // 子路由
@@ -1227,6 +1232,7 @@ const router = new VueRouter({
 ```js
 // 全局前置守卫
 // 当一个导航触发时，全局前置守卫按照创建顺序调用。守卫是异步解析执行，此时导航在所有守卫 resolve 完之前一直处于 等待中
+// router 是 Router的实例
 router.beforeEach((to, from, next) => {
     // ...
     next();
@@ -1380,6 +1386,7 @@ router.beforeEach((to, from, next) => {
 ## mounted 严格保证初始化成功挂载应用
 
  ```js
+    // 计时器相关操作，尽量都用setTimeout，而不用setInterval
     mounted() {
         setTimeout(() => {
             this._initScroll()
@@ -1389,7 +1396,7 @@ router.beforeEach((to, from, next) => {
         data() {
             setTimeout(() => {
                 this._calculateHeight()
-            }, 20)  // 延时20毫秒确保挂载完成在进行初始化   一般浏览器每分钟进行60次重绘，约16.67毫秒刷新一次
+            }, 20)  // 延时20毫秒确保挂载完成在进行初始化   一般浏览器每秒钟进行60次重绘，约16.67毫秒刷新一次
         },
     }
  ```
@@ -1609,6 +1616,8 @@ methods: {
         plugins: debug ? [createLogger()] : []
 
     });
+    // 取值时得用this.$store.state.user获取到模块user的state对象
+    // 因为getters是全局使用的，所以取值时得用this.$store.getters获取到的是所有模块合在一起的state对象
 ```
 
 ## 语言插件 vue-i18n
@@ -1619,8 +1628,9 @@ methods: {
 Vue.use(VueI18n);
 
 const i18n = new VueI18n({
-
+    // 默认语言
     locale: 'en',
+    // 以下为属性
     messages: {
         en: {
             hi: 'Hi',
@@ -1668,6 +1678,7 @@ new Vue({
 <p>Hot Sales: {{ $t('plan', {planname: 'Basic plan'}) }}</p>
 
 <!-- 区分单复数 -->
+<!-- 根据第二个参数传入的值选用 'Daily | {count}-Day' 里面的值，单数选第一个，复数选第二个格式（完整的为 a | b | c， 传 0 则使用 a , 传 1 则使用 b， 复数使用 c） -->
 <p>Cycle: {{ $t('cycle', 20, {count: 20}) }}<p>
 
 <!-- 数字本地化 -->

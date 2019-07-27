@@ -784,6 +784,23 @@ console.log('one');
     // {0: 1, 3: 1, length: 5}  返回结果依旧是类数组对象
 ```
 
+### arr.every() 和arr.some()
+
+- every()是对数组中每一项运行给定函数，如果该函数对每一项返回true,则返回true
+- some()是对数组中每一项运行给定函数，如果该函数对任一项返回true，则返回true
+
+```js
+var arr = [ 1, 2, 3, 4, 5, 6 ];
+
+arr.some( ( item, index, array ) => {
+    return item > 3;
+});
+
+arr.every( ( item, index, array ) => {
+    return item > 3;
+});
+```
+
 ### arr.fill(para,start,end)
 
 - 使用给定值，填充一个数组的某一段。用于初始化数组，数组中该段已有的元素会被全部抹去

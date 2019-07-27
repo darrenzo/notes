@@ -7,7 +7,7 @@
 - 不允许变量重名
 - 不允许使用八进制和转义字符
 
-## float类型数据实际是无限趋近的，不准确。
+## float类型数据实际是无限趋近的，不准确
 
 ```javascript
     var x = 0.1;
@@ -32,7 +32,7 @@
 
 ## 在 JavaScript中, 只有对象使用名字作为索引。数组如果用名字做为index,会被重新定义为对象，不能再使用数组的方法和属性
 
-## 对象只有被定义才有可能为 null，否则为 undefined。
+## 对象只有被定义才有可能为 null，否则为 undefined
 
 - if (typeof myObj !== "undefined" && myObj !== null)  我们需要先使用 typeof 来检测对象是否已定义
 
@@ -187,3 +187,12 @@
 
 - 可以使用webAPI **MutationObserver** 构造函数进行配置，但是只能监听写在内联的style属性里的值变化
 - **npm install element-resize-detector** 支持监听父元素 css样式中的变化
+
+## 模拟失去焦点隐藏
+
+- **tabindex** 属性规定元素的 tab 键控制次序（当 tab 键用于导航时）
+  - `<element tabindex="number">`  number 规定元素的 tab 键控制次序（1 是第一个）
+  - 几乎所有浏览器均有 tabindex 属性，除了 Safari
+- 给div加上 tabindex="0" 此时即有blur事件
+  - 需要设置 ouline: none 去除边框
+- 如果是右键菜单场景，需要在显示弹出框的时候手动触发focus(),才能再响应blur() 事件
