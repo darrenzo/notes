@@ -374,6 +374,7 @@ function draw(){
     ctx.shadowOffsetY = 2;
     ctx.shadowBlur = 2;
     ctx.shadowColor = '#666666';
+    // 绘制canvas时有预置字体，则绘制canvas前需要settimeout延时100ms再绘制，才会有字体效果
     ctx.font = '24px Arial';
     ctx.fillStyle = '#333333';
     ctx.fillText("天若有情", 10, 100);

@@ -106,9 +106,71 @@ f()
 - 如果我们不使用try-catch，然后async函数f()的调用产生的promise变成reject状态的话，我们可以添加.catch去处理它
 
 ```js
+let response = await fetch('http://no-such-url').catch( () => { } );
+
+// 或者
+
 async function f() {
     let response = await fetch('http://no-such-url')
 }
 // f()变成了一个rejected的promise
 f().catch(alert) // TypeError: failed to fetch
+```
+
+- 包装promise，使其返回统一的格式的代码
+
+```js
+function to (promise) {
+  return promise.then(res => [null, res]).catch(err => [err])
+}
+const [err, res] = await to(fetchUser(true))
+if (err) {
+  console.error('touser err:', err)
+}
+```
+
+## 串行和并行
+
+```js
+function fetchName () {
+    return new Promise((resolve, reject) => {
+      setTimeout(() => {
+        resolve('lujs')
+      }, 3000)
+    })
+}
+
+function fetchAvatar () {
+    return new Promise((resolve, reject) => {
+      setTimeout(() => {
+        resolve('123')
+      }, 4000)
+    })
+}
+
+// 串行
+async fetchUser () {
+    const name = await fetchName()
+    const avatar = await fetchAvatar()
+    return {
+      name,
+      avatar
+    }
+}
+
+// 并行
+async fetchUserParallel () {
+    // 先生成实例
+    const namePromise = fetchName()
+    const avatarPromise = fetchAvatar()
+    return {
+      name: await namePromise,
+      avatar: await avatarPromise
+    }
+}
+
+// Promise.all并发请求
+(async ()=>{
+    let result = await Promise.all([getNafetchNameme(), fetchAvatar()]); // result 为两个Promise resolve 出的值组成的数组
+})()
 ```

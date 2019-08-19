@@ -463,6 +463,27 @@ module.exports = {
           .use('url-loader')
             .loader('url-loader')
             .tap(options => Object.assign(options, { limit: 10240 }))
+
+      // 可开启对ico文件的使用，比如cursor: url('1.ico'), default;自定义使用ico图片时
+      config.module
+        .rule('ico')
+        .test(/\.(ico)(\?.*)?$/)
+        .use('url-loader')
+        .loader('url-loader')
+        .end()
+
+      // 为vue中的less 路径设置别名
+      config.module
+        .rule('less')
+        .oneOf('vue')
+        .use('css-loader')
+          .loader('css-loader')
+          .tap(options => Object.assign(options, {
+              alias: {
+                  '@': path.join(__dirname, './src/renderer')
+              }
+          }))
+      // 使用： background: url(~@/1.ico);
     }
   }
   ```

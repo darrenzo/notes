@@ -67,7 +67,7 @@ var kkk = Array.prototype.slice.call(obj); // ['prop0','prop1','prop2','prop3']
 
 ```javascript
     fruits.splice(2,0,"Lemon","Kiwi");
-    // 在数组的第2位置开始插入新元素
+    // 从索引值为2的位置（包括2）开始增删
 ```
 
 ### arrayObject.pop() 删除并返回数组的最后一个元素
@@ -141,7 +141,7 @@ function arrayUniq(arr) {
 
 ## 合并操作
 
-### objectA.concat(arrayX,stringX,......,numberX)
+### arrayObject.concat(arrayX,stringX,......,numberX)
 
 - 返回合并的对象且对象类型和objectA一样
 - 数组之间的合并为浅拷贝
@@ -188,7 +188,7 @@ function arrayUniq(arr) {
 
 ```javascript
     for (var key in myObject) {
-    　　if（myObject.hasOwnProperty(key)){
+    　　if(myObject.hasOwnProperty(key)){
     　　　　console.log(key);
     　　}
     }
@@ -199,7 +199,7 @@ function arrayUniq(arr) {
   - Objext.assign() 或者extends方法
 
 ```js
-    function deepCopy(obj, newObj) {
+    function deepCopy(obj) {
         if(obj === null) return null;
         if(typeof obj !== 'object') return obj;
         if(obj.constructor===Date) return new Date(obj);
@@ -236,7 +236,7 @@ function arrayUniq(arr) {
 
 ## 类型
 
-### 5 种不同的数据类型：
+### 5 种不同的数据类型
 
 - string
 - number
@@ -244,13 +244,13 @@ function arrayUniq(arr) {
 - object
 - function
 
-### 3 种对象类型：
+### 3 种对象类型
 
 - Object
 - Date
 - Array
 
-### 2 个不包含任何值的数据类型：
+### 2 个不包含任何值的数据类型
 
 - null
 - undefined

@@ -196,3 +196,8 @@
 - 给div加上 tabindex="0" 此时即有blur事件
   - 需要设置 ouline: none 去除边框
 - 如果是右键菜单场景，需要在显示弹出框的时候手动触发focus(),才能再响应blur() 事件
+
+## input file
+
+- 默认只能选择文件上传
+- **webkitdirectory** 和 **directory** 属性可以选择文件夹上传
