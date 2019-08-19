@@ -201,3 +201,39 @@
 
 - 默认只能选择文件上传
 - **webkitdirectory** 和 **directory** 属性可以选择文件夹上传
+
+## input range
+
+- 可通过修改样式自定义滑动条
+
+```html
+<!-- vue 模板 -->
+<div class='process-slider'>
+      <input type="range" :max="max" :min="min" :step="step" :defaultValue="defaultValue" v-model="computedValue" :style="{background: backgroundLinearColor}">
+</div>
+
+<style lang='less'>
+.process-slider {
+    width: 218px;
+    height: 8px;
+
+    input[type=range] {
+        cursor: pointer;
+        -webkit-appearance: none;
+        width: inherit;
+        height: inherit;
+        border-radius: 3px;
+    }
+
+    /* 滑动条 */
+    input[type=range]::-webkit-slider-thumb {
+        -webkit-appearance: none;
+        height: 10px;
+        width: 10px;
+        margin-top: -1px;
+        background: #ffffff;
+        border-radius: 50%;
+    }
+}
+</style>
+```
