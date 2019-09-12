@@ -559,6 +559,7 @@ module.exports = {
 ### 自动化导入
 
 - 如果你想自动化导入文件 (用于颜色、变量、mixin……)，可以使用 vue-cli-plugin-style-resources-loader (或 style-resources-loader)
+  - vue项目需要使用 vue add style-resources-loader下载
   - 例如 在每个单文件组件和 Less 文件中导入 ./src/styles/common.less
 
   ```js

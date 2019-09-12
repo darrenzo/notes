@@ -1,5 +1,9 @@
 # notice
 
+## 使用电脑来调试手机上的网页
+
+- chrome://inspect
+
 ## "use strict"
 
 - 不允许直接对未声明的变量赋值（对象也是个变量）
@@ -142,6 +146,7 @@
 ### div.getBoundingClientRect() 可以和event.clientX结合用
 
 - 获取某个元素相对于视窗的位置集合。集合中有top, right, bottom, left等属性
+  - 注意：四个属性分别表示元素各边与页面上边和左边的距离
 - IE5以上兼容
 - 解决position:sticky兼容性问题
 
@@ -196,6 +201,7 @@
 - 给div加上 tabindex="0" 此时即有blur事件
   - 需要设置 ouline: none 去除边框
 - 如果是右键菜单场景，需要在显示弹出框的时候手动触发focus(),才能再响应blur() 事件
+- 注意：electron项目点击div弹出新窗口时，会连续触发focus和blur事件
 
 ## input file
 

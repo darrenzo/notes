@@ -13,11 +13,16 @@ setTimeout(function () {
     console.log('three');
 }, 0);
 
+let test = new Promise((resolve) => {
+    console.log('four');
+})
+
 Promise.resolve().then(function () {
     console.log('two');
 });
 
 console.log('one');
+// four
 // one
 // two
 // three
@@ -117,7 +122,7 @@ console.log('one');
 - 函数里面的this，如果函数不是作为对象的方法运行，而是单纯作为函数运行，this会指向顶层对象。但是，严格模式下，这时this会返回undefined。
 - 不管是严格模式，还是普通模式，new Function('return this')()，总是会返回全局对象。但是，如果浏览器用了 CSP（Content Security Policy，内容安全政策），那么eval、new Function这些方法都可能无法使用。
 
-## 解构赋值的规则: 只要等号右边的值不是对象或数组，就先将其转为对象。由于undefined和null无法转为对象，所以对它们进行解构赋值，都会报错。
+## 解构赋值的规则: 只要等号右边的值不是对象或数组，就先将其转为对象。由于undefined和null无法转为对象，所以对它们进行解构赋值，都会报错
 
 ```javascript
     let { prop: x } = undefined; // TypeError
@@ -792,11 +797,11 @@ console.log('one');
 ```js
 var arr = [ 1, 2, 3, 4, 5, 6 ];
 
-arr.some( ( item, index, array ) => {
+let a = arr.some( ( item, index, array ) => {
     return item > 3;
 });
 
-arr.every( ( item, index, array ) => {
+let b = arr.every( ( item, index, array ) => {
     return item > 3;
 });
 ```
@@ -820,6 +825,7 @@ arr.every( ( item, index, array ) => {
 - 如果填充的类型为对象，那么被赋值的是同一个内存地址的对象，而不是深拷贝对象
 
 ```javascript
+    // fill()方法的参数，会先进行计算得出结果后再使用fill,所以即使传入new Array(3)，填充后的都是同一个内存地址
     let arr = new Array(3).fill({name: "Mike"});
     arr[0].name = "Ben";
     arr
@@ -859,6 +865,7 @@ arr.every( ( item, index, array ) => {
 
     [NaN].findIndex(y => Object.is(NaN, y))
     // 0 可以发现NaN
+    // 可以直接用isNaN(x)   如果 x 是特殊的非数字值 NaN（或者能被转换为这样的值），返回的值就是 true。如果 x 是其他值,则返回 false
 ```
 
 ### arr.entries()   arr.keys()   arr.values()
@@ -966,10 +973,10 @@ arr.every( ( item, index, array ) => {
             [propKey]: "world",
             ['a' + 'bc']: 123
         };
-        a['first word'] // "hello"
-        a[propKey] // "world"
-        a['foo'] // "world"
-        a['abc'] // 123
+        obj['first word'] // "hello"
+        obj[propKey] // "world"
+        obj['foo'] // "world"
+        obj['abc'] // 123
 
         //也可以用作定义方法名
         let obj = {
@@ -1048,6 +1055,7 @@ arr.every( ( item, index, array ) => {
 ```javascript
     const obj1 = {a: {b: 1}};
     const obj2 = Object.assign({}, obj1);
+    // obj2的内存地址和方法的第一个参数{}是一样的，拷贝时，把obj的a属性的值或者对象的内存地址拷贝过来
 
     obj1.a.b = 2;
     obj2.a.b // 2 目标对象拷贝得到的是这个对象的引用
@@ -1072,8 +1080,12 @@ arr.every( ( item, index, array ) => {
 - 数组的处理
 
 ```javascript
-    Object.assign([1, 2, 3], [4, 5])
+    let arr1 = [1, 2, 3];
+    let arr2 = [4, 5];
+    let arr3 = Object.assign(arr1, arr2);
     // [4, 5, 3]   把数组视为属性名为 0、1、2 的对象，因此源数组的 0 号属性4覆盖了目标数组的 0 号属性1
+    let arr1[0] = 6; // arr3 [6, 5, 3]; 变 ， 内存地址和arr1是一样的
+    let arr2[0] = 7; // arr3 [6, 5, 3]; 不变
 ```
 
 - 取值函数的处理
@@ -1174,7 +1186,9 @@ arr.every( ( item, index, array ) => {
 ### Object.keys()，Object.values()，Object.entries()
 
 - 均是遍历参数对象自身的（不含继承的）所有可遍历（enumerable）属性，供for...of使用
-- Object.values() 返回数组的成员顺序: 属性名为数值的属性，是按照数值大小，从小到大遍历的。会过滤属性名为 Symbol 值的属性。如果参数不是对象，会先将其转为对象。数值和布尔值时返回空数组
+- Object.values() 返回数组的成员顺序: 属性名为数值的属性，是按照数值大小，从小到大遍历的。会过滤属性名为 Symbol 值的属性时
+  - 如果参数不是对象，会先将其转为对象
+  - 参数为数值和布尔值时返回空数组
 - Object.entries()与Object.values()用法类似
 
 ```javascript
@@ -1218,7 +1232,8 @@ arr.every( ( item, index, array ) => {
     z // 3
     //变量x是单纯的解构赋值，所以可以读取对象o继承的属性；变量y和z是扩展运算符的解构赋值，只能读取对象o自身的属性
 
-    let { x, ...{ y, z } } = o;//报错
+    let { x, ...{ y, z } } = o; //报扩展运算符使用错误
+    let o = { x, ...{ y, z } }; //不会报扩展运算符使用错误
     //变量声明语句之中(注意前提)，如果使用解构赋值，扩展运算符后面必须是一个变量名，而不能是一个解构赋值表达式
 
     //是扩展某个函数的参数，引入其他操作。
@@ -1386,7 +1401,7 @@ arr.every( ( item, index, array ) => {
   - 无法取消Promise，一旦新建它就会立即执行，无法中途取消
   - 如果不设置回调函数，Promise内部抛出的错误，不会反应到外部
   - 当处于pending状态时，无法得知目前进展到哪一个阶段（刚刚开始还是即将完成）
-- 果某些事件不断地反复发生，一般来说，使用 Stream 模式是比部署Promise更好的选择
+- 如果某些事件不断地反复发生，一般来说，使用 Stream 模式是比部署Promise更好的选择
 
 ### 用法
 

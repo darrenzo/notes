@@ -385,6 +385,7 @@ draw();
 
 - 测量文本的宽度
   - ctx.measureText(text).width： 返回text文本的宽度，单位为px（但返回值不带px）
+  - 只有width属性，无法测量文字高度
   
   ```js
   var c=document.getElementById("myCanvas");

@@ -686,6 +686,7 @@ computed: {
                             clearInterval(this.timer);
                             this.timer = setInterval(this.changeEnable, 1000);
                         },
+                        // immediate为true时，元素会在绑定时就执行handler，如果是keepalive生效的组件，则切换组件时，不会反复生效immediate
                         immediate: true
                     }
                 },
