@@ -36,7 +36,7 @@ module.exports = {
 
 ## 工作流
 
-![webpack-workflow](/img/webpack-workflow.svg)
+![webpack-workflow](/img/webpack-workflow.png)
 
 ## 入口
 
@@ -483,7 +483,8 @@ module.exports = [ serverConfig, clientConfig ];
 
 - 通过以下步骤，可以做到在应用程序中置换模块
 - 你可以设置 HMR，以使此进程自动触发更新，或者你可以选择要求在用户交互时进行更新
-![webpack-hmr](./img/webpack-HMR.svg)
+
+![webpack-hmr](/img/webpack-HMR.png)
 
 ### 在编译器中
 

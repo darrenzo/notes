@@ -138,7 +138,7 @@ draw();
     - 第 2 条切线：控制点1 和控制点2决定的直线
   - 绘制出来的不一定是完美的圆弧
   - 两条直线间半径为radius的圆弧，先去切第一条切线，然后再连接起始点和第一个切点，再沿着第一条直线移动，直到正好切第二条直线位置，但不会补全第二个切点到控制点2的直线，需要在arcTo()方法调用后，手动用lineTo()补全
-  ![canvas-arc](./img/canvas-arc.png)
+  ![canvas-arc](/img/canvas-arc.png)
 
 ```js
 function draw(){
@@ -166,12 +166,12 @@ draw();
 
 ### 一次贝塞尔曲线
 
-![one-bezier](./img/one-bezier.gif)
+![one-bezier](/img/one-bezier.gif)
 
 ### 绘制二次贝塞尔曲线
 
-![two-bezier](./img/two-bezier.gif)
-![two-bezier](./img/two-bezier.png)
+![two-bezier](/img/two-bezier.gif)
+![two-bezier](/img/two-bezier.png)
 
 - quadraticCurveTo(cp1x, cp1y, x, y)
   - 参数 1 和 2：控制点坐标
@@ -193,8 +193,8 @@ draw();
 
 ### 绘制三次贝塞尔曲线
 
-![three-bezier](./img/three-bezier.gif)
-![three-bezier](./img/three-bezier.png)
+![three-bezier](/img/three-bezier.gif)
+![three-bezier](/img/three-bezier.png)
 
 - bezierCurveTo(cp1x, cp1y, cp2x, cp2y, x, y)
   - 参数 1 和 2：控制点 1 的坐标
@@ -282,7 +282,7 @@ ctx.stroke();
 
 ### lineCap 线条末端样式
 
-![linecap](./img/linecap.png)
+![linecap](/img/linecap.png)
 
 - `butt`：线段末端以方形结束
 - `round`：线段末端以圆形结束
@@ -302,7 +302,7 @@ for (var i = 0; i < 3; i++){
 
 ### lineJoin 同一个 path 内，设定线条与线条间接合处的样式
 
-![linejoin](./img/linejoin.png)
+![linejoin](/img/linejoin.png)
 
 - `round` 通过填充一个额外的，圆心在相连部分末端的扇形，绘制拐角的形状。 圆角的半径是线段的宽度
 - `bevel` 在相连部分的末端填充一个额外的以三角形为底的区域， 每个部分都有各自独立的矩形拐角
@@ -337,7 +337,7 @@ draw();
 
 ### 虚线
 
-![dash](./img/dash.png)
+![dash](/img/dash.png)
 
 - setLineDash 方法接受一个数组，来指定线段与间隙的交替
 - lineDashOffset属性设置起始偏移量，逆时针方向

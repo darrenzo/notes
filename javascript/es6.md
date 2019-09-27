@@ -6,7 +6,8 @@
   - 宏任务：包括整体代码script，setTimeout，setInterval
   - 微任务：Promise，process.nextTick
   - 进入宏任务后挨个执行(宏任务的异步的回调函数注册进宏任务事件队列)，接着执行所有的微任务(异步的回调函数注册进微任务的事件队列)，然后执行微任务的回调函数事件队列，第一次循环结束。然后再次从异步队列里的宏任务队列（此时异步回调函数进入主线程队列，先执行）开始
-  ![js事件循环](./img/js-event-loop.svg)
+
+![js事件循环](/img/js-event-loop.png)
 
 ```js
 setTimeout(function () {
@@ -1099,7 +1100,7 @@ let b = arr.every( ( item, index, array ) => {
     Object.assign(target, source)
     // { foo: 1 }  只能进行值的复制，如果要复制的值是一个取值函数，那么将求值后再复制。
     // source对象的foo属性是一个取值函数，Object.assign不会复制这个取值函数，只会拿到值以后，将这个值复制过去
-    //Object.assign方法总是拷贝一个属性的值，而不会拷贝它背后的赋值方法或取值方法。可以换成使用Object.getOwnPropertyDescriptor()和Object.getOwnPropertyDescriptors()方法正确拷贝
+    //Object.assign方法总是拷贝一个属性的值，而不会拷贝它背后的赋值方法（set）或取值方法(get)。可以换成使用Object.getOwnPropertyDescriptor()和Object.getOwnPropertyDescriptors()方法正确拷贝
 ```
 
 ### 属性的可枚举性和遍历
@@ -1343,19 +1344,103 @@ let b = arr.every( ( item, index, array ) => {
 
 ### 对象的新增方法
 
-- Object.is()
-- Object.assign()
-- Object.getOwnPropertyDescriptors()
+#### Object.getOwnPropertyDescriptors()
 
+```js
+const obj = {
+  foo: 123,
+  get bar() { return 'abc' }
+};
 
+Object.getOwnPropertyDescriptors(obj)
+// { foo:
+//    { value: 123,
+//      writable: true,
+//      enumerable: true,
+//      configurable: true },
+//   bar:
+//    { get: [Function: get bar],
+//      set: undefined,
+//      enumerable: true,
+//      configurable: true }
+// }
+```
 
+- 该方法的引入主要是为了解决Object.assign()无法正确拷贝get属性和set属性的问题(拷贝结果为undefined)
 
+```js
+const shallowMerge = (target, source) => Object.defineProperties(
+  target,
+  Object.getOwnPropertyDescriptors(source)
+);
+```
 
+- 配合**Object.create()**方法，将对象属性克隆到一个新对象。这属于浅拷贝
 
+```js
+const shallowClone = (obj) => Object.create(
+  Object.getPrototypeOf(obj),
+  Object.getOwnPropertyDescriptors(obj)
+);
+```
 
+- 实现一个对象继承另一个对象
 
+```js
+// 以前的继承对象写法
+const obj = {
+  __proto__: prot, // ES6规定此属性只有浏览器要部署，其他环境不用部署
+  foo: 123,
+};
 
+// 不使用__proto__的写法
+const obj = Object.create(prot);
+obj.foo = 123;
 
+// 或者
+const obj = Object.assign(
+  Object.create(prot),
+  {
+    foo: 123,
+  }
+);
+
+// 或者
+const obj = Object.create(
+  prot,
+  Object.getOwnPropertyDescriptors({
+    foo: 123,
+  })
+);
+```
+
+#### __proto__ 属性
+
+- 只有浏览器必须部署这个属性，其他运行环境不一定需要部署
+- 无论从语义的角度，还是从兼容性的角度，都不要使用这个属性，只是由于浏览器广泛支持，才被加入了 ES6
+  - 使用**Object.setPrototypeOf(object, prototype)**（写操作）、**Object.getPrototypeOf(object)**（读操作）、**Object.create(object)**（生成操作）代替
+
+#### Object.setPrototypeOf(object, prototype)
+
+- 如果第一个参数不是对象，会自动转为对象。但是由于返回的还是第一个参数，所以这个操作不会产生任何效果
+
+```js
+Object.setPrototypeOf(1, {}) === 1 // true
+Object.setPrototypeOf('foo', {}) === 'foo' // true
+Object.setPrototypeOf(true, {}) === true // true
+```
+
+- 由于undefined和null无法转为对象，所以如果第一个参数是undefined或null，就会报错
+
+#### Object.getPrototypeOf(object)
+
+- 如果参数不是对象，会被自动转为对象, 如果参数不是对象，会被自动转为对象
+- 如果一个对象本身部署了__proto__属性，该属性的值就是对象的原型
+
+```js
+Object.getPrototypeOf({ __proto__: null })
+// null
+```
 
 
 
@@ -1444,7 +1529,7 @@ promise.then(
 );
 ```
 
-- resolve函数的参数除了正常的值以外，还可能是另一个 Promise 实例
+- resolve函数的参数除了正常的值以外，还可能是另一个 Promise 实例 ？？？？？？？
 
 ```js
 // p1的状态决定了p2的状态

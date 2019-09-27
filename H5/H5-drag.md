@@ -8,7 +8,7 @@
 
 ### 拖拽事件
 
-![拖放事件流](img/htmlDragEvent.png)
+![拖放事件流](/img/htmlDragEvent.png)
 
 - drag: 当拖动元素或选中的文本时触发
 - dragstart: 当用户开始拖动一个元素或选中的文本时触发

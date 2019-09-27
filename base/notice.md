@@ -3,6 +3,25 @@
 ## 使用电脑来调试手机上的网页
 
 - chrome://inspect
+  - 有谷歌配备的安卓机调试教程（适用手机上大部分的浏览器）
+
+## url的完整格式
+
+- protocol :// hostname[:port] / path / [;parameters][?query]#fragment
+  - 如：`https://www.res.com:8080/windows/location/page.html?ver=1.0&id=timlq#love`
+  - 整个url -> window.location.href
+  - protocol ->  window.location.protocol
+    - `https:`
+  - hostname ->  window.location.host 或者 window.location.hostname
+    - `www.res.com`
+  - port ->  window.location.port
+    - `8080`
+  - path ->  window.location.pathname
+    - `/windows/location/page.html`  (page.html这个字段可能没有)
+  - query -> window.location.search
+    - `?ver=1.0&id=timlq`
+  - fragment -> window.location.hash
+    - `#love`
 
 ## "use strict"
 
@@ -67,6 +86,8 @@
 
 ## 鼠标点击获取坐标
 
+![位置图](/img/position.jpg)
+
 ### event.screenX/Y
 
 - 获取到的是触发点相对显示器屏幕左上角的距离，不随页面滚动而改变
@@ -127,7 +148,7 @@
 
 ## 位置
 
-### div.offsetLeft/div.offsetTop
+### div.offsetLeft/div.offsetTop (只读)
 
 - 获取离其最近的已经定位的父元素或祖先元素定位，否则就是body
 
@@ -142,6 +163,7 @@
 ### $().offset().left/$().offset().top
 
 - 返回或设置匹配元素相对于文档的坐标 包括滚动条卷去的高度
+- 设值 $(selector).offset({top:100,left:0})
 
 ### div.getBoundingClientRect() 可以和event.clientX结合用
 
@@ -197,7 +219,7 @@
 
 - **tabindex** 属性规定元素的 tab 键控制次序（当 tab 键用于导航时）
   - `<element tabindex="number">`  number 规定元素的 tab 键控制次序（1 是第一个）
-  - 几乎所有浏览器均有 tabindex 属性，除了 Safari
+  - 几乎所有浏览器均有 tabindex 属性，除了 **Safari**
 - 给div加上 tabindex="0" 此时即有blur事件
   - 需要设置 ouline: none 去除边框
 - 如果是右键菜单场景，需要在显示弹出框的时候手动触发focus(),才能再响应blur() 事件
@@ -243,3 +265,17 @@
 }
 </style>
 ```
+
+## ios与安卓的浏览器差异问题
+
+### Safari中当使用委托给一个元素添加click事件时，如果事件是委托到 document 或 body 上，并且委托的元素是默认不可点击的（如 div, span 等），此时 click 事件会失效
+
+- 将目标​元素换成**a**或者**button**等可点击的​元素
+​- 将**click**事件直接绑定到目标​元素上（此方法不行则改用touch事件）
+​- 将 click 事件委托到​​​​​非 document 或 body 的​​父级元素上
+​- 给​目标元素加一条样式规则 cursor: pointer
+
+### video 视频自动播放问题
+
+- 安卓系统会弹窗提示是否允许自动播放
+- safari禁止自动播放

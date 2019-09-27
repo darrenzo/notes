@@ -92,6 +92,28 @@
   - 把保存好的文件改动信息生成commit，并标记为“123”
 - git commit --amend -m "234"
   - 再次提交当前改动生成commit“234”，并覆盖上一个commit
+- 删除 **.git** 仓库中的大文件
+  - Git 维护着一个微型的文件系统，其中的文件也被称作数据对象
+  - 所有的数据对象均存储于项目下面的 .git/objects中
+  - 它会把你每次提交的文件的全部内容都会记录下来，所有当误操作把大文件提交到git仓库中，后续即使删除了文件，.git仓库依旧会有大文件记录
+  - 参考[git内部原理](http://iissnan.com/progit/html/zh/ch9_0.html)
+  - 步骤：
+    - 切到项目根目录
+      - 查看项目中哪个文件占用的空间比较大（非必要）
+      - du -d 1 -h
+    - 查看.git中占用空间最多的五个文件
+      - git rev-list --objects --all | grep "$(git verify-pack -v .git/objects/pack/*.idx | sort -k 3 -n | tail -5 | awk '{print$1}')"
+    - 删除历史提交过的大文件
+      - git filter-branch --force --index-filter 'git rm -rf --cached --ignore-unmatch big-file.jar' --prune-empty --tag-name-filter cat -- --all
+      - big-file.jar 指的是查看出来的文件名或者目录也可以
+      - 如果显示 **xxxxx unchanged**, 说明repo里没有找到该文件, 请检查路径和文件名是否正确，重复上面的脚本，把所有你想删除的文件都删掉
+    - 推送修改后的repo
+      - git push origin master -f
+    - 清理和回收空间
+      - 虽然我们已经删除了文件, 但是我们的repo里面仍然保留了这些objects, 等待垃圾回收(GC), 所以我们要用命令彻底清除它, 并收回空间
+      - rm -rf .git/refs/original/
+      - git reflog expire --expire=now --all
+      - git gc --prune=now
 
 ## 密钥登录
 
