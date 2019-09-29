@@ -1,8 +1,49 @@
 # optimize
 
-## 性能分析工具 ？？？？？
+## 性能分析工具
 
-- dynaTrace
+- 在线网站
+  - [WebPageTest](http://www.webpagetest.org/)
+    - 在该网站输入你的url，就会生成1个url加载的时间瀑布图，对所有加载的资源(css,js,image等等)列出优化的清单
+  - [ShowSlow](http://www.showslow.com/)
+    - showslow是yslow的数据收集与展示平台
+    - 它是开源的php项目，可以用来与firefox的yslow插件、page speed插件或者dynatrace通信，收集插件或程序所发送过来的信息并集中展示
+    - 只需要在dynatrace安装目录下进行一些设置，即可自动实现上传结果到showslow平台作为存档、分析及监控
+- 浏览器插件
+  - FireBug
+    - Firebug 是firefox中最为经典的开发工具，可以监控请求头，响应头，显示资源加载瀑布
+  - Page Speed
+    - 基于firebug的web页面优化的评测工具，同时还有支持chrome的插件，因为是google产的
+    - 直接打开FF的firebug或[chrome的开发人员工具](https://developers.google.com/speed/)，切换到page speed标签，浏览一个网页然后点击分析即可，分析完成后会针对规则打出一个成绩，并告诉你哪些规则你没有符合
+    - [评分规则](https://developers.google.com/speed/docs/best-practices/rules_intro)
+    - 其实这个更像是代码的白盒测试分析工具，因为其都是根据一定的规范来检测网页的优化程度，而不是实际的去监听和过滤页面访问所花费的时间
+    - 如果想看页面访问时间的细节，firebug和chrome的开发人员工具本身就已经有了
+  - [Speed Tracer](https://developers.google.com/web-toolkit/speedtracer/get-started)
+    - 基于chrome的插件，同样是google产的，这个是web前端页的性能记录和分析工具，同时还提供一个规则和建议的评测
+    - 这个工具收集的东西主要是资源或事件消耗的时间，它会实时的记录某个页面的加载过程，并且一直跟踪所有的事件
+    - 优势点是用于监控JS的解析执行时间，还可以监控页面的重绘、回流
+    - 安装这个插件，需要安装 [Google Chrome Developer Channel](http://dev.chromium.org/getting-involved/dev-channel#TOC-Subscribing-to-a-channel) 版本
+      - 如果打不开，可以去[http://www.google.com/chrome/eula.html?extra=devchannel](http://www.google.com/chrome/eula.html?extra=devchannel)下载
+- [Yslow](http://yslow.org/)
+  - 基于firebug的评测分析工具，yahoo产, page speed的增强版
+  - 和page speed类似工具，会给出页面的评分和优化说规则，同时会提供页面下载资源的统计分析功能，还提供了一些小工具，如js运行检测，图片的优化工具，未符合规则的资源有哪些等等
+  - [Yslow优化建议23条规则](http://developer.yahoo.com/performance/rules.html)
+- 独立程序类
+  - DynaTrace Ajax Edition
+    - 基于IE，firefox的插件，对于FF需要版本支持，需要独立安装文件（50多M）
+    - 不但可以检测资源加载瀑布图，而且还能监控页面呈现时间，CPU花销，JS分析和执行时间，CSS解析时间的等
+    - 其可支持到函数级的度量分析，此外其它工具能支持的功能这个工具都支持的
+  - Fiddler
+    - Microsoft的一款web调试工具，它会记录所有本地的http通信。同时支持ie插件版
+  - HttpAnalyzer
+    - 和fiddler原理一样的工具，不过功能比fiddler更加易用
+    - 同时支持ie，ff插件版，此外独立版程序提供http调试功能，写基于http通信的程序使用这个调试比较不错
+  - HttpWatch
+    - 可以监控请求头，响应头，显示资源加载瀑布图, 还能显示GZIP压缩信息，DNS查询，TCP链接信息
+    - 只支持插件版,只能在浏览器上使用，而且只能抓对应浏览器的http通信，且不支持http通信的调试
+    - httpwatch包含IE和firefox插件。不过httpwatch专业版本是收费的，免费版本有些功能限制
+- 通常意义上的web前端性能测试的话，可以选择一个固定的方案，比如：DynaTrace + showslow，前者获取非常丰富的数据，后者则在服务端专门展示这些数据，即方便使用又方便存储
+- 要支持持续测试的话，可以写自动化的脚本来跑具体的页面，每次新版本都执行一次自动化测试即可
 
 ## 输入网址到页面呈现的过程
 
@@ -78,9 +119,10 @@
   - Images懒加载
   - 首屏进度条的显示
     - 往往对于首屏优化后的数据量并不满意的话，同时也不能进一步缩短首屏包的长度了，就可以使用进度条的方式，来提醒用户进行等待
-  - 大量数据的运算 ？？？？？
+  - 大量数据的运算
     - JS本身的单线程就限制了它并不能计算大量的数据，往往会造成页面的卡顿
     - 业务中有些复杂的UI需要去运行大量的运算，所以，**webWorker**的使用是至关重要的
+      - 详[H5-web-worker](/H5/H5-web-worker.md)
 
 #### 异步请求
 
@@ -238,15 +280,69 @@
 - 解决途径：
   - 可以将脚本置底
   - 异步执行：
+    - 使用setTimeout、window.onload()或者**JQuery**中的$(function(){})
     - 使用**script**元素的**defer**属性, 用法同disabled（只有IE支持）
       - 规定是否对脚本执行进行延迟，直到页面加载为止
       - 如果脚本不会改变文档的内容，可将 defer 属性加入到 `<script>` 标签中，以便加快处理文档的速度
-    - 使用setTimeout、window.onload()或者**JQuery**中的$(function(){})
-    - H5 的  **Web Workers** 机制 ？？？？
+      - 使用defer属性的脚本执行顺序可以得到保证
     - 使用**script**标签中的**async**属性（和disabled用法一样）可以通知浏览器该脚本不需要在引用位置执行
       - 浏览器就可以继续构建DOM，JavaScript脚本会在就绪后开始执行，这样将显著提升页面首次加载的性能
       - async只可以在有src属性的标签中使用也就是外部引用的JavaScript文件
-  - 按需加载 （一般用在框架上）
+      - 使用async属性的脚本执行顺序是不能得到保证的
+    - 如果脚本没有操作DOM等元素，或者与DOM时候加载完成无关，直接使用**async**脚本就好，如果需要DOM，就使用**defer**
+    - **defer**和**async**在实际运用过程中需要权衡一下的，渲染速度变快也就意味着脚本加载时间会变长
+    - **defer**和**async**无法很好的处理加载过程中脚本的互相依赖关系
+      - 可以采用RequireJS
+      - 可以采用Promise
+
+      ```js
+      // 执行脚本
+      function exec(src) {
+          const script = document.createElement('script');
+          script.src = src;
+          // 返回一个独立的promise
+          return new Promise((resolve, reject) => {
+              var done = false;
+              // 兼容IE
+              // 已有缓存时不触发 ？？？？？？？
+              script.onload = script.onreadystatechange = () => {
+                  if (!done && (!script.readyState || script.readyState === "loaded" || script.readyState === "complete")) {
+                    done = true;
+
+                    // 即时释放内存，避免内存泄漏
+                    script.onload = script.onreadystatechange = null;
+                    resolve(script);
+                  }
+              }
+
+              script.onerror = reject;
+              document.getElementsByTagName('head')[0].appendChild(script);
+          });
+      }
+
+      function asyncLoadJS(dependencies) {
+        return Promise.all(dependencies.map(exec));
+      }
+
+      asyncLoadJS(['https://code.jquery.com/jquery-2.2.1.js', 'https://cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js']).then(() => console.log('all done'));
+      ```
+
+    - H5 的  **Web Workers** 机制
+  - 按需加载（一般用在框架上）
+    - 比如：
+      - 在原生es6的语法中，提供了import和export的方式来管理模块，其import关键字是被设置成静态的，因此不支持动态绑定
+      - 在es6的stage 3规范中，引入了一个新的方法import()动态加载模块
+
+      ```js
+       import('./dialog.js')
+      .then(dialog => {
+          //do something
+      })
+      .catch(err => {
+          console.log('模块加载错误');
+      });
+      ```
+
   - 为流量特别大的页面专门定制一个专用的**mini**版框架
 
 #### css
@@ -377,65 +473,100 @@
   - GPU的全名是Graphics Processing Unit，是一种硬件加速方式，一般的css渲染，浏览器的渲染引擎都不会使用到它
   - 在3D渲染时，计算量较大，繁重，浏览器会开启显卡的硬件加速来帮助完成这些操作
   - 可以使用css中的translateZ设定，来欺骗浏览器，让其帮忙开启GPU加速，加快渲染进程
-  
-#### 慎用with()
 
-- 使用**with()**相当于增加了作用域链长度
-- 查找作用域链是要消耗时间的，过长的作用域链会导致查找性能下降
+#### JS
 
-#### 慎用 **eval()** 和 **Function**
+- 慎用with()
+  - 使用**with()**相当于增加了作用域链长度
+  - 查找作用域链是要消耗时间的，过长的作用域链会导致查找性能下降
+- 慎用 **eval()** 和 **Function**
+  - 每次 eval 或 Function 构造函数作用于字符串表示的源代码时，脚本引擎都需要将源代码转换成可执行代码。这是很消耗资源的操作, 通常比简单的函数调用慢100倍以上
+    - eval 函数效率特别低，由于事先无法知晓传给 eval 的字符串中的内容，eval在其上下文中解释要处理的代码，也就是说编译器无法优化上下文，因此只能有浏览器在运行时解释代码
+    - Function 构造函数比 eval 略好，因为使用此代码不会影响周围代码, 但其速度仍很慢
+    - 使用 eval 和 Function 也不利于 Javascript 压缩工具执行压缩
+- 减少作用域链查找(尤其在循环中)
+  - 尽量少的不要让代码暴露在全局作用域下，变量从局部作用域到全局作用域的搜索过程越长速度越慢
+  - 应该减少闭包的使用
+  - 如果在循环中需要访问非本作用域下的变量时请在遍历之前用局部变量缓存该变量，并在遍历结束后再重写那个变量
+    - 这一点对全局变量尤其重要，因为全局变量处于作用域链的最顶端，访问时的查找次数是最多的
 
-- 每次 eval 或 Function 构造函数作用于字符串表示的源代码时，脚本引擎都需要将源代码转换成可执行代码。这是很消耗资源的操作, 通常比简单的函数调用慢100倍以上
-  - eval 函数效率特别低，由于事先无法知晓传给 eval 的字符串中的内容，eval在其上下文中解释要处理的代码，也就是说编译器无法优化上下文，因此只能有浏览器在运行时解释代码
-  - Function 构造函数比 eval 略好，因为使用此代码不会影响周围代码, 但其速度仍很慢
-  - 使用 eval 和 Function 也不利于 Javascript 压缩工具执行压缩
-
-#### 减少作用域链查找(尤其在循环中)
-
-- 应该减少闭包的使用
-- 如果在循环中需要访问非本作用域下的变量时请在遍历之前用局部变量缓存该变量，并在遍历结束后再重写那个变量
-  - 这一点对全局变量尤其重要，因为全局变量处于作用域链的最顶端，访问时的查找次数是最多的
-
-```js
-var globalVar = 1;
-function myCallback(info){
-  for( var i = 100000; i--;){
-    //每次访问 globalVar 都需要查找到作用域链最顶端，本例中需要访问 100000 次
-    globalVar += i;
+  ```js
+  var globalVar = 1;
+  function myCallback(info){
+    for( var i = 100000; i--;){
+      //每次访问 globalVar 都需要查找到作用域链最顶端，本例中需要访问 100000 次
+      globalVar += i;
+    }
   }
-}
 
-// 改成
+  // 改成
 
-var globalVar = 1;
-function myCallback(info){
-  //局部变量缓存全局变量
-  var localVar = globalVar;
-  for( var i = 100000; i--;){
-    //访问局部变量是最快的
-    localVar += i;
+  var globalVar = 1;
+  function myCallback(info){
+    //局部变量缓存全局变量
+    var localVar = globalVar;
+    for( var i = 100000; i--;){
+      //访问局部变量是最快的
+      localVar += i;
+    }
+    // 本例中只需要访问 2次全局变量
+    // 在函数中只需要将 globalVar中内容的值赋给localVar 中区
+    globalVar = localVar;
   }
-  // 本例中只需要访问 2次全局变量
-  // 在函数中只需要将 globalVar中内容的值赋给localVar 中区
-  globalVar = localVar;
-}
-```
+  ```
 
-#### 数据访问
+- 数据访问
+  - Javascript中的数据访问包括直接量(字符串、正则表达式)、变量、对象属性以及数组
+    - 对直接量和局部变量的访问是最快的
+    - 对对象属性以及数组的访问需要更大的开销
+  - 以下情况建议将数据放入局部变量
+    - 对任何对象属性的访问超过1次
+    - 对任何数组成员的访问次数超过1次
+  - 应当尽可能的减少对对象以及数组深度查找
+- 字符串拼接
+  - 在Javascript中使用 "+" 号来拼接字符串效率是比较低的，因为每次运行都会开辟新的内存并生成新的字符串变量，然后将拼接结果赋值给新变量
+  - 更为高效的做法是使用数组的 join 方法，即将需要拼接的字符串放在数组中，最后调用其 join 方法得到结果
+    - 由于使用数组也有一定的开销，因此当需要拼接的字符串较多的时候可以考虑用此方法
+  - 或者使用ES6的反引号格式进行字符串拼接也可
+- 按照强类型风格去写代码，指明变量类型和返回类型
+  - 类型确定，解析器不会去做一些额外的的工作，类型不确定的情况下回发生优化回滚
+  - 优化回滚：编译器已经编译完成函数，类型变化导致回滚到通用状态，重新生成函数
 
-- Javascript中的数据访问包括直接量(字符串、正则表达式)、变量、对象属性以及数组
-  - 对直接量和局部变量的访问是最快的
-  - 对对象属性以及数组的访问需要更大的开销
-- 以下情况建议将数据放入局部变量
-  - 对任何对象属性的访问超过1次
-  - 对任何数组成员的访问次数超过1次
-- 应当尽可能的减少对对象以及数组深度查找
+  ```js
+    //bad
+    let num,
+    str,
+    obj;
+    //good
+    let num = 0;
+    str = '',
+    obj = null;
 
-#### 字符串拼接
+    //bad
+    getPrice:function(price){
+      if (price < 0) {
+        return false;
+      }else {
+        return price * 10
+      }
+    }
+     //good
+    getPrice:function(price){
+      if (price < 0) {
+        return -1;
+      }else {
+        return price * 10
+      }
+    }
+  ```
 
-- 在Javascript中使用 "+" 号来拼接字符串效率是比较低的，因为每次运行都会开辟新的内存并生成新的字符串变量，然后将拼接结果赋值给新变量
-- 更为高效的做法是使用数组的 join 方法，即将需要拼接的字符串放在数组中，最后调用其 join 方法得到结果
-  - 由于使用数组也有一定的开销，因此当需要拼接的字符串较多的时候可以考虑用此方法
+- 对象嵌套的越深，读取速度就越慢
+- 确定类型的情况下直接使用 **===**, 避免 **==** 的使用
+- 用三目运算符代替简单的**if-else**
+  - 在进行代码压缩的时候，即使书写的是**if-else**，压缩工具也会帮你把它改成三目运算符的形式
+- 使用箭头函数取代小函数
+- 使用ES6的class
+- 块级作用域变量，使用**let**代替**var**
 
 #### css样式
 
@@ -454,6 +585,8 @@ function myCallback(info){
 - 使用预处理工具
 - 尽量使用css动画
   - 相对于js动画，浏览器本身对css动画进行了优化，使用上面不会出现卡顿等问题
+- box-shadow、border-radius、float需要浏览器进行大量的计算，应减少使用
+- 把有共同的属性内容的一系列选择器组合到一起，能压缩空间和资源开销
 - 使用requestAnimationFrame代替setInterval和settimeout操作
   - 详[canvas动画](/H5/H5-canvas.md)
 - 适当使用canvas
@@ -462,21 +595,21 @@ function myCallback(info){
   - 在使用过程中，由于其频繁触发的特性，会拖累网页的性能，出现卡顿。因此在使用过程中尽量减少css表达式的使用，可以改换成js进行操作
 - 操作细节注意（影响较小）
   - 避免图片或者frame使用空src
-  - 在css属性为0时，去掉单位
+  - 在css属性为0时，去掉单位，增加兼容性
   - 禁止图像缩放
   - 正确的css前缀的使用
   - 移除空的css规则
   - 对于css中可继承的属性，如font-size，尽量使用继承，少一点设置
   - 缩短css选择器（尽量不要超过三层），多使用伪元素等帮助定位
 
-#### HTML优化 ？？？？？
+#### HTML优化
 
 - gzip压缩可以将html中重复的部分进行一个打包，多次复用
 - 首屏只加载部分HTML
   - 服务端在接收到请求时先只响应回HTML的初始部分，后续的HTML内容在需要时再通过AJAX获得
   - 这个方法不能用在CSS上，浏览器不允许CSSOM只构建初始部分，否则会无法确定具体的样式
 
-#### CDN加速 ？？？？
+#### CDN加速
 
 - CDN（content distribute network，内容分发网络）的本质仍然是一个缓存，而且将数据缓存在离用户最近的地方，使用户以最快速度获取数据
 

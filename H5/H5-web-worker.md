@@ -92,6 +92,30 @@ self.name // myWorker
   - self.importScripts()
     - 加载 JS 脚本
 
+### 消息
+
+- 拷贝而并非共享的那个值称为**消息**
+- 使用 **postMessage()** 将消息传递给主线程或从主线程传送回来
+- *postMessage()传递消息使用结构化拷贝算法
+  - 结构化拷贝算法可以接收JSON数据以及一些JSON不能表示的数据——比如循环引用
+  - 结构化拷贝算法支持的数据类型：
+    - 所有的原始类型（除了symbols）
+    - Boolean
+    - String
+    - Date
+    - RegExp (lastIndex字段没有保存)
+    - Blob
+    - File
+    - FileList
+    - ArrayBuffer
+    - ArrayBufferView
+    - ImageBitmap
+    - ImageData
+    - Array
+    - 普通对象
+    - Map
+    - Set
+
 ## 用法
 
 ### 主线程中的用法
@@ -220,6 +244,9 @@ self.onmessage = function (e) {
 <!-- 注意必须指定<script>标签的type属性是一个浏览器不认识的值，这里是app/worker -->
 <!DOCTYPE html>
   <body>
+    <!-- 目前没有一种「官方」的方法能够像 <script> 元素一样将 worker 的代码嵌入的网页中 -->
+    <!-- 如果一个 <script> 元素没有 src 特性，并且它的 type 特性没有指定成一个可运行的 mime-type，那么它就会被认为是一个数据块元素，并且能够被 JavaScript 使用 -->
+    <!-- 「数据块」是 HTML5 中一个十分常见的特性，它可以携带几乎任何文本类型的数据 -->
     <script id="worker" type="app/worker">
       addEventListener('message', function () {
         postMessage('some message');
@@ -387,6 +414,18 @@ onconnect = function(e) {
   }
 }
 ```
+
+## 其他类型的Workers
+
+- [ServiceWorkers(服务worker)](https://developer.mozilla.org/en-US/docs/Web/API/ServiceWorker_API)
+  - 一般作为web应用程序、浏览器和网络（如果可用）之间的代理服务器
+  - 它们旨在（除开其他方面）创建有效的离线体验，拦截网络请求，以及根据网络是否可用采取合适的行动并更新驻留在服务器上的资源
+  - 他们还将允许访问推送通知和后台同步API
+- [Chrome Workers](https://developer.mozilla.org/zh-CN/docs/Web/API/ChromeWorker)
+  - 仅适用于firefox的worker
+  - 如果你正在开发附加组件，希望在扩展程序中使用worker且有在你的worker中访问  js-ctypes 的权限，你可以使用Chrome Workers
+- [Audio Workers(音频worker)](https://developer.mozilla.org/en-US/docs/Web/API/Web_Audio_API#Audio_Workers)
+  - 使得在web worker上下文中直接完成脚本化音频处理成为可能
 
 ## 线程安全
 
