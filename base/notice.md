@@ -5,6 +5,15 @@
 - chrome://inspect
   - 有谷歌配备的安卓机调试教程（适用手机上大部分的浏览器）
 
+## 在手机上调试页面
+
+- 页面html引入以下js，在手机上查看页面时，会有一个设置图标出现，点开进行调试
+
+```html
+<script type="text/javascript" src="//cdn.bootcss.com/eruda/1.4.2/eruda.min.js"></script>
+<script>eruda.init();</script>
+```
+
 ## url的完整格式
 
 - protocol :// hostname[:port] / path / [;parameters][?query]#fragment
@@ -208,7 +217,11 @@
 ## css3 transform 问题
 
 - 进行2D或者3D动画使用transform实际上是进行矩阵运算，对应的属性为transform: matrix(...)
-- transform: translate() 方法中如果使用了百分比，则如果目标元素高宽为奇数，容易出现先matrix值为小数，即导致内容文字模糊
+- transform: translate() 方法中如果使用了百分比，则如果目标元素高宽为奇数，容易出现matrix值为小数，即导致内容文字模糊
+
+## :disabled 伪类
+
+- 在 vue 中给元素绑定 disabled 属性时，会出现无 disabled 属性和 disabled="disabled" 的情况，css 中写 :disabled 选择器会出现无效的情况，可以写属性选择器 [disabled="disabled"]
 
 ## 子元素需要监听父元素尺寸变化
 
@@ -279,3 +292,7 @@
 
 - 安卓系统会弹窗提示是否允许自动播放
 - safari禁止自动播放
+
+## 在前端模仿接口响应
+
+- [mockjs](https://github.com/nuysoft/Mock/wiki)

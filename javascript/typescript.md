@@ -1,6 +1,10 @@
 # TS
 
 - [类型检查工具](https://github.com/litert/type-guard)
+- 案例项目
+  - [云服务使用的日志库](https://github.com/litert/logger.js)
+  - [TLS SNI 库](https://github.com/litert/tls-sni.js)
+  - [事件功能封装库](https://github.com/litert/events.js)
 
 ## 安装
 
@@ -29,6 +33,7 @@
 ### 元组
 
 - 元组类型允许表示一个已知元素数量和类型的数组，各元素的类型不必相同
+  - 数组元素数量是不固定的
 
 ```typescript
     let x: [string, number];
@@ -38,6 +43,16 @@
 
     let y: [string, number, ...string[]];
     x = ['hello', 10, 'a', 'b', 'c'];
+```
+
+```typescript
+let sourceArr = [['1', '2'], ['3', '4']] as Array<[string, string]>;
+let arr: [string, string][] = [];
+for (const [key, val] of sourceArr) {
+    arr.push([val, key]);
+}
+let newArr = new Map([...sourceArr, ...arr]) as Map<string, string>;
+// sourceArr 和 arr 必须标记为元组类型而不能是string[][]这样的数组类型，因为Map结构每一项有数量限制
 ```
 
 ### 枚举 enum
@@ -289,6 +304,43 @@
 
     // pet is Fish 就是类型谓词。 谓词为 parameterName is Type 格式
     // TypeScript不仅知道在 if分支里 pet是 Fish类型， 它还清楚在 else分支里，一定 不是 Fish类型，一定是 Bird类型
+```
+
+- 当一个对象中各属性返回不同类型的值，随机对这个对象中某个属性赋值有可能会报错(在vetur插件中)
+
+```typescript
+interface A {
+    aa: number;
+    bb: boolean;
+}
+let a: A = {
+    aa: 1,
+    bb: false
+};
+
+let b: A = {
+    aa: 2,
+    bb: true
+};
+
+let arr: Array<'aa' | 'bb'> = ['aa', 'bb'];
+
+for (const item of arr) {
+    //  此时 a[item] 出现错误下曲线
+    // 等号左侧的值类型一定是确定的，解析为 boolean 或者解析为 number, 但等号右侧的值类型却是 boolean | number 这种非确定的
+    a[item] = b[item];
+}
+
+// 解决办法1
+a[item] = b[item] 改为 (a as any)[item] = b[item]; // 跳过类型检查
+
+// 解决办法2
+a[item] = b[item] 改为
+(<K extends keyof A(k: K, v: A[K]) => {
+
+    a[k] = v; // 通过参数明确了等号左右的值类型一定是正确对应的
+
+})(item, b[item]);
 ```
 
 - typeof 类型保护 可以直接使用判断类型    typeof padding === "number" 返回Boolean
@@ -1001,6 +1053,22 @@
         console.log(arg.length);  // Array has a .length, so no more error
         return arg;
     }
+```
+
+- T类型变量的可能值
+
+```typescript
+function loggingIdentity<T extends string[] | number>(arg: T): T {
+    return arg;
+}
+```
+
+- T类型变量的默认值
+
+```typescript
+function loggingIdentity<T extends string[] | number = number>(arg: T): T {
+    return arg;
+}
 ```
 
 ### 泛型函数

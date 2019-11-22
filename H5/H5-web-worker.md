@@ -2,6 +2,7 @@
 
 - 参考[阮一峰 Web Worker 使用教程](http://www.ruanyifeng.com/blog/2018/07/web-worker.html)
 - 参考[MDN Web Worker 使用教程](https://developer.mozilla.org/zh-CN/docs/Web/API/Web_Workers_API/Using_web_workers)
+- 兼容性：IE和safari不支持**messageerror event**和**onmessageerror**，另外IE不支持**Transferable**对象。 移动端IOS的safari和Samsung不支持**messageerror event**和**onmessageerror**
 - 概述：
   - JavaScript 语言采用的是单线程模型，随着电脑计算能力的增强，尤其是多核 CPU 的出现，单线程带来很大的不便，无法充分发挥计算机的计算能力
   - Web Worker 的作用，就是为 JavaScript 创造多线程环境，允许主线程创建 Worker 线程，将一些任务分配给后者运行, 在主线程运行的同时，Worker 线程在后台运行，两者互不干扰。等到 Worker 线程完成计算任务，再把结果返回给主线程

@@ -639,6 +639,7 @@ computed: {
 ## watch 监听data某个属性的变化
 
 - 当你想要在数据变化响应时，执行异步操作或开销较大的操作，这是很有用的, 使用 watch 选项允许我们执行异步操作 (访问一个 API)，限制我们执行该操作的频率，并在我们得到最终结果前，设置中间状态。这是计算属性无法做到的
+- 当监听的是引用类型的值时，应该尽量保证此类型的值每次返回的地址都是新的，避免直接写 :aa="[bb, cc]"形式
 
 ```html
     <template>
@@ -769,14 +770,15 @@ methods: {
 
 ```html
     <transition name="slide">
-        <music-list :title="title" :bg-image="bgImage" :songs="songs"></music-list>
+        <music-list :title="title" class="music-list" :bg-image="bgImage" :songs="songs"></music-list>
     </transition>
     <style>
         .slide-enter-active, .slide-leave-active {
-            transition: all 0.3s    /* 动画期间 */
+            transition: all 0.3s;    /* 动画期间 */
         }
         .slide-enter, .slide-leave-to {
-            transform: translate3d(100%, 0, 0)  /* 动画开始和结束位置 */
+            opacity: 0; /* 不能给原样式 显示设置 opacity: 1, 否则无效  */
+            transform: translate3d(100%, 0, 0);  /* 动画开始和结束位置 */
         }
     </style>
 ```
@@ -959,6 +961,7 @@ props: {
 
 ##　数据的更新检测
 
+- Map和Set数据无法响应
 - 万金油解决方法
 
 ```js
@@ -1376,6 +1379,8 @@ router.beforeEach((to, from, next) => {
  ```
 
 - keep-alive 是Vue的内置组件，能在组件切换过程中将状态保留在内存中，防止重复渲染DOM。一般App.vue使用
+  - 当目前激活的组件不是对应某个组件时，该组件的监听依旧在执行
+    - 如A组件监听了store中的time值，当切换tab到B组件，B组件修改了store中的time值，A组件的监听依旧会被触发
 
  ```html
     <keep-alive>

@@ -99,9 +99,11 @@ function arrayNoEmpty(arr) {
 
 ### 数组去重
 
+- 只适合基础数据类型的数组
+
 ```js
 function arrayUniq(arr) {
-    return Array.from(new Set(arr));
+    return [...new Set(arr)];
 }
 ```
 

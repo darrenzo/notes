@@ -148,7 +148,7 @@
 
 #### 资源预加载
 
-- Pre-fetching：指的是一种提示浏览器预先加载用户之后可能会使用到的资源的方法
+- 指的是一种提示浏览器预先加载用户之后可能会使用到的资源的方法
 - 有以下方法：
   - preload 必须和as属性合用
     - 参考[MDN](https://developer.mozilla.org/zh-CN/docs/Web/HTML/Preloading_content)

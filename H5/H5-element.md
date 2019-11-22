@@ -790,7 +790,7 @@
   - readyState：返回音频当前的就绪状态
 - 对象方法：
   - addTextTrack()：向音频添加新的文本轨道
-  - canPlayType()：检查浏览器是否能够播放指定的音频类型
+  - canPlayType()：检查浏览器是否能够播放指定的音频类型, 需要传类似于'audio/wav'的字符串参数进行判断,返回字符串判断说明
   - **getStartDate()**：返回新的 Date 对象，表示当前时间线偏移量
   - **fastSeek()**：在音频播放器中指定播放时间
   - load()：重新加载音频元素

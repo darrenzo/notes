@@ -104,6 +104,8 @@ f()
 ```
 
 - 如果我们不使用try-catch，然后async函数f()的调用产生的promise变成reject状态的话，我们可以添加.catch去处理它
+  - 尽量使用try-catch，因为函数调用性能开销最大
+  - async-await语法中不要出现then和catch的回调
 
 ```js
 let response = await fetch('http://no-such-url').catch( () => { } );
