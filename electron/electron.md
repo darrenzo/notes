@@ -349,3 +349,5 @@ MyApp.app/Contents
 ## [代码签名](https://electronjs.org/docs/tutorial/code-signing)
 
 ## [桌面环境集成](https://electronjs.org/docs/tutorial/desktop-environment-integration)
+
+<!-- TODO 待续 -->

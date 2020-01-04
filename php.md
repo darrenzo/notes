@@ -2342,3 +2342,5 @@ throw new Exception('Uncaught Exception occurred'); // Exception: Uncaught Excep
   - 用于允许或禁止字符串中指定的字符
   - 无数据格式规则
   - 始终返回字符串
+
+<!-- TODO 待续 -->

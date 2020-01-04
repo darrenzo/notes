@@ -1,4 +1,4 @@
-# http
+# HTTP
 
 ## TCP连接
 
@@ -7,7 +7,17 @@
 ## 协议
 
 - http： HTTP、TCP、IP
-- https: HTTP、TCP、IP、SSL(或TCL)
+- https: HTTP、TCP、IP、SSL(或TLS)
+
+## TCP/IP
+
+- TCP/IP是个协议组，可分为三个层次：网络层、传输层和应用层
+  - 在网络层有IP协议、ICMP协议、ARP协议、RARP协议和BOOTP协议
+  - 在传输层中有TCP协议与UDP协议
+    - UDP包括DNS、TFTP等协议
+  - 在应用层有:TCP包括FTP、HTTP、TELNET、SMTP等协议
+- HTTP属于应用层协议，在传输层使用TCP协议，在网络层使用IP协议
+  - IP协议主要解决网络路由和寻址问题，TCP协议主要解决如何在IP层之上可靠地传递数据包，使得网络上接收端收到发送端所发出的所有包，并且顺序与发送顺序一致。TCP协议是可靠的、面向连接的
 
 ## http 请求
 

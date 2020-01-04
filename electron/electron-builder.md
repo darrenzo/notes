@@ -73,12 +73,14 @@ export CSC_KEY_PASSWORD=bbb
   - 如果设置了**GH_TOKEN**环境变量，则默认为github, 值为github仓库指定为repo建的token
   - 如果设置了**BT_TOKEN**,并且没有设置**GH_TOKEN**，则默认为bintray
 - publish属性可以设置在vue.config.js的pluginOptions.electronBuilder.builderOptions对象的直接子级，或者给每个系统（mac、win、linux）设置一个
+- 使用github用作自动更新平台，可以参考[readme](https://github.com/web-pencil/electron-updater-example)
 
 ```js
+// 自定义一个平台，手动/自己写脚本上传最新文件到目标服务器
 "publish": [
     {
       "provider": "generic",
-      "url": "https://bucket_name.s3.amazonaws.com/download/", // baseurl  这里文件夹只放安装包和publish生成的latest.yml文件即可，每次更新s3的两个文件（要同时更新），app开启会检测latest.yml文件，如果发生更新，则会自动进行更新下载
+      "url": "https://bucket_name.s3.amazonaws.com/download/", // baseurl  这里文件夹只放安装包和publish生成的latest.yml文件即可，每次更新s3的两个文件（要同时更新），app开启会检测latest.yml文件，如果发生更新，则会自动进行更新下载, 只有版本号不一样才会认为是更新了
     }
   ]
 ```

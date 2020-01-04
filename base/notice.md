@@ -68,6 +68,15 @@
 
 - if (typeof myObj !== "undefined" && myObj !== null)  我们需要先使用 typeof 来检测对象是否已定义
 
+```js
+var content=$("content").val();
+if(!content){
+     alert("请输出内容！");
+     return;
+}
+//上述内容相当于判断content=""、content=null、content = undefined、content=0
+```
+
 ## 函数显式参数(Parameters)与隐式参数(Arguments)
 
 - 函数显式参数在函数定义时列出，函数隐式参数在函数调用时传递给函数真正的值。

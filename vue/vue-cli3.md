@@ -863,8 +863,8 @@ VUE_APP_SECRET=secret
 
 - 环境加载属性
   - 为一个特定模式准备的环境文件的 (例如 .env.production) 将会比一般的环境文件 (例如 .env) 拥有更高的优先级
-  - Vue CLI 启动时已经存在的环境变量拥有最高优先级，并不会被 .env 文件覆写   ？？？？？
-- 如果在环境中有默认的 NODE_ENV，你应该移除它或在运行 vue-cli-service 命令的时候明确地设置 NODE_ENV  ？？？？
+  - Vue CLI 启动时已经存在的环境变量拥有最高优先级，并不会被 .env 文件覆写
+- 如果在环境中有默认的 NODE_ENV，你应该移除它或在运行 vue-cli-service 命令的时候明确地设置 NODE_ENV
 
 ### 模式
 
@@ -878,6 +878,7 @@ VUE_APP_SECRET=secret
   - 如果你在项目根目录创建一个名为 .env.development 的文件，那么在这个文件里声明过的变量就只会在 development 模式下被载入
   - 可以通过传递 --mode 选项参数为命令行覆写默认的模式
     - 例如，如果你想要在构建命令中使用开发环境变量，请在你的 package.json 脚本中加入： "dev-build": "vue-cli-service build --mode development"
+    - 注意： --mode development 不能和 vue-cli-service 拆开，即不能一个写在package.json 脚本中，一个写在命令行中传入
   - **--mode**的使用
     - 例如： Staging 模式
       - vue-cli-service build 会加载可能存在的 .env、.env.production 和 .env.production.local 文件然后构建出生产环境应用

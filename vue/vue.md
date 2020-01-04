@@ -897,7 +897,9 @@ methods: {
                         return this.childsize
                     },
                     emit() {
-                        this.$emit('func', this.childString, this.childsize); // 父组件监听子组件派发的func函数，并获得emit时带的参数，可以从左到右选择性获取
+                        // 父组件监听子组件派发的func函数，并获得emit时带的参数，可以从左到右选择性获取
+                        // 父组件中  @func="aaa=$event"   此时$event就是子组件emit上来的第一个参数
+                        this.$emit('func', this.childString, this.childsize);
                     }
                 }
             }
@@ -961,7 +963,8 @@ props: {
 
 ##　数据的更新检测
 
-- Map和Set数据无法响应
+- 修改引用类型数据的属性时无法响应，(arr, object, map, set)
+- vue.$set只能在对arr进行设值时可以触发arr的响应事件（相当于slice），尽量只用在新增属性的情况下
 - 万金油解决方法
 
 ```js
@@ -1627,6 +1630,74 @@ methods: {
     // 因为getters是全局使用的，所以取值时得用this.$store.getters获取到的是所有模块合在一起的state对象
 ```
 
+### vue2.0 + ts 中的 vuex写法
+
+```ts
+// baseConfig.ts
+import * as Vuex from 'vuex';
+
+export interface BaseConfig {
+    dialogId: string;
+}
+
+const state: BaseConfig = {
+    dialogId: ''
+}
+
+const mutations = {
+    SET_DIALOGID(state: BaseConfig, dialogId: string) {
+        state.dialogId = dialogId;
+    }
+}
+
+const getters = {
+
+    dialogId: (state: BaseConfig) => state.dialogId
+}
+
+const actions = {
+
+    handleDialogId(
+        actionContext: Vuex.ActionContext<BaseConfig, BaseConfig>,
+        // 需要传多个属性值时就需要以对象的形式传递，因为actions方法只能有两个参数
+        paras: {
+            dialogId: string
+        }
+    ) {
+        actionContext.commit('SET_DIALOGID', paras.dialogId);
+    }
+}
+
+export default {
+    state,
+    getters,
+    mutations,
+    actions
+};
+
+// index.ts
+import Vue from 'vue';
+import * as Vuex from 'vuex';
+import baseConfig, { BaseConfig } from './modules/baseConfig';
+import createLogger from 'vuex/dist/logger';
+
+Vue.use(Vuex);
+
+const debug = process.env.NODE_ENV !== 'production';
+
+export interface State {
+    baseConfig: BaseConfig;
+}
+
+export default new Vuex.Store<State>({
+    modules: {
+        baseConfig
+    },
+    strict: debug,
+    plugins: debug ? [createLogger({})] : []
+});
+```
+
 ## 语言插件 vue-i18n
 
 ### 安装插件
@@ -1693,3 +1764,5 @@ new Vue({
 <p>In stock: {{ $n(10000.69) }}</p>
 
 ```
+
+- 注意，存储i18n文案的变量，需要是计算属性或者是一个返回文案的方法，才能即时响应语言的切换

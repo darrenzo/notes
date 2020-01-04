@@ -2083,3 +2083,5 @@ class MyComponent extends React.Component {
 ```
 
 - React 15 不支持 error boundaries，而是要用`unstable_handleError`,所以升级为16时，要把它改成`componentDidCatch`
+
+<!-- TODO 待续 -->

@@ -1,4 +1,4 @@
-# H5-web-worker
+# H5 Web Worker
 
 - 参考[阮一峰 Web Worker 使用教程](http://www.ruanyifeng.com/blog/2018/07/web-worker.html)
 - 参考[MDN Web Worker 使用教程](https://developer.mozilla.org/zh-CN/docs/Web/API/Web_Workers_API/Using_web_workers)

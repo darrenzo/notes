@@ -835,11 +835,11 @@
   - networkState：返回视频的当前网络状态
   - readyState：返回视频当前的就绪状态
 - 对象方法：
-  - addTextTrack()：向音频添加新的文本轨道
-  - canPlayType()：检查浏览器是否能够播放指定的音频类型
-  - load()：重新加载音频元素
-  - play()：开始播放音频
-  - pause()：暂停当前播放的音频
+  - addTextTrack()：向视频添加新的文本轨道
+  - canPlayType()：检查浏览器是否能够播放指定的视频类型
+  - load()：重新加载视频元素
+  - play()：开始播放视频
+  - pause()：暂停当前播放的视频
 
 ## Media 事件
 

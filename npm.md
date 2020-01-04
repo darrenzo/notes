@@ -36,4 +36,20 @@ yarn 或 yarn install
 ## 全局安装
 yarn global add [package]
 
+## 升级
+yarn upgrade [package]@ver
+
+## 升级到最新
+yarn upgrade –latest [package]
+
+```
+
+## serve 服务器
+
+```shell
+
+yarn global add serve
+cd [用作服务器的文件夹路径]
+serve .
+
 ```

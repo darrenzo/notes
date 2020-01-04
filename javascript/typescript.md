@@ -131,7 +131,7 @@ let newArr = new Map([...sourceArr, ...arr]) as Map<string, string>;
 - 在一个嵌套作用域里引入一个新名字的行为称做屏蔽
 
 ```typescript
-    function sumMatrix(matrix: number[]) { // 怎么声明二维数组 ？？？
+    function sumMatrix(matrix: number[]) {
         let sum = 0;
         for (let i = 0; i < matrix.length; i++) {
             var currentRow = matrix[i];
@@ -1551,6 +1551,7 @@ function loggingIdentity<T extends string[] | number = number>(arg: T): T {
     import polygons = Shapes.Polygons
 ```
 
+<!-- TODO 待续 -->
 ## Mixins
 
 ## 装饰器

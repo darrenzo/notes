@@ -118,7 +118,7 @@ function arrayUniq(arr) {
 
 - start和stop均为非负整数
 - stop为可选参数
-- 返回的子串包括 start 处的字符，stop 处的字符
+- 返回的子串包括 start 处的字符，不包括stop 处的字符
 - start = stop 返回空串
 - start > stop 自动交换这2个参数再截取字符串
 

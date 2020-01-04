@@ -132,6 +132,7 @@
 
 ### 每次登陆时开启ssh，所以直接保存到bash_profile文件，每次打开bash自动执行开启ssh操作
 
+- 启动bash，会使用bashrc文件，而使用bash进行登录操作，比如登录服务器，会使用bash_profile文件
 - vi ~/.bash_profile
   - 打开编辑bash_profile界面
   - 最初是命令行模式
@@ -147,6 +148,48 @@
   - : wq (输入「wq」，存盘并退出vi)
   - : q! (输入q!， 不存盘强制退出vi)
 - 代码无误后输入wq确认退出即可
+
+### vscode内启动bash，使用 ssh-add 添加密钥进 ssh-agent 高速缓存的操作 会出现无法连接的情况
+
+- 在 `.bash_profile` 同级目录下的 `.bashrc` 文件（没有则新建） 加入以下代码即可正常操作
+
+```shell
+# Add following code at the end of ~/.bashrc
+
+# Check if ~/.pid_ssh_agent exists.
+if [ -f ~/.pid_ssh_agent ]; then
+
+    source ~/.pid_ssh_agent
+
+    # Check process of ssh-agent still exists.
+    TEST=$(ssh-add -l)
+
+    if [ -z "$TEST" ]; then # Reinit if not.
+        NEED_INIT=1
+    fi
+else
+    NEED_INIT=1 # PID file doesm't exist, reinit it.
+fi
+
+# Try start ssh-agent.
+if [ ! -z "$NEED_INIT" ]; then
+    echo $(ssh-agent -s) | sed -e 's/echo[ A-Za-z0-9]*;//g' > ~/.pid_ssh_agent # save the PID to file.
+    source ~/.pid_ssh_agent
+fi
+```
+
+### ssh-add的一些指令
+
+- ssh-add ~/.ssh/id_dsa
+  - 把专用密钥添加到 ssh-agent 的高速缓存中
+- 以下为参数选项
+  - `-D`  删除ssh-agent中的所有密钥
+  - `-d [file]`  从ssh-agent中的删除密钥
+  - `-L`  显示ssh-agent中的公钥
+  - `-l`  显示ssh-agent中的密钥
+  - `-t [file]` life：对加载的密钥设置超时时间，超时ssh-agent将自动卸载密钥
+  - `-X` 对ssh-agent进行解锁
+  - `-x` 对ssh-agent进行加锁
 
 ## http式只输入一次账号密码（没有安全性）
 

@@ -9,6 +9,8 @@
 
 - 检索字符串中的正则表达式的匹配。该函数返回一个数组，其中存放匹配的结果。如果未找到匹配，则返回值为 null。
 - /e/.exec("The best things in life are free!"); 返回 ["e", index: 2, input: "The best things in life are free!"]
+- 在调用非全局的 RegExp 对象的 exec() 方法时，返回的数组与调用方法 String.match() 返回的数组是相同的
+- 当调用全局的 RegExp 对象的 exec() 方法时，需要注意 RegExp 对象的 lastIndex 属性
 
 ## 声明
 
