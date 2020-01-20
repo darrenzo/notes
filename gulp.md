@@ -3,6 +3,7 @@
 ## 安装
 
 - 如果之前安装过**gulp**，可以执行 `npm rm --global gulp` 来移除旧的安装
+  - gulp@4 版本以下不兼容高版本的nodejs，建议使用 nodejs@10 左右的，比如 10.15.3
 - 通过 `npm install --global gulp-cli` 安装新的 CLI， `gulp -v` 检查**gulp**版本
 - 在项目文件夹下 `npm init` 初始化后，`npm install --save-dev gulp` 安装**gulp**依赖
 

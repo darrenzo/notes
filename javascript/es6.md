@@ -2330,14 +2330,16 @@ const map2 = new Map();
 
 ### 实例的遍历方法
 
+- 遍历器不是数组，无法使用数组的方法。例如forEach
 - Map.prototype.keys()
   - 返回键名的遍历器
 - Map.prototype.values()
   - 返回键值的遍历器
 - Map.prototype.entries()
   - 返回所有成员的遍历器
-- Map.prototype.forEach()
+- Map.prototype.forEach((value, key, Map) => {})
   - 遍历 Map 的所有成员
+  - value是Map每一项的值，key是每一项的键, Map是当前正在被遍历的对象
 - Map 的遍历顺序就是插入顺序
 - Map 结构的默认遍历器接口（Symbol.iterator属性），就是entries方法
 
@@ -2611,7 +2613,7 @@ obj.time // 35
   - 拦截**delete proxy[propKey]**的操作，返回一个布尔值
 - ownKeys(target)
   - 拦截对象自身属性的读取操作，返回一个数组
-  - **Object.getOwnPropertyNames(proxy)、Object.getOwnPropertySymbols(proxy)、Object.keys(proxy)、for...in**循环
+  - **Object.getOwnPropertyNames(proxy)、Object.getOwnPropertySymbols(proxy)、Object.keys(proxy)、for...in循环**
   - 该方法返回目标对象所有自身属性的属性名，而**Object.keys()**的返回结果仅包括目标对象自身的可遍历属性
 - getOwnPropertyDescriptor(target, propKey)
   - 拦截**Object.getOwnPropertyDescriptor(proxy, propKey)**，返回一个属性描述对象或者undefined
@@ -2967,76 +2969,193 @@ Reflect.apply(Math.floor, undefined, [1.75]) // 1
 - 大部分与Object对象的同名方法的作用都是相同的，而且它与Proxy对象的方法是一一对应的
 - Reflect.get(target, name, receiver)
   - 查找并返回target对象的name属性，如果没有该属性，则返回undefined
-
-<!-- TODO 待续 -->
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+  - 如果第一个参数不是对象，Reflect.get方法会报错
+  - 如果name属性部署了读取函数（getter），则 读取函数的this 绑定 receiver
+
+  ```js
+    var myObject = {
+      foo: 1,
+      bar: 2,
+      get baz() {
+        return this.foo + this.bar;
+      },
+    };
+
+    var myReceiverObject = {
+      foo: 4,
+      bar: 4,
+    };
+
+    Reflect.get(myObject, 'baz', myReceiverObject) // 8
+  ```
+
+- Reflect.set(target, name, value, receiver)
+  - Reflect.set方法设置target对象的name属性等于value
+  - 如果第一个参数不是对象，Reflect.set会报错
+  - 如果name属性设置了赋值函数，则 赋值函数的this 绑定 receiver
+  
+  ```js
+  var myObject = {
+    foo: 4,
+    set bar(value) {
+      return this.foo = value;
+    },
+  };
+
+  var myReceiverObject = {
+    foo: 0,
+  };
+
+  Reflect.set(myObject, 'bar', 1, myReceiverObject);
+  myObject.foo // 4
+  myReceiverObject.foo // 1
+  ```
+
+  - 如果 Proxy对象和 Reflect对象联合使用，前者拦截赋值操作，后者完成赋值的默认行为，而且传入了receiver，那么Reflect.set会触发Proxy.defineProperty拦截
+
+  ```js
+  let p = {
+    a: 'a'
+  };
+
+  let handler = {
+    set(target, key, value, receiver) {
+      console.log('set');
+      Reflect.set(target, key, value, receiver)
+    },
+    defineProperty(target, key, attribute) {
+      console.log('defineProperty');
+      Reflect.defineProperty(target, key, attribute);
+    }
+  };
+
+  let obj = new Proxy(p, handler);
+  obj.a = 'A';
+  // set
+  // defineProperty
+  // 因为Proxy.set的receiver参数总是指向当前的 Proxy实例（即上例的obj）
+  // 而Reflect.set一旦传入receiver，就会将属性赋值到receiver上面（即obj），导致触发defineProperty拦截
+  // 不传入receiver则不会触发defineProperty拦截
+  ```
+
+- Reflect.has(obj, name)
+  - 如果Reflect.has()方法的第一个参数不是对象，会报错
+- Reflect.deleteProperty(obj, name)
+  - Reflect.deleteProperty方法等同于delete obj[name]，用于删除对象的属性
+  - 如果Reflect.deleteProperty()方法的第一个参数不是对象，会报错
+  - 如果删除成功，或者被删除的属性不存在，返回true
+  - 删除失败，被删除的属性依然存在，返回false
+- Reflect.construct(target, args)
+  - 如果Reflect.construct()方法的第一个参数不是函数，会报错
+  - Reflect.construct方法等同于new target(...args)，这提供了一种不使用new，来调用构造函数的方法
+  
+  ```js
+  function Greeting(name) {
+    this.name = name;
+  }
+
+  // new 的写法
+  const instance = new Greeting('张三');
+
+  // Reflect.construct 的写法
+  const instance = Reflect.construct(Greeting, ['张三']);
+  ```
+
+- Reflect.getPrototypeOf(obj)
+  - Reflect.getPrototypeOf方法用于读取对象的__proto__属性，对应Object.getPrototypeOf(obj)
+    - 区别：如果参数不是对象，Object.getPrototypeOf会将这个参数转为对象，然后再运行，而Reflect.getPrototypeOf会报错
+- Reflect.setPrototypeOf(obj, newProto)
+  - Reflect.setPrototypeOf方法用于设置目标对象的原型（prototype），对应Object.setPrototypeOf(obj, newProto)方法
+  - 返回一个布尔值，表示是否设置成功
+  
+  ```js
+  const myObj = {};
+
+  // 旧写法
+  Object.setPrototypeOf(myObj, Array.prototype);
+
+  // 新写法
+  Reflect.setPrototypeOf(myObj, Array.prototype);
+
+  myObj.length // 0
+  ```
+
+  - 如果无法设置目标对象的原型（比如，目标对象禁止扩展），Reflect.setPrototypeOf方法返回false
+
+  ```js
+  Reflect.setPrototypeOf({}, null)
+  // true
+  Reflect.setPrototypeOf(Object.freeze({}), null)
+  // false
+  ```
+
+  - 如果第一个参数不是对象，Object.setPrototypeOf会返回第一个参数本身，而Reflect.setPrototypeOf会报错
+  - 如果第一个参数是undefined或null，Object.setPrototypeOf和Reflect.setPrototypeOf都会报错
+- Reflect.apply(func, thisArg, args)
+  - Reflect.apply方法等同于Function.prototype.apply.call(func, thisArg, args)，用于绑定this对象后执行给定函数
+  - 如果要绑定一个函数的this对象，可以这样写fn.apply(obj, args)，但是如果函数定义了自己的apply方法，就只能写成Function.prototype.apply.call(fn, obj, args)
+    - 采用Reflect对象可以简化这种操作
+  
+  ```js
+  const ages = [11, 33, 12, 54, 18, 96];
+
+  // 旧写法
+  const youngest = Math.min.apply(Math, ages);
+  const oldest = Math.max.apply(Math, ages);
+  const type = Object.prototype.toString.call(youngest);
+
+  // 新写法
+  const youngest = Reflect.apply(Math.min, Math, ages);
+  const oldest = Reflect.apply(Math.max, Math, ages);
+  const type = Reflect.apply(Object.prototype.toString, youngest, []);
+  ```
+
+- Reflect.defineProperty(target, propertyKey, attributes)
+  - Reflect.defineProperty方法基本等同于Object.defineProperty，用来为对象定义属性
+    - 后者会被逐渐废除
+  - 如果Reflect.defineProperty的第一个参数不是对象，就会抛出错误
+- Reflect.getOwnPropertyDescriptor(target, propertyKey)
+  - Reflect.getOwnPropertyDescriptor基本等同于Object.getOwnPropertyDescriptor，用于得到指定属性的描述对象，将来会替代掉后者
+  - 如果第一个参数不是对象，Object.getOwnPropertyDescriptor(1, 'foo')不报错，返回undefined，而Reflect.getOwnPropertyDescriptor(1, 'foo')会抛出错误，表示参数非法
+- Reflect.isExtensible (target)
+  - Reflect.isExtensible方法对应Object.isExtensible，返回一个布尔值，表示当前对象是否可扩展
+  - 如果参数不是对象，Object.isExtensible会返回false，因为非对象本来就是不可扩展的，而Reflect.isExtensible会报错
+- Reflect.preventExtensions(target)
+  - Reflect.preventExtensions对应Object.preventExtensions方法，用于让一个对象变为不可扩展。它返回一个布尔值，表示是否操作成功
+  - 如果参数不是对象，Object.preventExtensions在 ES5 环境报错，在 ES6 环境返回传入的参数，而Reflect.preventExtensions会报错
+- Reflect.ownKeys(target)
+  - Reflect.ownKeys方法用于返回对象的所有属性，基本等同于Object.getOwnPropertyNames与Object.getOwnPropertySymbols之和
+  - 如果Reflect.ownKeys()方法的第一个参数不是对象，会报错
+
+## 使用 Proxy 实现观察者模式
+
+```js
+const queuedObservers = new Set();
+
+const observe = fn => queuedObservers.add(fn);
+const observable = obj => new Proxy(obj, {set});
+
+function set(target, key, value, receiver) {
+  const result = Reflect.set(target, key, value, receiver);
+  queuedObservers.forEach(observer => observer());
+  return result;
+}
+
+// 只要实现 observable() 和 observe() 方法就实现了
+const person = observable({
+  name: '张三',
+  age: 20
+});
+
+function print() {
+  console.log(`${person.name}, ${person.age}`)
+}
+
+observe(print);
+person.name = '李四';
+// 输出
+// 李四, 20
+```
 
 ## Promise
 

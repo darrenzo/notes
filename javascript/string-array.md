@@ -376,7 +376,7 @@ function func() {
 }
 
 var func1 = func.bind(obj);
-func1();                        // study
+func1();// study
 ```
 
 ##### 参数的使用

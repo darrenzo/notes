@@ -1,4 +1,11 @@
-# npm
+# npm相关
+
+## nvm
+
+- [请参考地址](https://www.cnblogs.com/yulinlewis/p/10441180.html)
+- [nvm下npm安装相关设置](https://www.cnblogs.com/ejll/p/11229557.html)
+
+## npm
 
 - 查看 npm 全局安装过的包
   - npm list -g --depth=0
@@ -13,10 +20,18 @@
       - 先查看当前项目有没 create-react-app
       - 如果当前项目找不到，会去全局查找 create-react-app
       - 如果全局还找不到，会帮我们临时从 npm 包仓库安装 create-react-app，不会污染到当前项目，也不会装到全局
-  
+- [windows-build-tools](https://github.com/felixrieseberg/windows-build-tools)
+  - 需要使用VC环境编译原生node模块包时使用的工具（普通编译会出现node-gyp报错）
+  - npm install --global windows-build-tools
+  - yarn global add windows-build-tools
+
 ## yarn
 
 ```shell
+
+npm install -g yarn
+## 注意，要检查系统环境变量中是否有yarn路径，如果没有，全局安装的包不会生效
+yarn global bin ## 查看yarn的安装目录
 
 yarn init
 

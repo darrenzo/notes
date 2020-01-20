@@ -64,6 +64,10 @@ export CSC_KEY_PASSWORD=bbb
 
 - 自动更新官网页有github案例
 - [网上mac案例](https://segmentfault.com/a/1190000012904543)
+- 当检测的目标url上没有latest.yml文件时，检测会直接跳到error
+- 当启动程序完毕后，更改检测的目标url上的文件，此时调用程序的检查更新接口，结果和刚启动时调用的结果一样
+- build的options选项中的nsis属性可以用来设置自定义安装，如果未undefined，则默认为一键安装
+  - 一键安装默认只安装在C盘
 
 ### [设置publish参数](https://www.electron.build/configuration/publish)
 
