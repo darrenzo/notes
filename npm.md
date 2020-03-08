@@ -2,7 +2,7 @@
 
 ## nvm
 
-- [请参考地址](https://www.cnblogs.com/yulinlewis/p/10441180.html)
+- [参考地址](https://www.cnblogs.com/yulinlewis/p/10441180.html)
 - [nvm下npm安装相关设置](https://www.cnblogs.com/ejll/p/11229557.html)
 
 ## npm

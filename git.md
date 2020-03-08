@@ -1,5 +1,12 @@
 # git
 
+## vscode终端使用bash
+
+- 在settings.json中加入"terminal.integrated.shell.windows": "C:\\Program Files\\Git\\bin\\bash.exe"
+- 右键vscode图标，在属性中的兼容性里只勾选“以管理员身份运行”
+
+## git命令
+
 - bash粘贴指令为Shift+Insert, shell为右键
 - git config --global credential.helper store
   - 可以将账号密码永久的存在本地，不用每次都输入，输入此命令设置后，下次再输入账号密码之后就会存起来
@@ -119,10 +126,10 @@
 
 - ssh-keygen -t rsa -b 4096 -C "zhouww@git.reolink.com"
   - 生成 rsa型 4096长度的密钥文件，注释为zhouww@git.reolink.com
-- 交互模式提示输入密钥存放地址，比如 /c/Users/Administrator/.ssh/zhouww@git.reolink.com
+- 交互模式提示输入密钥存放地址，比如 /c/Users/dom/.ssh/zhouww@git.reolink.com
   - zhouww@git.reolink.com是文件名字
 - 交互模式提示输入密码和二次确认密码，输入结束时，提示生成成功
-- clip < ~/.ssh/
+- ls ~/.ssh/
   - 查看ssh目录下密钥文件（有公钥和私钥）
   - 公钥为带.pub后缀的文件
 - clip < ~/.ssh/zhouww\@git.reolink.com.pub
