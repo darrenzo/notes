@@ -573,7 +573,7 @@ draw();
 ### translate(x, y)
 
 - 用来移动 canvas 的原点到指定的位置。  注意：translate 移动的是 canvas 的坐标原点(坐标变换)
-- 在做变形之前先保存状态是一个良好的习惯。大多数情况下，调用 restore 方法比手动恢复原先的状态要简单得多。
+- 在做变形之前先保存状态是一个良好的习惯。大多数情况下，调用 restore 方法比手动恢复原先的状态要简单得多
 - 如果你是在一个循环中做位移但没有保存和恢复 canvas 的状态，很可能到最后会发现怎么有些东西不见了，那是因为它很可能已经超出 canvas 范围以外了
 
 ```js
@@ -760,7 +760,7 @@ if (ctx.isPointInPath(20,50)){
 
       ```js
       window.requestAnimationFrame(function(time){
-          //显示频刷新的时候被执行
+          //显示屏刷新的时候被执行
       })；
       ```
 
@@ -826,10 +826,12 @@ if (ctx.isPointInPath(20,50)){
         function raf(callback) {
             const entry = callbackList.find(item => item.callback === callback)
             if (entry) {
+                // 回调已存在则不再添加进队列
                 return entry.requestId
             }
             else {
                 const requestId = requestAnimationFrame(ts => {
+                    // 下一帧，获取push到callbackList中回调的位置，取出执行
                     const index = callbackList.findIndex(item => item.callback === callback)
                     callbackList.splice(index, 1)
                     callback(ts)
@@ -843,6 +845,10 @@ if (ctx.isPointInPath(20,50)){
         }
         function caf(requestId) {
             const index = callbackList.findIndex(item => item.requestId === requestId);
+            // 对任一数值 x 进行按位非操作的结果为 -(x + 1)。例如，~5 结果为 -6
+            // 对于浮点数，~~value可以代替parseInt(value)，而且前者效率更高些
+            // parseInt(-2.99) === ~~(-2.99) === -2
+            // 此处表示若找不到则返回-1，位运算得0
             if (~index) {
                 callbackList.splice(index, 1)
             }

@@ -11,6 +11,9 @@
   - npm list -g --depth=0
 - 查看 yarn 全局安装过的包
   - yarn global list --depth=0
+- 全局安装脚手架的包时，推荐用npm。 yarn安装全局包时不会去设置环境变量，是的脚手架的全局命令找不到
+- 如果npm 安装全局包失败时，可以先清楚缓存再进行尝试
+  - npm cache clean --force
 - 如果有些包我们只会使用一次，或者只想尝试以下，不想安装到全局，也不想作为当前项目的依赖可以使用 npx 的方式来执行（npx 是 npm 5.2+ 版本之后自带的工具）
   - 更方便的执行当前项目中的可执行工具
     - node ./node_modules/.bin/mocha 等价于 npx mocha

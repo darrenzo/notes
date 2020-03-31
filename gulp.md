@@ -44,7 +44,7 @@ exports.build = build;
 exports.default = series(transpile, bundle);
 
 // gulp <task> <task> <task>... 格式
-// gulp build 执行build任务，不带build参数默认执行default任务
+// gulp build 执行build任务，不带"build"这个参数默认执行default任务
 ```
 
 ## 组合任务
@@ -99,7 +99,8 @@ exports.build = parallel(css, javascript);
 ## 异步执行
 
 - 任务完成通知
-  - 当从任务（task）中返回 stream、promise、event emitter、child process 或 observable 时，成功或错误值将通知 gulp 是否继续执行或结束。如果任务（task）出错，gulp 将立即结束执行并显示该错误
+  - 当从任务（task）中返回 stream、promise、event emitter、child process 或 observable 时，成功或错误值将通知 gulp 是否继续执行或结束
+  - 如果任务（task）出错，gulp 将立即结束执行并显示该错误
 
 ```js
 // 返回 stream  ????
@@ -209,11 +210,11 @@ exports.default = asyncAwaitTask;
 ### src(globs, [options])、dest()、pipe()
 
 - gulp 暴露了 src() 和 dest() 方法用于处理计算机上存放的文件
-  - src()：接受 glob 参数，并从文件系统中读取文件然后生成一个 Node 流（stream）
-    - 它将所有匹配的文件读取到内存中并通过流（stream）进行处理
-    - 由 src() 产生的流（stream）应当从任务（task）中返回并发出异步完成的信号
-    - 流（stream）所提供的主要的 API 是 .pipe() 方法，用于连接转换流（Transform streams）或可写流（Writable streams）
-  - dest() 接受一个输出目录作为参数，并且它还会产生一个 Node 流（stream），通常作为终止流（terminator stream）
+  - src()：接受 glob 参数，并从文件系统中读取文件然后生成一个 Node stream
+    - 它将所有匹配的文件读取到内存中并通过流 stream 进行处理
+    - 由 src() 产生的 stream 应当从任务 task 中返回并发出异步完成的信号
+    - stream 所提供的主要的 API 是 .pipe() 方法，用于连接 转换流（Transform streams）或可写流（Writable streams）
+  - dest() 接受一个输出目录作为参数，并且它还会产生一个 Node stream，通常作为终止流（terminator stream）
     - 当它接收到通过管道（pipeline）传输的文件时，它会将文件内容及文件属性写入到指定的目录中
     - gulp 还提供了 symlink() 方法，其操作方式类似 dest()，但是创建的是链接而不是文件（ 详情请参阅 symlink() ）
 
@@ -248,8 +249,8 @@ exports.default = function() {
 
 ### 分阶段输出
 
-- dest() 可以用在管道（pipeline）中间用于将文件的中间状态写入文件系统
-- 当接收到一个文件时，当前状态的文件将被写入文件系统，文件路径也将被修改以反映输出文件的新位置，然后该文件继续沿着管道（pipeline）传输
+- dest() 可以用在管道中间用于将文件的中间状态写入文件系统
+- 当接收到一个文件时，当前状态的文件将被写入文件系统，文件路径也将被修改以反映输出文件的新位置，然后该文件继续沿着管道传输
 
 ```js
 const { src, dest } = require('gulp');
@@ -270,7 +271,7 @@ exports.default = function() {
 
 ### 模式
 
-- src() 可以工作在三种模式下：缓冲（buffering）、流动（streaming）和空（empty）模式，这些模式可以通过对 src() 的 buffer 和 read 参数 进行设置
+- src() 可以工作在三种模式下：缓冲（buffering）、流动（streaming）和空（empty）模式，这些模式可以通过对 src() 的 buffer 和 read 参数进行设置
   - 缓冲（Buffering）模式
     - 默认模式，将文件内容加载内存中
     - 插件通常运行在缓冲（buffering）模式下，并且许多插件不支持流动模式
@@ -522,7 +523,7 @@ watch('src/*.js', { queue: false }, function(cb) {
 ### 延迟
 
 - 文件更改之后，只有经过 200 毫秒的延迟之后，文件监控程序所关联的任务才会被执行
-  - 为了避免在同使更改许多文件时（例如查找和替换操作）过早启动任务的执行
+  - 为了避免在同时更改许多文件时（例如查找和替换操作）过早启动任务的执行
 - delay: 500 调整延迟时间为500毫秒
 
 ```js
@@ -559,4 +560,46 @@ watch('src/*.js', { delay: 500 }, function(cb) {
 - Gulp 由许多小模块组成，这些模块被拉到一起以实现内聚性工作
 - 通过在小模块中使用 semver，作者可以在不发布 gulp 新版本的情况下发布 bug 修复和特性
 - 通常，当没有看到主存储库上的进展时，工作是在其中一个模块中完成的
-- 如果遇到问题，可以尝试使用 npm update 命令更新当前模块，如果 无效可以提issue
+- 如果遇到问题，可以尝试使用 npm update 命令更新当前模块，如果无效可以提issue
+
+## src(globs, [options])
+
+- src() 可在管道中间引入
+  - src() 在中间引入文件流，则只有其后的文件处理有效
+- 资源映射
+
+```js
+// 与gulp 3.x 不同的是 sourcemaps 不需要引入单独的依赖了
+// 内联资源映射: 和源文件在同一目录
+const { src, dest } = require('gulp');
+const uglify = require('gulp-uglify');
+
+src('input/**/*.js', { sourcemaps: true })
+  .pipe(uglify())
+  .pipe(dest('output/', { sourcemaps: true }));
+
+// 外部资源映射：在根目录
+const { src, dest } = require('gulp');
+const uglify = require('gulp-uglify');
+
+src('input/**/*.js', { sourcemaps: true })
+  .pipe(uglify())
+  .pipe(dest('output/', { sourcemaps: '.' }));
+```
+
+- 其他options详官网
+
+## dest(directory: string|function, [options])
+
+- 创建一个用于将 Vinyl 对象写入到文件系统的流
+- 每当 Vinyl 对象通过流被传递时，它将内容和其他细节写到给定目录下的文件系统
+  - 如果 Vinyl 对象具有 symlink 属性，将创建符号链接（symbolic link）而不是写入内容
+- 创建文件后，将更新其元数据以匹配 Vinyl 对象
+- directory: 将写入文件的输出目录的路径。如果使用一个函数，该函数将与每个 Vinyl 对象一起调用，并且必须返回一个字符串目录路径
+- 在文件系统上创建文件时，Vinyl 对象将被修改
+  - cwd、base 和 path 属性将被更新以匹配创建的文件
+  - stat 属性将被更新，以匹配文件系统上的文件
+  - 如果 contents 属性是一个流，它将被重置，以便可以再次读取
+- options具体祥官网，注意 overwrite 和 append 这两个属性的使用
+
+## 其他API详见官网

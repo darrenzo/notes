@@ -43,6 +43,8 @@
   - 删除远端对应分支 tag v1.0.1
 - git tag -l "*-production*" --sort=-creatordate | head -n 1
   - 返回最新的带'-production'字段的tag,例如 v3.6.17-20181219-production
+- git remote prune origin
+  - 清理本地的远程分支记录
 - git branch
   - 查看当前分支
 - git branch dev-press

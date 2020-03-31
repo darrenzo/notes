@@ -11,6 +11,7 @@
 
 ### stringObject.replace(regexp/substr,replacement)
 
+- 返回新的字符串
 - stringObject.replace(regexp/substr,"$1 $& $` $' $$")
 - $1 与 regexp 中的第 1 个子表达式相匹配的文本。
 - $& 与regexp相匹配的子串

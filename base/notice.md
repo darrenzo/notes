@@ -16,7 +16,7 @@
 
 ## url的完整格式
 
-- protocol :// hostname[:port] / path / [;parameters][?query]#fragment
+- protocol :// hostname[:port] / pathname / [;parameters][?search]#hash
   - 如：`https://www.res.com:8080/windows/location/page.html?ver=1.0&id=timlq#love`
   - 整个url -> window.location.href
   - protocol ->  window.location.protocol
@@ -25,11 +25,11 @@
     - `www.res.com`
   - port ->  window.location.port
     - `8080`
-  - path ->  window.location.pathname
+  - pathname ->  window.location.pathname
     - `/windows/location/page.html`  (page.html这个字段可能没有)
-  - query -> window.location.search
+  - search -> window.location.search
     - `?ver=1.0&id=timlq`
-  - fragment -> window.location.hash
+  - hash -> window.location.hash
     - `#love`
 
 ## "use strict"
@@ -74,12 +74,12 @@ if(!content){
      alert("请输出内容！");
      return;
 }
-//上述内容相当于判断content=""、content=null、content = undefined、content=0
+//上述内容相当于判断content=""、content=0、content=null、content = undefined
 ```
 
 ## 函数显式参数(Parameters)与隐式参数(Arguments)
 
-- 函数显式参数在函数定义时列出，函数隐式参数在函数调用时传递给函数真正的值。
+- 函数显式参数在函数定义时列出，函数隐式参数在函数调用时传递给函数真正的值
 - 如果函数在调用时未提供隐式参数，参数会默认设置为： undefined
 
 ```jaicascript
