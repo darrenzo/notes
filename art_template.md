@@ -205,7 +205,7 @@ template.render(source, data, options);
 ## 子模板
 
 - data 数默认值为 $data；标准语法不支持声明 object 与 array，只支持引用变量，而原始语法不受限制
-- art-template 内建 HTML 压缩器，请避免书写 HTML 非正常闭合的子模板，否则开启压缩后标签可能会被意外“优化
+- art-template 内建 HTML 压缩器，请避免书写 HTML 非正常闭合的子模板，否则开启压缩后标签可能会被意外优化
 
 ```html
 <!-- 标准语法 -->
@@ -421,6 +421,7 @@ imports: runtime
 
 - 根据模板名渲染模板
   - 浏览器版本无法加载外部文件，filename 为存放模板的元素 id
+    - script标签的id
 - 参数:
   - {string} filename
   - {Object,string} content
