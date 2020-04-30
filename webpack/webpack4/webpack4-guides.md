@@ -51,7 +51,13 @@ npm install webpack webpack-cli --save-dev
 
 ### 安装loader
 
-- **css-loader** 和 **style-loader** 处理 css 文件
+- loader数组的执行顺序是从右往左执行
+- ['style-loader', 'css-loader'] 处理 css 文件
+- ['style-loader', 'css-loader', 'less-loader'] 处理 less 文件
+  - less-loader 内部依赖 less 包
+- ['style-loader', 'css-loader', 'sass-loader'] 处理 sass、scss 文件
+  - sass-loader 内部依赖 node-sass 包
+  - node-sass包一般用npm装不成功，可以用cnpm
 - **file-loader** 和 **url-loader** 处理图片 **png|svg|jpg|gif** 和字体 **woff|woff2|eot|ttf|otf**
   - url-loader 将html以及css中的图片(默认限制10KB以下的)打包成base64
 
