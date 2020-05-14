@@ -7,7 +7,9 @@
 - 字符串匹配 找不到返回null
 - var str="1 plus 2 equal 3"
 - str.match(/\d+/g)   返回['1','2','3'] length = 3
-- str.match(/\d+/)和 str.match("1")一样   返回['1', index: 0, input: '1 plus 2 equal 3'] length = 1
+- str.match(/\d+/)和 str.match("1")一样   返回['1', groups: undefined, index: 0, input: '1 plus 2 equal 3'] length = 1
+- 'ddda1bccc'.match(/(a)\d+(b)/) 返回 ['a1b', 'a', 'b', groups: undefined, index: 0, input: '1 plus 2 equal 3'] length = 2
+  - 返回的数组第一项是匹配到的字段，第二个开始是第一个匹配到的子项，一直到最后一个子项为止(左圆括号为顺序)
 
 ### stringObject.replace(regexp/substr,replacement)
 

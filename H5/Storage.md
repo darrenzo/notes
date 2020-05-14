@@ -20,7 +20,7 @@
 
 ### 创建cookie
 
-- document.cookie="username=John Doe; demain=.baidu.com; expires=Thu, 18 Dec 2013 12:00:00 GMT; path=/";
+- document.cookie="username=John Doe; domain=.baidu.com; expires=Thu, 18 Dec 2013 12:00:00 GMT; path=/";
 - 内容，过期时间，cookie路径（当前页面）
 - 注：document.cookie返回字符串，只返回"username=John Doe;username2=John Doe2;",不会包含demain、expires和path信息
 
@@ -42,9 +42,9 @@
 ```javascript
     function getCookie(cname)
     {
-        var reg = new RegExp("(^| )" + name + "=([^;]*)(;|$)");
+        var reg = new RegExp("(?<=" + name + "=).+?(?=;|$)");
         // 防止在cookie值中出现了特殊符号而导致 cookie 信息出错
-        return unescape(document.cookie.match(reg)[2]) | null;
+        return decodeURIComponent(document.cookie.match(reg)[0]) | null;
     }
 ```
 
