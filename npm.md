@@ -27,14 +27,29 @@
   - 需要使用VC环境编译原生node模块包时使用的工具（普通编译会出现node-gyp报错）
   - npm install --global windows-build-tools
   - yarn global add windows-build-tools
+- npm 设置淘宝镜像
+  - npm get registry
+  - npm config set registry http://registry.npm.taobao.org/
+  - 还原
+    - npm config set registry https://registry.npmjs.org/
+  - 安装 cnpm
+    - npm install -g cnpm --registry=https://registry.npm.taobao.org
+
 
 ## yarn
 
 ```shell
 
 npm install -g yarn
+
 ## 注意，要检查系统环境变量中是否有yarn路径，如果没有，全局安装的包不会生效
 yarn global bin ## 查看yarn的安装目录
+
+## 查看镜像地址
+yarn config get registry
+
+## 设置淘宝镜像
+yarn config set registry https://registry.npm.taobao.org
 
 yarn init
 

@@ -9,6 +9,12 @@
   - 如果你已经全局安装了旧版本的 vue-cli (1.x 或 2.x)，需要先通过 npm uninstall vue-cli -g 或 yarn global remove vue-cli 卸载它
   - 推荐使用Node.js 8.11.0+, 可以使用 nvm 或者 nvm-windows 管理多个node版本
 - vue --version 查看版本
+- 有时候使用npm安装 @vue/cli会失败，需要修改为淘宝镜像下载
+- powershell上如果无法识别vue命令
+  - 以管理员身份运行PowerShell
+    - 一定要以管理员的身份运行PowerShell，不是cmd窗口
+  - 执行：get-ExecutionPolicy，回复Restricted，表示状态是禁止的
+  - 执行：set-ExecutionPolicy RemoteSigned， 选择Y即可
 
 ## 快速原型开发
 
