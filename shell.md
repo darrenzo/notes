@@ -2,6 +2,41 @@
 
 - 一般情况下, 不区分 Bourne Shell 和 Bourne Again Shell, #!/bin/sh 同样也可以改为 #!/bin/bash。
 
+## 执行脚本的四种方法
+
+### 相对路径 (sh文件需要可执行权限)
+
+```shell
+./hello.sh
+```
+
+- ./ 的意思是说在当前的工作目录下执行hello.sh。如果不加上 ./，bash可能会因找不到相应hello.sh而报错，因为不在环境变量PASH中（echo $PATH）
+
+### 绝对路径 (sh文件需要可执行权限)
+
+- /data/shell/hello.sh
+
+### 使用 bash 或者 sh 命令 (sh 文件 不需要可执行权限)
+
+- bash hello.sh
+- sh hello.sh
+- 可以不必事先设定shell的执行权限，甚至都不用写shell文件中的第一行（指定bash路径）
+  - 将hello.sh作为参数传给sh(bash)命令来执行的。这时不是hello.sh自己来执行，而是被人家调用执行，所以不要执行权限
+
+### 在当前的shell环境中执行bash shell脚本
+
+- . hello.sh
+- source hello.sh
+- 不创建子shell，在当前shell环境下读取并执行脚本中的命令，相当于顺序执行脚本里面的命令
+  - 前三种方法执行shell脚本时都是在当前shell（称为父shell）开启一个子shell环境，此shell脚本就在这个子shell环境中执行。shell脚本执行完后子shell环境随即关闭，然后又回到父shell中
+- 子Shell从父Shell继承得来的属性如下：
+  - 当前工作目录
+  - 环境变量
+  - 标准输入、标准输出和标准错误输出
+  - 所有已打开的文件标识符
+- 子Shell不能从父Shell继承的属性(除非 父shell的变量 使用export声明为当前环境变量)：
+  - 除环境变量和.bashrc文件中定义变量之外的Shell变量
+
 ## 变量
 
 - 变量命名格式类似js变量
@@ -51,6 +86,19 @@
     # 反引号里不能用${}取值写法，只能用 `  "$变量名"  `
 ```
 
+## 输出字符串总结
+
+```shell
+            能否引用变量  能否引用转义符  能否引用文本格式（换行符、制表符等等）
+    单引号      -              -                    -
+    双引号      能             能                   能
+    无引号      能             能                   -
+```
+
+### 反引号
+
+- 括起来的字符串被shell解释为命令行，在执行时，shell首先执行命令行，执行结果会取代包括反引号在内的部分
+
 ### 获取字符串长度
 
 ```shell
@@ -78,6 +126,89 @@
     echo `expr index "$string" run`
     # 输出1
     # 查找字符 "run" 的位置
+```
+
+## echo 命令
+
+- echo "It is a test" 与  echo It is a test 相同，可省略双引号
+- echo "\"It is a test\"" 显示转义字符，结果是 "It is a test"
+- 显示换行
+
+```shell
+    # -e 开启转义  \n换行符
+    echo -e "OK! \n"
+    echo "It it a test"
+    # OK!
+    # It it a test
+
+    # -e 开启转义 \c 不换行
+    echo -e "OK! \c"
+    echo "It is a test"
+    # OK! It is a test
+```
+
+- 显示结果定向至文件  echo "It is a test" > myfile
+- 原样输出字符串，不进行转义或取变量(用单引号)
+
+```shell
+    echo '$name\"'
+    $name\"
+```
+
+- 显示命令执行结果
+
+```shell
+    echo `date`
+    # Thu Jul 24 10:08:46 CST 2014
+```
+
+## printf 命令
+
+- printf  format-string  [arguments...]   format-string: 为格式控制字符串，arguments: 为参数列表。
+
+```shell
+    printf "Hello, Shell\n"
+    printf "Hello, Shell2\n"
+    # 两个printf不会自动换行，得需要加\n
+
+    # format-string为双引号或者单引号，效果一样
+    printf "%d %s\n" 1 "abc"   #  1 abc
+
+    # format-string为无引号，效果一样，但不能引用文本格式，会当成转义符
+    printf %s\n abcdef #  nabcdef
+
+    # 格式只指定了一个参数，但多出的参数仍然会按照该格式输出，format-string 被重用
+    printf %s abc def  # abcdef
+    printf "%s\n" abc def
+    #  abc
+    #  def
+    printf "%s %s\n" a b c d
+    #  ab
+    #  cd
+    # 如果没有 arguments，那么 %s 用NULL代替，%d 用 0 代替
+    printf "%s and %d \n"  #     and 0
+
+    printf "a string, no processing:<%s>\n" "A\nB"
+    #  a string, no processing:<A\nB>
+
+    printf "a string, no processing:<%b>\n" "A\nB"
+    # a string, no processing:<A
+    # B>
+
+    $ printf "www.runoob.com \a"
+    # www.runoob.com $  
+```
+
+- %d %s %c %f 格式替代符
+  - d: Decimal 十进制整数 -- 对应位置参数必须是十进制整数，否则报错！
+  - s: String 字符串 -- 对应位置参数必须是字符串或者字符型，否则报错！
+  - c: Char 字符 -- 对应位置参数必须是字符串或者字符型，否则报错！
+  - f: Float 浮点 -- 对应位置参数必须是数字型，否则报错！
+
+```shell
+    printf "%d %s %c\n" 1 "abc" "def"
+    # 1 abc d
+    # 其中最后一个参数是 "def"，%c 自动截取字符串的第一个字符作为结果输出。
 ```
 
 ## shell数组
@@ -185,9 +316,9 @@
 
 - =   检测两个字符串是否相等，相等返回 true。
 - !=  检测两个字符串是否相等，不相等返回 true。
-- -z  检测字符串长度是否为0，为0返回 true。    [ -z $a ] 返回 false
+- -z  检测字符串长度是否为0，为0返回 true。    [ -z "$a" ] 返回 false
 - -n  检测字符串长度是否为0，不为0返回 true。  [ -n "$a" ] 返回 true。
-- str 检测字符串是否为空，不为空返回 true。    [ $a ] 返回 true。
+- str 检测字符串是否为空，不为空返回 true。    [ "$a" ] 返回 true。
 
 ### 文件测试运算符
 
@@ -205,49 +336,6 @@
 - -s file  检测文件是否为空（文件大小是否大于0），不为空返回 true。
 - -e file  检测文件（包括目录）是否存在，如果是，则返回 true。
 
-## echo 命令
-
-- echo "It is a test" 与  echo It is a test 相同，可省略双引号
-- echo "\"It is a test\"" 显示转义字符，结果是 "It is a test"
-- 显示换行
-
-```shell
-    # -e 开启转义  \n换行符
-    echo -e "OK! \n"
-    echo "It it a test"
-    # OK!
-    # It it a test
-
-    # -e 开启转义 \c 不换行
-    echo -e "OK! \c"
-    echo "It is a test"
-    # OK! It is a test
-```
-
-- 显示结果定向至文件  echo "It is a test" > myfile
-- 原样输出字符串，不进行转义或取变量(用单引号)
-
-```shell
-    echo '$name\"'
-    $name\"
-```
-
-- 显示命令执行结果
-
-```shell
-    echo `date`
-    # Thu Jul 24 10:08:46 CST 2014
-```
-
-## 输出字符串总结
-
-```shell
-            能否引用变量  能否引用转义符  能否引用文本格式（换行符、制表符等等）
-    单引号      -              -                    -
-    双引号      能             能                   能
-    无引号      能             能                   -
-```
-
 ## read命令
 
 - 一个一个词组地接收输入的参数，每个词组需要使用空格进行分隔；如果输入的词组个数大于需要的参数个数，则多出的词组将被作为整体为最后一个参数接收
@@ -261,97 +349,10 @@
     #  password is asdfgh
 ```
 
-## printf 命令
-
-- printf  format-string  [arguments...]   format-string: 为格式控制字符串，arguments: 为参数列表。
-
-```shell
-    printf "Hello, Shell\n"
-    printf "Hello, Shell2\n"
-    # 两个printf不会自动换行，得需要加\n
-
-    # format-string为双引号或者单引号，效果一样
-    printf "%d %s\n" 1 "abc"   #  1 abc
-
-    # format-string为无引号，效果一样，但不能引用文本格式，会当成转义符
-    printf %s\n abcdef #  nabcdef
-
-    # 格式只指定了一个参数，但多出的参数仍然会按照该格式输出，format-string 被重用
-    printf %s abc def  # abcdef
-    printf "%s\n" abc def
-    #  abc
-    #  def
-    printf "%s %s\n" a b c d
-    #  ab
-    #  cd
-    # 如果没有 arguments，那么 %s 用NULL代替，%d 用 0 代替
-    printf "%s and %d \n"  #     and 0
-
-    printf "a string, no processing:<%s>\n" "A\nB"
-    #  a string, no processing:<A\nB>
-
-    printf "a string, no processing:<%b>\n" "A\nB"
-    # a string, no processing:<A
-    # B>
-
-    $ printf "www.runoob.com \a"
-    # www.runoob.com $  
-```
-
-- %d %s %c %f 格式替代符
-  - d: Decimal 十进制整数 -- 对应位置参数必须是十进制整数，否则报错！
-  - s: String 字符串 -- 对应位置参数必须是字符串或者字符型，否则报错！
-  - c: Char 字符 -- 对应位置参数必须是字符串或者字符型，否则报错！
-  - f: Float 浮点 -- 对应位置参数必须是数字型，否则报错！
-
-```shell
-    printf "%d %s %c\n" 1 "abc" "def"
-    # 1 abc d
-    # 其中最后一个参数是 "def"，%c 自动截取字符串的第一个字符作为结果输出。
-```
-
 ## test命令
 
-- test 命令用于检查某个条件是否成立，它可以进行数值、字符和文件三个方面的测试。
-
-### 数值测试
-
-- -eq 等于则为真  num1=100  num2=100    if test $[num1] -eq $[num2]
-- -ne 不等于则为真
-- -gt 大于则为真
-- -ge 大于等于则为真
-- -lt 小于则为真
-- -le 小于等于则为真
-
-```shell
-    #  代码中的 [] 执行基本的算数运算
-    a=5
-    b=6
-    result=$[a+b]
-```
-
-### 字符串测试
-
-- = 等于则为真
-- != 不相等则为真
-- -z 字符串的长度为零则为真
-- -n 字符串的长度不为零则为真
-
-### 文件测试
-
-- -e 文件名    文件存在则为真  if test -e ./bash
-- -r 文件名    文件存在且可读则为真
-- -w 文件名    文件存在且可写则为真
-- -x 文件名    文件存在且可执行则为真
-- -s 文件名    文件存在且至少有一个字符则为真
-- -d 文件名    文件存在且为目录则为真
-- -f 文件名    文件存在且为普通文件则为真
-- -c 文件名    文件存在且为字符型特殊文件则为真
-
-```shell
-    #  逻辑操作符 非( ! )、并( -a )、或( -o )
-    if test -e ./notFile -o -e ./bash
-```
+- test 命令用于检查某个条件是否成立，它可以进行数值、字符和文件三个方面的测试
+  - if test $[num1] -eq $[num2]
 
 ## 流程控制
 
