@@ -139,9 +139,9 @@
   - 去git的账户settings中切换到SSH Keys这个tab，直接黏贴保存
 - 之后每次登陆bash时输入 ssh-add ~/.ssh/zhouww\@git.reolink.com执行，输入私钥密码即可
 
-### ~/.profile 与 ~/.bashrc 的区别
+### ~/.bash_profile 与 ~/.bashrc 的区别
 
-- ~/.profile: 每个用户都可使用该文件输入专用于自己使用的shell信息,当用户登录时,该文件仅仅执行一次!默认情况下,它设置一些环境变量,然后执行用户的.bashrc文件. 它们是父与子的关系
+- ~/.bash_profile: 每个用户都可使用该文件输入专用于自己使用的shell信息,当用户登录时,该文件仅仅执行一次! 默认情况下,它设置一些环境变量,然后执行用户的.bashrc文件. 它们是父与子的关系
 - ~/.bashrc：该文件包含专用于某个用户的bash shell的bash信息,当该用户登录时以及每次打开新的shell时,该文件被读取
 
 ### 为了避免每次登陆时开启ssh，可以直接保存到bash_profile文件
