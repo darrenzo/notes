@@ -59,6 +59,8 @@ export CSC_KEY_PASSWORD=bbb
 ```
 
 - 运行build，electron-builder插件会自动进行代码签名
+  - 进行签名时，会有提示signing:
+  - 如果未提示签名，则需要把CSC_LINK和CSC_KEY_PASSWORD设置到环境变量中，在powershell上进行build
 
 ## [自动更新](https://www.electron.build/auto-update)
 

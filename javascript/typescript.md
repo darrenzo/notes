@@ -520,6 +520,7 @@ a[item] = b[item] 改为
 - static private protected 都可以被继承，但是访问会被限制，各有不同
 - static成员可以保留其值(因为开辟了他自己内部的空间)
 - 当一个类实现了一个接口时，只对其实例部分进行类型检查。 constructor构造函数存在于类的静态部分(构造函数其实就是class本身)，所以不在检查的范围内
+- 静态方法只能调用静态属性
 
 ```typescript  
     let sees: Employee; //  声明 sees 是类Employee的一种实例

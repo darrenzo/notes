@@ -75,6 +75,12 @@ yarn upgrade [package]@ver
 ## 升级到最新
 yarn upgrade –latest [package]
 
+# 查看yarn缓存存放路径
+yarn cache dir
+
+# 清除yarn缓存
+yarn cache clean
+
 ```
 
 ## serve 服务器

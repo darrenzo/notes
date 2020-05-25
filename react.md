@@ -202,6 +202,24 @@ var ul = (
 
 ```jsx
 <button onClick={this.checkAndSubmit.bind(this)}>Submit</button>
+
+// 推荐使用
+export default class BindEvent extend React.Component {
+  constructor(props) {
+    super(props)
+  }
+
+  checkAndSubmit = () => {
+    console.log(222);
+  }
+
+  render() {
+    return <button onClick={ () => this.checkAndSubmit() }>Submit</button>
+
+  }
+
+}
+
 ```
 
 ### JSX中使用样式

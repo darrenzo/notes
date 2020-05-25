@@ -3,25 +3,28 @@
 ## js事件循环
 
 - 除了广义的同步任务和异步任务，我们对任务有更精细的定义 [参考文档](https://juejin.im/post/59e85eebf265da430d571f89)
-  - 宏任务：包括整体代码script，setTimeout，setInterval
-  - 微任务：Promise，process.nextTick
-  - 进入宏任务后挨个执行(宏任务的异步的回调函数注册进宏任务事件队列)，接着执行所有的微任务(异步的回调函数注册进微任务的事件队列)，然后执行微任务的回调函数事件队列，第一次循环结束。然后再次从异步队列里的宏任务队列（此时异步回调函数进入主线程队列，先执行）开始
-
-![js事件循环](/img/js-event-loop.png)
+  - 宏任务：包括整体代码script，setTimeout，setInterval, requestAnimationFrame
+  - 微任务：Promise.then catch finally，process.nextTick
+  - 进入任务后挨个执行宏任务(此时遇见异步任务，宏任务的回调放入宏任务队列，微任务的回调放入微任务的队列)，接着执行微任务队列，一轮结束，然后以此循环直至队列无任务，依次循环
 
 ```js
 setTimeout(function () {
+    // 内层宏事件
     console.log('three');
 }, 0);
 
 let test = new Promise((resolve) => {
+    // 外层宏事件
     console.log('four');
 })
 
 Promise.resolve().then(function () {
+    // 微事件
     console.log('two');
 });
 
+
+// 外层宏事件
 console.log('one');
 // four
 // one

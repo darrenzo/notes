@@ -213,8 +213,8 @@ vue create --preset my-preset.json my-project
   - 可以在 npm scripts 中以 vue-cli-service、或者从终端中以 ./node_modules/.bin/vue-cli-service 访问这个命令
 - vue-cli-service serve 命令会启动一个开发服务器 (基于 webpack-dev-server) 并附带开箱即用的模块热重载
 - vue-cli-service serve 命令行参数
-  - 命令行参数 [entry] 将被指定为唯一入口，而非额外的追加入口  ？？？？？
-  - 尝试使用 [entry] 覆盖 config.pages 中的 entry 将可能引发错误 ？？？？？
+  - 命令行参数 [entry] 将被指定为唯一入口，而非额外的追加入口
+  - 尝试使用 [entry] 覆盖 config.pages 中的 entry 将可能引发错误
   - 除了通过命令行参数，也可以使用 **vue.config.js** 里的 **devServer** 字段配置开发服务器
 
 ```text
@@ -890,6 +890,7 @@ VUE_APP_SECRET=secret
       - vue-cli-service build 会加载可能存在的 .env、.env.production 和 .env.production.local 文件然后构建出生产环境应用
       - vue-cli-service build --mode staging 会在 staging 模式下加载可能存在的 .env、.env.staging 和 .env.staging.local 文件然后构建出生产环境应用
       - 这两种情况下，根据 **NODE_ENV**，构建出的应用都是生产环境应用，但是在 staging 版本中，process.env.VUE_APP_TITLE 被覆写成了另一个值
+      - 当进行build时，当前env中一定要确保 **NODE_ENV** 是 production，例如 staging 版本的env，不覆写为NODE_ENV=production，则会出问题
 
     ```shell
     # .env 文件
