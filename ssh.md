@@ -23,3 +23,11 @@
 
 ## ssh-agent
 
+- 可以控制和保存公钥身份验证所使用的私钥的程序
+- 当 ssh-add 把私钥交给 ssh-agent 来管理时,其他程序需要身份验证的时候都可以申请交给 ssh-agent 来完成整个认证过程
+- 密钥登录常用操作
+
+```shell
+eval $(ssh-agent -s)
+ssh-add ~/.ssh/user@git.reolink.com
+```

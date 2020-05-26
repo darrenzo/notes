@@ -141,8 +141,11 @@
 
 ### ~/.bash_profile 与 ~/.bashrc 的区别
 
-- ~/.bash_profile: 每个用户都可使用该文件输入专用于自己使用的shell信息,当用户登录时,该文件仅仅执行一次! 默认情况下,它设置一些环境变量,然后执行用户的.bashrc文件. 它们是父与子的关系
+- ~/.bash_profile: 每个用户都可使用该文件输入专用于自己使用的shell信息,当用户登录时,该文件仅仅执行一次! 默认情况下,它设置一些环境变量, 它们是父与子的关系
 - ~/.bashrc：该文件包含专用于某个用户的bash shell的bash信息,当该用户登录时以及每次打开新的shell时,该文件被读取
+- 打开bash命令行窗口（调用的是git/git-bash.exe），只会执行~/.bash_profile
+- 打开vscode中的bash（调用的是git/bin/bash.exe），只会执行~/.bashrc
+- 在 ~/.bash_profile 中 调用 ~/.bashrc 就能兼容以上两种情况
 
 ### 为了避免每次登陆时开启ssh，可以直接保存到bash_profile文件
 
@@ -155,6 +158,8 @@
 
 ```shell
   eval $(ssh-agent -s) > /dev/null
+  # 0 指的是退出bash时
+  # 退出bash时关掉agent程序
   trap 'test -n "$SSH_AGENT_PID" && eval `/usr/bin/ssh-agent -k` > /dev/null' 0
 ```
 
@@ -163,12 +168,20 @@
   - : q! (输入q!， 不存盘强制退出vi)
 - 代码无误后输入wq确认退出即可
 
-### vscode内启动bash，使用 ssh-add 添加密钥进 ssh-agent 高速缓存的操作 会出现无法连接的情况
+### 多进程共用同一个ssh-agent
 
 - 在 `.bash_profile` 同级目录下的 `.bashrc` 文件（没有则新建） 加入以下代码即可正常操作
 
 ```shell
-# Add following code at the end of ~/.bashrc
+# ~/.bash_profile 中
+
+# ~/.bash_profile 中 不能有关闭agent的程序，比如 上面的trap操作
+if [ -f ~/.bashrc ]; then
+    source ~/.bashrc
+fi
+
+
+# ~/.bashrc 中
 
 # Check if ~/.pid_ssh_agent exists.
 if [ -f ~/.pid_ssh_agent ]; then
@@ -187,7 +200,8 @@ fi
 
 # Try start ssh-agent.
 if [ ! -z "$NEED_INIT" ]; then
-    echo $(ssh-agent -s) | sed -e 's/echo[ A-Za-z0-9]*;//g' > ~/.pid_ssh_agent # save the PID to file.
+    # save the PID to file. | 删除agent启动时出现的echo打印，否则传输文件时会报错
+    echo $(ssh-agent -s) | sed -e 's/echo[ A-Za-z0-9]*;//g' > ~/.pid_ssh_agent
     source ~/.pid_ssh_agent
 fi
 ```
