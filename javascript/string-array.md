@@ -271,6 +271,8 @@ function arrayUniq(arr) {
 - constructor 属性 返回所有 JavaScript 变量的构造函数。
   - [1,2,3,4].constructor.toString() 返回 "function Array() { [native code] }" 搜索字段Array即可
 - arr instanceof Array 返回Boolean值
+  - 数组和对象 instanceof Object 都返回true
+- toString.call(param) === '[object Array]' ? [] : {} 可以用来区分数组和对象
 
 ## call | apply | bind
 

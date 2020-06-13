@@ -602,6 +602,7 @@ a[item] = b[item] 改为
         penWidth: number;
     }
 
+    // 同时继承多个的时候，不能使用类似于 Shape['aaa'] 的写法，所要继承的类型必须是单独明确定义的。可以使用 & 符号合并两个类型，且支持Shape['aaa']的写法
     interface Square extends Shape, PenStroke { // 同时继承多个
         sideLength: number;
     }
