@@ -477,19 +477,6 @@ module.exports = {
         .use('url-loader')
         .loader('url-loader')
         .end()
-
-      // 为vue中的less 路径设置别名
-      config.module
-        .rule('less')
-        .oneOf('vue')
-        .use('css-loader')
-          .loader('css-loader')
-          .tap(options => Object.assign(options, {
-              alias: {
-                  '@': path.join(__dirname, './src/renderer')
-              }
-          }))
-      // 使用： background: url(~@/1.ico);
     }
   }
   ```
@@ -814,6 +801,8 @@ module.exports = {
       .set('@', path.join(__dirname, "./src/renderer"))
       .set('@main', path.join(__dirname, "./src/renderer/main"))
   }
+  // less中别名使用： background: url(~@/1.ico);
+  // url() 中使用 类似 ~@../ 来取文件上下级关系的会报错，应该明确的新建一个对应别名进行使用
 }
 ```
 

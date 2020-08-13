@@ -16,7 +16,7 @@
 
 ## url的完整格式
 
-- protocol :// hostname[:port] / pathname / [;parameters][?search]#hash
+- protocol // hostname[:port] / pathname / [;parameters][?search]#hash
   - 如：`https://www.res.com:8080/windows/location/page.html?ver=1.0&id=timlq#love`
   - 整个url -> window.location.href
   - protocol ->  window.location.protocol

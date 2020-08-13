@@ -498,7 +498,7 @@ computed: {
 ## v-show 显示隐藏元素
 
 - 带有 v-show 的元素始终会被渲染并保留在 DOM 中。v-show 是简单地切换元素的 CSS 属性 display 。
-- 注意，v-show 不支持 `<template>` 语法，也不支持 v-else。
+- `<template>` 不能使用 v-show
 
 ```html
     <h1 v-show="ok">Hello!</h1>
@@ -1099,6 +1099,7 @@ new Vue({
   - 在实例初始化之后，data、watch、methods之前。 $route对象存在，可以进行重定向
 - created() {}
   - 在实例已经创建完成之后被调用. data、watcher、methods配置完成，$el挂载之前
+  - watcher中的立即执行的监听，会在此之前执行
 - beforeMount() {}
   - 在挂载开始之前被调用, DOM还是无法操作的
 - mounted() {}

@@ -82,6 +82,8 @@
 - git reset --hard origin/master
   - 用origin master分支强行覆盖当前分支
   - PS：危险操作，请先确定当前分支的代码是否全部丢弃
+- git reflog
+  - 可以找出所有曾经存在的commit，包括被reset清除的，可以在此找出误删的commit号
 - git reset --hard
   - 撤销到上一个commit
 - git reset --hard 7aba1ed57d8bdbc9274f8f2af61cd8ffc58a26f4
@@ -226,3 +228,73 @@ fi
   - bash安装时，默认有个credential.helper manager 选项 ，如果勾选了，即是把凭证存储在windows的凭证管理器中的普通凭证中
     - 此时如果要清除，可以去凭证管理器中找到删除，再用git config --system --unset credential.helper清除下设置
   - git config --list | grep credential 可以通过此行命令查看配置
+
+## git 配置增删改
+
+- 查看配置
+  - git config --global --list
+  - git config --global user.name
+- 增加配置
+  - git config  --global --add user.name 随便
+- 删除配置
+  - git config  --global --unset user.name
+- 修改配置
+  - git config  --global user.name 真随便
+
+## git 自定义命令
+
+- git config --global alisa.name  "the operation command"
+  - 例如git config --global alias.pr "pull --rebase" //重命名git rebase操作
+- 自定义合并命令
+  - 例如 git config --global alias.cmp '!f() { git add -A && git commit -m "日志" && git push; }; f'
+  - shell里方法声明不需要声明标志
+
+## gitsubmodule 使用和注意事项
+
+### 子模块的使用
+
+- 项目中，/src 和 /injection 目录使用了 gitsubmodule。下面按照项目开发流程的顺序介绍具体使用方式和注意事项
+
+#### clone 项目
+
+- 默认子模块目录下无任何内容。需要在项目根目录执行如下命令完成子模块的下载：
+  - git submodule init 后 git submodule update
+  - 或者 git submodule update --init --recursive
+- clone 项目后，如果需要新增子项目
+  - `git submodule add <url> <path>`
+  - url为子模块的git地址，path为该子模块存储的目录路径
+  - 执行成功后，git status会看到项目中修改了.gitmodules，并增加了一个新文件（为刚刚添加的路径）
+  - git commit提交即完成子模块的添加（把当前子项目的信息提交到主项目的git信息里）
+
+#### 子模块的维护和修改
+
+- 准备对 submodule 做修改和维护时，注意在切换到子模块目录后，查看当前所在分支。如果刚执行过子模块的初始化更新，则子模块默认当前分支不在任何一个分支上，HEAD 指向是某个具体的提交记录。具体如：/e/projects/device-web-client/injection ((da79e69...))，此时需要切换到需要修改的分支上，然后在进行开发。其余操作都相同
+- 如果不慎忘记切换分支，但还未提交，直接切换分支即可。但是如果已经做了提交，可以用 `cherry-pick` 命令挽救。具体做法如下：
+  1. 用 `git checkout your-branch` 将 HEAD 从游离状态切换到 your-branch 分支, 这时候，git 会报 warning 说有一个提交没有在 branch 上，记住这个提交的 change-id（假如change-id为 aaaaa)
+  2. 用 `git cherry-pick aaaa` 来将刚刚的提交作用在 your-branch 分支上
+  3. 用 `git push` 将更新提交到子模块的远程仓库中
+- 分支之间合并更新等操作执行前，最好先将子模块中代码删除，只留文件夹，主项目和子项目同时需要更新时，先更新主项目
+
+#### 子模块的更新
+
+- 当前项目
+  - 如果 submodule 在当前项目中更新后，父项目中依赖的版本号也需要更新。需要在 `git pull` 拉取主项目更新之后，调用 `git submodule update` 命令来更新 submodule 的提交信息。否则可能会在之后的维护中把旧的 submodule 依赖信息提交了。因此开发过程中应注意：
+  1. `git pull` 之后，执行 `git status` 查看是否有子模块更新
+  2. `git add` 之后也可以查看是否有子模块更新，注意查看
+
+- 非当前项目
+  - 子模块的维护者提交了更新后，使用了该模块的其他项目维护者，`git pull` 不包含最新的子模块提交信息。如果需要最新代码，需要切换到子模块目录，拉取子模块最新代码之后，项目才会包含最新子模块代码。
+  - 步骤如下：
+    1. 进入到子模块目录，`git pull`
+    2. `git log` 查看提交记录，如果有更新进入步骤 3
+    3. 返回主项目根目录，git commit更新主项目git信息
+
+#### 替换/删除子模块
+
+- 如果子模块的项目维护地址发生了变化，或者需要替换子模块，就需要删除原有的子模块
+- 删除子模块较复杂，步骤如下：
+  1. `rm -rf` 子模块目录   删除子模块目录及源码
+  2. 删除项目目录下 .gitmodules 文件中子模块相关条目
+  3. 删除 .git/config 文件中子模块相关条目
+  4. `git rm --cached` 子模块名称
+  5. git commit 更新主项目git信息

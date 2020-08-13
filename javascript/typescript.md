@@ -539,7 +539,7 @@ a[item] = b[item] 改为
         new (x?: number, y?: number): IPoint; // 不用new，就是指函数了，用new就表示的是类
     }
 
-    let ip: IPointFactory; // 指定 ip是指向某个类类型的类或者实现某个接口的类类型的类
+    let ip: IPointFactory; // 指定 ip是指向某个类类型的类或者实现某个接口的类类型的类 (不是实例，实例就是把类里的所有方法和属性列在interface里)
 
 
 
