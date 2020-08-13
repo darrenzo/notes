@@ -8,7 +8,7 @@
 ## git命令
 
 - bash粘贴指令为Shift+Insert, shell为右键
-- git config --global credential.helper store
+- git config credential.helper store --global
   - 可以将账号密码永久的存在本地，不用每次都输入，输入此命令设置后，下次再输入账号密码之后就会存起来
 - 本地分支： 分支名   本地待推送的远端分支： origin 分支名   远端分支：remote 分支名
 - git remote -v 查看当前关联的远端仓库
@@ -61,7 +61,7 @@
   - 撤销当前工作区内所有改动
   - 慎用
 - git checkout dev-press
-  - 切换到分支 dev-press
+  - 切换到分支 dev-press, 如果本地没有此分支而本地待推送的远端仓库有，则会依据远端仓库的分支创建对应的本地分支并关联
 - git checkout v0.1.0
   - 切换到tag为v0.1.0的代码状态（不是分支，此时还需要git checkout -b 一个新分支出来并切换出来）
 - git checkout -b dev-press
@@ -73,10 +73,10 @@
   - 从origin/debug分支拉取、新建并关联本地分支
 - git checkout -b co-bug v0.1.0
   - 从v0.1.0复制新建co-bug分支，并切换当前分支到co-bug
-- git branch --set-upstream-to origin/debug co-bug
+- git branch co-bug --set-upstream-to origin/debug
   - 关联远端分支debug和本地分支co-bug
   - --set-upstream-to 可以用 -u 替换
-- git push --set-upstream origin dev-zww
+- git push origin dev-zww --set-upstream
   - 新建远端分支dev-zww,并将当前分支与远端dev-zww分支关联
   - --set-upstream 可以用 -u 替换
 - git reset --hard origin/master
@@ -96,9 +96,9 @@
   - 查看文件改动信息
   - -s后缀为缩写展示
 - git add 文件相对地址
-  - 保存某个文件的改动
+  - 保存某个文件的改动, 存入暂存区
 - git add .
-  - 保存当前所有文件的改动
+  - 保存当前所有文件的改动，存入暂存区
 - git commit -m "123"
   - 把保存好的文件改动信息生成commit，并标记为“123”
 - git commit --amend -m "234"
@@ -106,7 +106,7 @@
 - 删除 **.git** 仓库中的大文件
   - Git 维护着一个微型的文件系统，其中的文件也被称作数据对象
   - 所有的数据对象均存储于项目下面的 .git/objects中
-  - 它会把你每次提交的文件的全部内容都会记录下来，所有当误操作把大文件提交到git仓库中，后续即使删除了文件，.git仓库依旧会有大文件记录
+  - 它会把你每次提交的文件的全部内容记录下来，当误操作把大文件提交到git仓库中，后续即使删除了文件，.git仓库依旧会有大文件记录
   - 参考[git内部原理](http://iissnan.com/progit/html/zh/ch9_0.html)
   - 步骤：
     - 切到项目根目录
@@ -143,11 +143,11 @@
 
 ### ~/.bash_profile 与 ~/.bashrc 的区别
 
-- ~/.bash_profile: 每个用户都可使用该文件输入专用于自己使用的shell信息,当用户登录时,该文件仅仅执行一次! 默认情况下,它设置一些环境变量, 它们是父与子的关系
+- ~/.bash_profile: 每个用户都可使用该文件输入专用于自己使用的shell信息,当用户登录时,该文件仅仅执行一次! 默认情况下,它设置一些环境变量, 它与 bashrc 是父与子的关系
 - ~/.bashrc：该文件包含专用于某个用户的bash shell的bash信息,当该用户登录时以及每次打开新的shell时,该文件被读取
 - 打开bash命令行窗口（调用的是git/git-bash.exe），只会执行~/.bash_profile
 - 打开vscode中的bash（调用的是git/bin/bash.exe），只会执行~/.bashrc
-- 在 ~/.bash_profile 中 调用 ~/.bashrc 就能兼容以上两种情况
+- 在 ~/.bash_profile 中 调用 ~/.bashrc , 在 ~/.bashrc 中编写代码就能兼容以上两种情况
 
 ### 为了避免每次登陆时开启ssh，可以直接保存到bash_profile文件
 
