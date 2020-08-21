@@ -17,7 +17,7 @@
 
 ## chrome调试
 
-- 在chrome浏览器调试时，安装Vue Devtool扩展工具，并且将`Vue.config.devtools`设置为true时，可以在浏览器中看到实例中的所有状态。
+- 在chrome浏览器调试时，安装Vue Devtool扩展工具，并且将`Vue.config.devtools`设置为true时，可以在浏览器中看到实例中的所有状态
 
 ## fastclick插件与某些插件冲突时，第三方插件阻止了默认的点击事件，自己代理点击事件，会被fastclick阻止，此时只需要在需要点击事件的元素上加上class="needclick"
 
@@ -25,7 +25,7 @@
 
 ## vue 渲染
 
-- 在vue项目中，如果将模版语法写在html文件中，那么页面在vue加载完成并渲染完成之前，会短暂地将源代码暴露在页面上，影响了用户体验，此时可以在根节点上增加`v-cloak`，并在css中写上`#app[v-cloak] {diaplay: none;}`，vue在渲染完成时，会将`v-cloak`去掉。
+- 在vue项目中，如果将模版语法写在html文件中，那么页面在vue加载完成并渲染完成之前，会短暂地将源代码暴露在页面上，影响了用户体验，此时可以在根节点上增加`v-cloak`，并在css中写上`#app[v-cloak] {diaplay: none;}`，vue在渲染完成时，会将`v-cloak`去掉
 
 ## css隔离
 
@@ -199,7 +199,8 @@
 - v-model绑定的是表单的value值
 - v-model 会忽略所有表单元素的 value、checked、selected 特性的初始值。因为它会选择 Vue 实例数据来作为具体的值。你应该通过 JavaScript 在组件的 data 选项中声明初始值。
 - 对于要求 IME (如中文、日语、韩语等) (IME 意为“输入法”)的语言，你会发现 v-model 不会在 ime 输入中得到更新。如果你也想实现更新，请使用 input 事件。
-- 当被遍历生成的元素为表单元素时，v-model不能直接绑定 (item, index) in arr 中的item， 得使用arr[index]
+- 在v-for 中，v-model不能直接绑定 (item, index) in arr 中的item， 得使用arr[index] （遍历对象时同理）
+  - item是别名，相当于函数体内的局部变量，通过v-model向局部变量写入值，无法触发外部的实际数据的改变
 
 ```html
     <template>
@@ -321,7 +322,7 @@ computed: {
     <template>
         <div id="app">
             <select v-model="selected">
-                <option v-for="option in options" v-bind:value="option.value">
+                <option v-for="option in options" :value="option.value">
                     {{ option.text }}
                 </option>
             </select>
@@ -745,12 +746,22 @@ methods: {
 
 ```html
 
+<script>
+// 全局
+Vue.directive('focus', {
+  inserted: function (el) {
+    el.focus()
+  }
+})
+</script>
+
 <!-- 当`input`元素被插入到父节点时，为聚焦状态。 -->
 
 <input v-model="text" v-focus>
 
 <script>
-
+    data() {},
+    ...,
     directives: {
         focus: {
             // 指令的定义

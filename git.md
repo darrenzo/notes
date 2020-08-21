@@ -101,6 +101,8 @@
   - 保存当前所有文件的改动，存入暂存区
 - git commit -m "123"
   - 把保存好的文件改动信息生成commit，并标记为“123”
+- git commit --amend
+  - 会进入vi模式，第一行是最新的commit信息，可以进行修改
 - git commit --amend -m "234"
   - 再次提交当前改动生成commit“234”，并覆盖上一个commit
 - 删除 **.git** 仓库中的大文件
@@ -125,6 +127,10 @@
       - rm -rf .git/refs/original/
       - git reflog expire --expire=now --all
       - git gc --prune=now
+
+### 修改历史某个commit信息
+
+- 只能通过 git commit --amend 命令修改commit信息，而这个命令只能修改最新的commit的信息，所以需要通过git rebase -i HEAD~n 来筛选出最新的n个commit，这个命令会进入vi模式，输入i，选择你要修改的那个commit（一次修改只能修改一个），把 'pick' 改为 'edit'，按 'ESC'， 输入 ':wq' 自动保存退出， 此时，你要修改的那个commit会暂时被放置为最新的commit，然后通过 git commit --amend 命令在vi界面修改第一行显示的commit信息，保存退出后， git rebase --continue 继续下一个改动，直至改完
 
 ## 密钥登录
 
@@ -243,11 +249,21 @@ fi
 
 ## git 自定义命令
 
-- git config --global alisa.name  "the operation command"
+- git config --global alias.name  "the operation command"
   - 例如git config --global alias.pr "pull --rebase" //重命名git rebase操作
 - 自定义合并命令
   - 例如 git config --global alias.cmp '!f() { git add -A && git commit -m "日志" && git push; }; f'
   - shell里方法声明不需要声明标志
+- 相当于在 .gitconfig文件中添加
+
+```text
+[alias]
+  last = log -1 HEAD
+  lg = log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit --date=relative
+  tags = tag -n1 -l
+  subupdate = submodule update --init --recursive
+  rupdate = remote update origin -p
+```
 
 ## gitsubmodule 使用和注意事项
 
