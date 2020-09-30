@@ -16,7 +16,7 @@
 
 ## url的完整格式
 
-- protocol // hostname[:port] / pathname / [;parameters][?search]#hash
+- protocol // hostname[:port] / pathname / [;parameters][?search][#hash]
   - 如：`https://www.res.com:8080/windows/location/page.html?ver=1.0&id=timlq#love`
   - 整个url -> window.location.href
   - protocol ->  window.location.protocol
@@ -25,6 +25,7 @@
     - `www.res.com`
   - port ->  window.location.port
     - `8080`
+    - 如果url省略未写port，则获取到的port是空字符串
   - pathname ->  window.location.pathname
     - `/windows/location/page.html`  (page.html这个字段可能没有)
   - search -> window.location.search
@@ -38,6 +39,24 @@
 - 不允许删除变量和函数
 - 不允许变量重名
 - 不允许使用八进制和转义字符
+
+## console.time() 和 console.timeEnd()
+
+```js
+var i;
+console.time("for 循环测试");
+for (i = 0; i < 100000; i++) {
+  // 代码部分
+}
+console.timeEnd("for 循环测试");
+
+i = 0;
+console.time("while 循环测试");
+while (i < 1000000) {
+  i++
+}
+console.timeEnd("while 循环测试");
+```
 
 ## float类型数据实际是无限趋近的，不准确
 
@@ -198,8 +217,8 @@ if(!content){
 
 - navigator 对象包含有关浏览器的信息，以下为对象中的这几个与 language 相关的属性
   - language：返回当前的浏览器语言  （IE6-8不支持）
-  - userLanguage：返回操作系统设定的自然语言    （Firefox不支持）
   - browserLanguage：返回当前的浏览器语言       （Firefox不支持）
+  - userLanguage：返回操作系统设定的自然语言    （Firefox不支持）
   - systemLanguage：返回当前操作系统的缺省语言  （Firefox不支持）（Opera不支持）
 - currentLang = (navigator.language || navigator.browserLanguage).toLowerCase()
 
@@ -241,9 +260,9 @@ if(!content){
 
 - **tabindex** 属性规定元素的 tab 键控制次序（当 tab 键用于导航时）
   - `<element tabindex="number">`  number 规定元素的 tab 键控制次序（1 是第一个）
-  - 几乎所有浏览器均有 tabindex 属性，除了 **Safari**
+  - 几乎所有浏览器均有 tabindex 属性，除了 **IE** 和 **Opera**
 - 给div加上 tabindex="0" 此时即有blur事件
-  - 需要设置 ouline: none 去除边框
+  - 需要设置 outline: none 去除边框
 - 如果是右键菜单场景，需要在显示弹出框的时候手动触发focus(),才能再响应blur() 事件
 - 注意：electron项目点击div弹出新窗口时，会连续触发focus和blur事件
 
@@ -261,7 +280,16 @@ if(!content){
 <div class='process-slider'>
       <input type="range" :max="max" :min="min" :step="step" :defaultValue="defaultValue" v-model="computedValue" :style="{background: backgroundLinearColor}">
 </div>
+<script>
+      ...,
+      computed: {
+          backgroundLinearColor(): string {
+              let percent = this.computedValue / this.max * 100 + '%';
+              return `linear-gradient(to right, ${this.contentBgColor}, ${this.contentBgColor} ${percent}, ${this.bgColor} ${percent}, ${this.bgColor})`;
+          }
+      }
 
+</script>
 <style lang='less'>
 .process-slider {
     width: 218px;
