@@ -83,6 +83,24 @@ yarn cache clean
 
 ```
 
+## cross-env 插件
+
+- [github地址](https://github.com/kentcdodds/cross-env#readme)
+- 能跨平台地设置及使用环境变量， 可以在package.json中自定义scripts命令
+
+```json
+// yarn dev luda   => $1 值为 "luda"  调取 .env.luda文件与 .env 文件的环境变量
+// yarn dev luda 相当于  npm run dev -- luda
+// 若 yarn dev aaa 时，没有.env.aaa 文件，则只取 .env文件的环境变量，不会报错
+"scripts": {
+  "lint": "vue-cli-service lint --no-fix",
+  "build": "cross-env NODE_ENV=production VUE_APP_IS_TEST=true webpack --config build/webpack.config.js",
+  "dev": "cross-env-shell \"vue-cli-service electron:serve --mode $1\"",
+  "test": "cross-env-shell NODE_ENV=production VUE_APP_IS_TEST=true \"vue-cli-service electron:build --legacy --mode $1\"",
+  "release": "cross-env-shell NODE_ENV=production \"vue-cli-service electron:build --legacy --mode $1\""
+}
+```
+
 ## serve 服务器
 
 ```shell
