@@ -1,6 +1,6 @@
 # @vue/cli 3.x
 
-- [最新版@vue/cli 3.x](https://cli.vuejs.org/zh/guide/#%E8%AF%A5%E7%B3%BB%E7%BB%9F%E7%9A%84%E7%BB%84%E4%BB%B6)
+- [@vue/cli 3.x](https://cli.vuejs.org/zh/guide/#%E8%AF%A5%E7%B3%BB%E7%BB%9F%E7%9A%84%E7%BB%84%E4%BB%B6)
 - [旧版vue-cli](https://github.com/vuejs/vue-cli/tree/v2#vue-cli--)
 
 ## 安装
@@ -13,7 +13,7 @@
 - powershell上如果无法识别vue命令
   - 以管理员身份运行PowerShell
     - 一定要以管理员的身份运行PowerShell，不是cmd窗口
-  - 执行：get-ExecutionPolicy，回复Restricted，表示状态是禁止的
+  - 执行：get-ExecutionPolicy，显示Restricted，表示状态是禁止的
   - 执行：set-ExecutionPolicy RemoteSigned， 选择Y即可
 
 ## 快速原型开发
