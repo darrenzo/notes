@@ -314,3 +314,54 @@ fi
   3. 删除 .git/config 文件中子模块相关条目
   4. `git rm --cached` 子模块名称
   5. git commit 更新主项目git信息
+
+## git补丁功能
+
+- 当两个分支的差异改动或者某个分支上的某几个commit需要应用到其他分支上时，可以使用补丁功能
+
+### 不同分支对比差异后打补丁
+
+- 分支dev和master的对比差异改动需要应用到dev-a上
+
+```shell
+git checkout dev
+#生成patch
+git diff master > patch
+git checkout dev-a
+#打patch
+git apply patch
+#提交
+git commit -m "apply dev patch"
+```
+
+- 生成git专用补丁(推荐)
+
+```shell
+git checkout dev
+#生成0001-dev.patch
+git format-patch -M master
+git checkout dev-a
+#打patch
+git am 0001-dev.patch
+```
+
+- git diff生成的Patch兼容性强。如果你在修改的代码的官方版本库不是Git管理的版本库，那么你必须使用git diff生成的patch才能让你的代码被项目的维护人接受
+- 对于git diff生成的patch，你可以用git apply --check 查看补丁是否能够干净顺利地应用到当前分支中
+- 如果git format-patch 生成的补丁不能打到当前分支，git am会给出提示，并协助你完成打补丁工作，你也可以使用git am -3进行三方合并
+- 由于git format-patch生成的补丁中含有这个补丁开发者的名字，因此在应用补丁时，这个名字会被记录进版本库
+
+### 根据指定commit打补丁
+
+```shell
+#从当前分支最新提交点往下共生成3个补丁
+git format-patch -3
+#生成指定commit号的补丁
+git format-patch -1 [指定commit号]
+```
+
+## git工作流
+
+- 集中式工作流
+- 功能分支工作流
+- gitflow工作流
+- forking工作流（一般用在开源项目）
