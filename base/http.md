@@ -64,7 +64,7 @@
 
 ### 请求方法
 
-- HTTP1.0定义了三种请求方法： GET, POST 和 HEAD方法。
+- HTTP1.0定义了三种请求方法： GET, POST 和 HEAD方法
 - HTTP1.1新增了五种请求方法：OPTIONS, PUT, DELETE, TRACE 和 CONNECT 方法
 - 具体说明：
   - GET: 请求指定的页面信息，并返回实体主体，回送给客户端
@@ -138,6 +138,7 @@
 - 301  Moved Permanently
   - 请求的网页已永久移动到新位置, 响应报文的Location首部应该有该资源的新URL
   - 搜索引擎搜索时，记录的内容和地址都是新url页面的
+  - 不完整的URL都会触发重定向，包括末尾没有加/
 - 302 Found
   - 临时性重定向，响应报文的Location首部给出的URL用来临时定位资源
   - 搜索引擎搜索时，记录的内容是新页面的，但是收录的地址是旧页面的，相当于新页面为旧页面的seo排名做了贡献，此处有流量劫持风险
@@ -172,3 +173,5 @@
 ### 响应头
 
 ![响应头属性](/img/response-headers.jpg)
+
+## [http1.0、http1.1、http2.0的区别](https://juejin.im/entry/6844903489596833800)
