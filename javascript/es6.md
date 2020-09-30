@@ -1,35 +1,78 @@
-# ES6笔记
+# ES6
+
+- [参考](https://es6.ruanyifeng.com/)
 
 ## js事件循环
 
-- 除了广义的同步任务和异步任务，我们对任务有更精细的定义 [参考文档](https://juejin.im/post/59e85eebf265da430d571f89)
+- 除了广义的同步任务和异步任务，我们对任务有更精细的定义
   - 宏任务：包括整体代码script，setTimeout，setInterval, requestAnimationFrame
-  - 微任务：Promise.then catch finally，process.nextTick
-  - 进入任务后挨个执行宏任务(此时遇见异步任务，宏任务的回调放入宏任务队列，微任务的回调放入微任务的队列)，接着执行微任务队列，一轮结束，然后以此循环直至队列无任务，依次循环
+  - 微任务：process.nextTick （比promise优先级高）， Promise.then catch finally
+  - 进入任务后挨个执行宏任务，接着执行微任务，此时遇到异步回调时，按时间顺序放入事件队列（同一时间只存在一个事件队列）
+    - 执行宏任务或者微任务或事件队列时，优先按对应事件优先级顺序执行，优先级一样再按加入顺序执行
+  - 执行事件队列事，当前执行的事件中若又存在异步回调，则向当前事件队列的最后追加
 
 ```js
+console.log('1');
 setTimeout(function () {
-    // 内层宏事件
-    console.log('three');
-}, 0);
-
-let test = new Promise((resolve) => {
-    // 外层宏事件
-    console.log('four');
+    console.log('2');
+    process.nextTick(function () {
+        console.log('3');
+    })
+    new Promise(function (resolve) {
+        console.log('4');
+        resolve();
+    }).then(function () {
+        console.log('5')
+    })
+})
+new Promise(function (resolve) {
+    console.log('6');
+    resolve();
+}).then(function () {
+    console.log('7');
+    new Promise(function (resolve) {
+        console.log('8');
+        resolve();
+    }).then(function () {
+      new Promise(function (resolve) {
+          console.log('9');
+          resolve();
+      }).then(function () {
+          console.log('10')
+      })
+    })
+})
+process.nextTick(function () {
+    console.log('11');
+})
+setTimeout(function () {
+    console.log('12');
+    process.nextTick(function () {
+        console.log('13');
+    })
+    new Promise(function (resolve) {
+        console.log('14');
+        resolve();
+    }).then(function () {
+        console.log('15')
+    })
 })
 
-Promise.resolve().then(function () {
-    // 微事件
-    console.log('two');
-});
-
-
-// 外层宏事件
-console.log('one');
-// four
-// one
-// two
-// three
+// 1
+// 6
+// 11
+// 7
+// 8
+// 9
+// 10
+// 2
+// 4
+// 3
+// 5
+// 12
+// 14
+// 13
+// 15
 ```
 
 ## ES6 严格模式
@@ -165,9 +208,10 @@ console.log('one');
 ### 解构赋值的表达式
 
 - 无顺序，取不到值返回undefined
-- 可以指定默认值;默认值生效的条件是，对象的属性值严格等于undefined。
+- 可以指定默认值;默认值生效的条件是，对象的属性值严格等于undefined
 - 机制：先找到同名属性，然后再赋给对应的变量。真正被赋值的是后者，而不是前者
 - let { foo: foo, bar: bar } = { foo: "aaa", bar: "bbb" }; 完整版;
+- 
 - let { foo, bar } = { foo: "aaa", bar: "bbb" }; 简写版
 - let { foo: baz } = { foo: "aaa", bar: "bbb" }; foo 未定义; baz: 'aaa'; foo是匹配的模式，baz才是变量。真正被赋值的是变量baz，而不是模式foo; 左右两边的foo只是用作表达式两边匹配用，真正发生的是给变量baz赋值'aaa'
 
@@ -188,7 +232,7 @@ console.log('one');
     // line  1
     // loc   Object {start: Object}
     // start Object {line: 1, column: 5}
-    // 最后一次对line属性的解构赋值之中，只有line是变量，loc和start都是模式，不是变量。
+    // 最后一次对line属性的解构赋值之中，只有line是变量，loc和start都是模式，不是变量
 
     let x;
     {x} = {x: 1};
@@ -392,7 +436,7 @@ console.log('one');
 
 - rest 参数就是一个真正的数组，数组特有的方法都可以使用
 - rest 参数之后不能再有其他参数（即只能是最后一个参数），否则会报错
-- 函数的length属性，不包括 rest 参数 和 指定了默认值的参数。
+- 函数的length属性，不包括 rest 参数 和 指定了默认值的参数
 - 函数参数arguments对象不是数组，而是一个类似数组的对象
 
 ## Object.getOwnPropertyDescriptor(obj, prop)
@@ -405,8 +449,8 @@ console.log('one');
   - writable: 当且仅当属性的值可以被改变时为true。(仅针对数据属性描述有效)
   - get: 获取该属性的访问器函数（getter）。如果没有访问器， 该值为undefined。(仅针对包含访问器或设置器的属性描述有效)
   - set: 获取该属性的设置器函数（setter）。 如果没有设置器， 该值为undefined。(仅针对包含访问器或设置器的属性描述有效)
-  - configurable： 当且仅当指定对象的属性描述可以被改变或者属性可被删除时，为true。
-  - enumerable： 当且仅当指定对象的属性可以被枚举出时，为 true。
+  - configurable： 当且仅当指定对象的属性描述可以被改变或者属性可被删除时，为true
+  - enumerable： 当且仅当指定对象的属性可以被枚举出时，为 true
 
 ```javascript
     var o, d;
@@ -552,6 +596,7 @@ console.log('one');
 - 链式写法： 如果双冒号运算符的运算结果，还是一个对象，就可以采用链式写法。
 
 ```javascript
+    [{character() {}}]
     ::map(x => x.character())
     ::takeWhile(x => x.strength > 100)
     ::forEach(x => console.log(x));
@@ -730,6 +775,14 @@ console.log('one');
 
     Array.from({ length: 3 });
     // [ undefined, undefined, undefined ]
+
+    Array.from({ 'aa': 'a', 'aa': 'b', '2': 'c', length: 3 });
+    // [undefined, undefined, 'c']
+
+    Array.from({ '0': 'a', '1': 'b' });
+    // []
+    Array.from({ '0': 'a', '1': 'b' }, () => 'aa');
+    // []
 ```
 
 ### 第二个参数func用来对每个元素进行处理，将处理后的值放入返回的数组
@@ -1087,7 +1140,7 @@ let b = arr.every( ( item, index, array ) => {
     let arr1 = [1, 2, 3];
     let arr2 = [4, 5];
     let arr3 = Object.assign(arr1, arr2);
-    // [4, 5, 3]   把数组视为属性名为 0、1、2 的对象，因此源数组的 0 号属性4覆盖了目标数组的 0 号属性1
+    // [4, 5, 3]   把数组视为属性名为 0、1、2 的对象，因此源数组的 0 号属性值4覆盖了目标数组的 0 号属性值1
     let arr1[0] = 6; // arr3 [6, 5, 3]; 变 ， 内存地址和arr1是一样的
     let arr2[0] = 7; // arr3 [6, 5, 3]; 不变
 ```
@@ -1096,7 +1149,7 @@ let b = arr.every( ( item, index, array ) => {
 
 ```javascript
     const source = {
-    get foo() { return 1 }
+      get foo() { return 1 }
     };
     const target = {};
 
@@ -1108,26 +1161,27 @@ let b = arr.every( ( item, index, array ) => {
 
 ### 属性的可枚举性和遍历
 
-- 可枚举性：有四个操作会忽略enumerable为false的属性。
+- 可枚举性：有四个操作会忽略enumerable为false的属性
   - for...in循环：只遍历对象自身的和继承的可枚举的属性。（不含 Symbol 属性）
   - Object.keys()：返回对象自身的所有可枚举的属性的键名（不含 Symbol 属性，不含继承），推荐用这个
-  - JSON.stringify()：只串行化对象自身的可枚举的属性。
-  - Object.assign()： 忽略enumerable为false的属性，只拷贝对象自身的可枚举的属性。
-  - ES6 规定，所有 Class 的原型的方法都是不可枚举的。
+  - JSON.stringify()：只串行化对象自身的可枚举的属性
+  - Object.assign()： 只拷贝对象自身的可枚举的属性
+  - ES6 规定，所有 Class 的原型的方法都是不可枚举的
 
 - 遍历
   - for...in
   - Object.keys(obj)
-  - Object.getOwnPropertyNames(obj) 返回一个数组，包含对象自身的所有属性（不含 Symbol 属性，但是包括不可枚举属性）的键名。
-  - Object.getOwnPropertySymbols(obj) 返回一个数组，包含对象自身的所有 Symbol 属性的键名。
-  - Reflect.ownKeys(obj) 返回一个数组，包含对象自身的所有键名，不管键名是 Symbol 或字符串，也不管是否可枚举。
-  - Object.getOwnPropertyDescriptor() 返回某个对象属性的描述对象（descriptor）
-  - Object.getOwnPropertyDescriptors() 返回指定对象所有自身属性（非继承属性）的描述对象。
+  - Object.getOwnPropertyNames(obj) 返回一个数组，包含对象自身的所有属性（不含 Symbol 属性，但是包括不可枚举属性）的键名
+  - Object.getOwnPropertySymbols(obj) 返回一个数组，包含对象自身的所有 Symbol 属性的键名
+  - Reflect.ownKeys(obj) 返回一个数组，包含对象自身的所有键名，不管键名是 Symbol 或字符串，也不管是否可枚举
+  - Object.getOwnPropertyDescriptor() 返回某个对象自身属性的描述对象（descriptor）
+  - Object.getOwnPropertyDescriptors() 返回指定对象所有自身属性（非继承属性）的描述对象
 
 - 遍历规则
-  - 首先遍历所有数值键，按照数值升序排列。
-  - 其次遍历所有字符串键，按照加入时间升序排列。
-  - 最后遍历所有 Symbol 键，按照加入时间升序排列。
+  - 首先遍历所有数值键，按照数值升序排列
+    - '1': a 也算数值键
+  - 其次遍历所有字符串键，按照加入时间升序排列
+  - 最后遍历所有 Symbol 键，按照加入时间升序排列
 
 ```javascript
     Reflect.ownKeys({ [Symbol()]:0, b:0, 10:0, 2:0, a:0 })
@@ -1136,9 +1190,9 @@ let b = arr.every( ( item, index, array ) => {
 
 ### __proto__属性
 
-- 用来读取或设置当前对象的prototype对象。__proto__调用的是Object.prototype.__proto__。
+- 用来读取或设置当前对象的prototype对象。__proto__调用的是Object.prototype.__proto__
 - 目前，所有浏览器（包括 IE11）都部署了这个属性，但是不推荐使用
-- 一个对象本身部署了__proto__属性，该属性的值就是对象的原型。
+- 一个对象本身部署了__proto__属性，该属性的值就是对象的原型
 
 ```javascript
     Object.getPrototypeOf({ __proto__: null })
@@ -1148,41 +1202,40 @@ let b = arr.every( ( item, index, array ) => {
 ### Object.setPrototypeOf(object, prototype) 和 Object.getPrototypeOf(obj)
 
 - Object.setPrototypeOf(object, prototype) 用来设置一个对象的prototype对象，返回参数对象本身
-- Object.getPrototypeOf(obj) 用于读取一个对象的原型对象。
-- Object.create(prototype, descriptors) 生成一个具有指定原型且可选择性地包含指定属性的对象。
-- 如果参数不是对象，会被自动转为对象。
-- 由于undefined和null无法转为对象，所以如果第一个参数是undefined或null，就会报错。
+- Object.getPrototypeOf(obj) 用于读取一个对象的原型对象
+- Object.create(prototype, descriptors) 生成一个具有指定原型且可选择性地包含指定属性的对象
+- 如果参数不是对象，会被自动转为对象
+- 由于undefined和null无法转为对象，所以如果第一个参数是undefined或null，就会报错
 
 ### super关键字
 
-- 指向当前对象的原型对象。
-- super关键字表示原型对象时，只能用在对象的方法之中，用在其他地方都会报错。
-- 目前，只有对象方法的简写法可以让 JavaScript 引擎确认，定义的是对象的方法。
+- 指向当前对象的原型对象
+- super关键字表示原型对象时，只能用在对象的方法之中，用在其他地方都会报错
 
 ```javascript
     // 报错
     const obj = {
-        foo: super.foo
+        foo: super.hasOwnProperty
     }
 
     // 报错
     const obj = {
-        foo: () => super.foo
+        foo: () => super.hasOwnProperty
     }
 
     // 报错
     const obj = {
         foo: function () {
-            return super.foo
+            return super.hasOwnProperty
         }
     }
 
 
-
+    // 目前，只有对象方法的简写法可以让 JavaScript 引擎确认，super.hasOwnProperty() 是对象的方法
     const obj = {
         x: 'world',
         foo() {
-            super.foo();
+            super.hasOwnProperty();
         }
     }
 ```
@@ -1215,7 +1268,7 @@ let b = arr.every( ( item, index, array ) => {
     }
 
     Object.values('foo')
-    // ['f', 'o', 'o'] 参数是一个字符串，会返回各个字符组成的一个数组。
+    // ['f', 'o', 'o'] 参数是一个字符串，会返回各个字符组成的一个数组
 
     // Object.entries()另一个用处是，将对象转为真正的Map结构。
     const obj = { foo: 'bar', baz: 42 };
@@ -1242,7 +1295,7 @@ let b = arr.every( ( item, index, array ) => {
 - 可在 Web Worker 中可用
 - 兼容性：IE不支持，safari对 URLSearchParams 对象的delete方法有部分bug
 - 方法：
-  - URLSearchParams.append()
+  - URLSearchParams.append(name, value)
     - 插入一个指定的键/值对作为新的搜索参数
   - URLSearchParams.delete()
     - 从搜索参数列表里删除指定的搜索参数及其对应的值
@@ -1269,7 +1322,7 @@ let b = arr.every( ( item, index, array ) => {
 var paramsString = "q=URLUtils.searchParams&topic=api"
 var searchParams = new URLSearchParams(paramsString);
 
-// 和遍历 searchParams.entries() 一样
+// 和遍历 searchParams.entries() 一样，因为它的Symbol.Iterator方法就是entries()
 for (let p of searchParams) {
   console.log(p); // [q, URLUtils.searchParams]、[topic, api]
 }
@@ -1292,7 +1345,7 @@ searchParams.toString(); // "q=URLUtils.searchParams"
 - 解构赋值的拷贝是浅拷贝，如果一个键的值是复合类型的值（数组、对象、函数）、那么解构赋值拷贝的是这个值的引用，而不是这个值的副本
 
 ```javascript
-    const o = Object.create({ x: 1, y: 2 });
+    let o = Object.create({ x: 1, y: 2 });
     o.z = 3;
 
     let { x, ...newObj } = o;
@@ -1300,11 +1353,11 @@ searchParams.toString(); // "q=URLUtils.searchParams"
     x // 1
     y // undefined
     z // 3
-    //变量x是单纯的解构赋值，所以可以读取对象o继承的属性；变量y和z是扩展运算符的解构赋值，只能读取对象o自身的属性
+    //变量x是单纯的解构赋值，所以可以读取对象o继承的属性；newObj是扩展运算符的解构赋值，只能读取对象o自身的属性
 
     let { x, ...{ y, z } } = o; //报扩展运算符使用错误
     let o = { x, ...{ y, z } }; //不会报扩展运算符使用错误
-    //变量声明语句之中(注意前提)，如果使用解构赋值，扩展运算符后面必须是一个变量名，而不能是一个解构赋值表达式
+    //变量声明语句之中即等号左边(注意前提)，如果使用解构赋值，扩展运算符后面必须是一个变量名，而不能是一个解构赋值表达式
 
     //是扩展某个函数的参数，引入其他操作。
     function wrapperFunction({ x, y, ...restConfig }) {
@@ -1380,7 +1433,7 @@ searchParams.toString(); // "q=URLUtils.searchParams"
 ```
 
 - 如果扩展运算符后面是一个空对象，则没有任何效果
-- 如果扩展运算符的参数是null或undefined，这两个值会被忽略，不会报错。
+- 如果扩展运算符的参数是null或undefined，这两个值会被忽略，不会报错
 
 ```javascript
     {...{}, a: 1}
@@ -1389,7 +1442,7 @@ searchParams.toString(); // "q=URLUtils.searchParams"
     let emptyObject = { ...null, ...undefined }; // 不报错
 ```
 
-- 扩展运算符的参数对象之中，如果有取值函数get，这个函数是会执行的。
+- 扩展运算符的参数对象之中，如果有取值函数get，这个函数是会执行的
 
 ```javascript
     // 并不会抛出错误，因为 x 属性只是被定义，但没执行
@@ -1422,7 +1475,8 @@ const obj = {
 };
 
 Object.getOwnPropertyDescriptors(obj)
-// { foo:
+// {
+//   foo:
 //    { value: 123,
 //      writable: true,
 //      enumerable: true,
@@ -1509,9 +1563,9 @@ obj.z // 40
 - 如果第一个参数不是对象，会自动转为对象。但是由于返回的还是第一个参数，所以这个操作不会产生任何效果
 
 ```js
-Object.setPrototypeOf(1, {}) === 1) // true
-Object.setPrototypeOf('foo', {}) === 'foo') // true
-Object.setPrototypeOf(true, {}) === true) // true
+Object.setPrototypeOf(1, {}) === 1 // true
+Object.setPrototypeOf('foo', {}) === 'foo' // true
+Object.setPrototypeOf(true, {}) === true // true
 ```
 
 - 由于undefined和null无法转为对象，所以如果第一个参数是undefined或null，就会报错
@@ -1711,15 +1765,25 @@ s1 === s2 // true
 ```
 
 - Symbol.for为 Symbol 值登记的名字，是全局环境的，可以在不同的 iframe 或 service worker 中取到同一个值
+  - Symbol.for()与Symbol()这两种写法，都会生成新的 Symbol。它们的区别是，前者会被登记在全局环境中供搜索，后者不会
+  - 不管有没有在全局环境运行(例如在函数内生成), Symbol.for() 生成的 Symbol 值 都是登记在全局环境的
+  - Symbol()写法没有登记机制，所以每次调用都会返回一个不同的值
 
 ```js
 // iframe 窗口生成的 Symbol 值，可以在主页面得到
 iframe = document.createElement('iframe');
-iframe.src = String(window.location);
+iframe.src = (window.location).toString();
 document.body.appendChild(iframe);
 
-iframe.contentWindow.Symbol.for('foo') === Symbol.for('foo')
 // true
+iframe.contentWindow.Symbol.for('foo') === Symbol.for('foo')
+
+
+Symbol.for("bar") === Symbol.for("bar")
+// true
+
+Symbol("bar") === Symbol("bar")
+// false
 ```
 
 ### Symbol.keyFor
@@ -2076,6 +2140,7 @@ class MySplitter {
 
 ```js
 let s = new Set();
+
 s.add(1).add(2).add(2);
 // 注意2被加入了两次, 成功了1次
 
@@ -2205,7 +2270,10 @@ set = new Set(Array.from(set, val => val * 2));
 
 ### 和 Set 的区别
 
-- WeakSet 的成员只能是对象(或具有 Iterable 接口的对象)，而不能是其他类型的值
+- new WeakSet([iterable])
+- WeakSet 只能是对象的集合，而不能是任何类型的任意值
+- 如果传入一个可迭代对象作为参数, 则该对象的所有迭代值都会被自动添加进生成的 WeakSet 对象中
+  - null 被认为是 undefined
 
 ```js
 const ws = new WeakSet();
@@ -2219,7 +2287,7 @@ const ws2 = new WeakSet(a);
 // WeakSet {[1, 2], [3, 4]}
 ```
 
-- WeakSet 中的对象都是弱引用，即垃圾回收机制不考虑 WeakSet 对该对象的引用
+- WeakSet 中的对象都是弱引用，即垃圾回收机制不考虑 WeakSet 对该对象的引用，所以WeakSet 是不可枚举的
   - 也就是说，如果其他对象都不再引用该对象，那么垃圾回收机制会自动回收该对象所占用的内存，不考虑该对象还存在于 WeakSet 之中
   - 这是因为垃圾回收机制依赖引用计数，如果一个值的引用次数不为0，垃圾回收机制就不会释放这块内存。结束使用该值之后，有时会忘记取消引用，导致内存无法释放，进而可能会引发内存泄漏
   - WeakSet 里面的引用，都不计入垃圾回收机制，所以就不存在这个问题。因此，WeakSet 适合临时存放一组对象，以及存放跟对象绑定的信息。只要这些对象在外部消失，它在 WeakSet 里面的引用就会自动消失
@@ -2233,7 +2301,7 @@ const ws2 = new WeakSet(a);
     - 清除 WeakSet 实例的指定成员
   - WeakSet.prototype.has(value)
     - 返回一个布尔值，表示某个值是否在 WeakSet 实例之中
-- WeakSet 没有 size 属性和 forEach 方法
+- WeakSet 没有 size 属性和 forEach 方法， length属性值为0
 - WeakSet 的一个用处，是储存 DOM 节点，而不用担心这些节点从文档移除时，会引发内存泄漏
 - 其中一种使用场景
 
@@ -3591,4 +3659,1559 @@ console.log('next');
 Promise.try(() => new Promise())
   .then(...)
   .catch(...)
+```
+
+## Iterator
+
+- 遍历器是一种接口，为各种不同的数据结构提供统一的访问机制
+- 任何数据结构只要部署 Iterator 接口，就可以完成遍历操作（即依次处理该数据结构的所有成员）
+- 作用：
+  - 为各种数据结构，提供一个统一的、简便的访问接口
+  - 使得数据结构的成员能够按某种次序排列
+  - ES6 创造了一种新的遍历命令for...of循环，Iterator 接口主要供for...of消费
+- 遍历过程
+  - 创建一个指针对象，指向当前数据结构的起始位置
+    - 遍历器对象本质上，就是一个指针对象
+    - 返回一个包含value和done两个属性的对象，value属性是当前成员的值，done属性是一个布尔值，表示遍历是否结束
+  - 第一次调用指针对象的next方法，可以将指针指向数据结构的第一个成员
+  - 第二次调用指针对象的next方法，指针就指向数据结构的第二个成员
+  - 不断调用指针对象的next方法，直到它指向数据结构的结束位
+
+```js
+// 模拟一个遍历器
+var it = makeIterator(['a', 'b']);
+
+it.next() // { value: "a", done: false }
+it.next() // { value: "b", done: false }
+it.next() // { value: undefined, done: true }
+
+function makeIterator(array) {
+  var nextIndex = 0;
+  return {
+    next: function() {
+      return nextIndex < array.length ?
+        {value: array[nextIndex++], done: false} :
+        {value: undefined, done: true};
+    }
+  };
+}
+
+// ts类型
+interface Iterable {
+  [Symbol.iterator](): Iterator,
+}
+
+interface Iterator {
+  next(value?: any): IterationResult,
+}
+
+interface IterationResult {
+  value: any,
+  done: boolean,
+}
+```
+
+- Iterator 接口的目的，就是为所有数据结构，提供了一种统一的访问机制，即for...of循环
+  - 当使用for...of循环遍历某种数据结构时，该循环会自动去寻找 Iterator 接口
+- ES6 规定，默认的 Iterator 接口部署在数据结构的Symbol.iterator属性
+  - 一种数据结构只要部署了 Iterator 接口，我们就称这种数据结构是“可遍历的”（iterable）
+  - Symbol.iterator属性本身是一个函数，就是当前数据结构默认的遍历器生成函数，执行这个函数，就会返回一个遍历器
+  - 属性名Symbol.iterator，它是一个表达式，返回Symbol对象的iterator属性，这是一个预定义好的、类型为 Symbol 的特殊值，所以要放在方括号内
+
+```js
+let arr = ['a', 'b', 'c'];
+let iter = arr[Symbol.iterator]();
+
+iter.next() // { value: 'a', done: false }
+iter.next() // { value: 'b', done: false }
+iter.next() // { value: 'c', done: false }
+iter.next() // { value: undefined, done: true }
+```
+
+- 原生具备 Iterator 接口的数据结构: Array、Map、Set、String、TypedArray、函数的 arguments 对象、dom的NodeList 对象
+  - 对象（Object）之所以没有默认部署 Iterator 接口，是因为对象的哪个属性先遍历，哪个属性后遍历是不确定的，需要开发者手动指定
+  - 对象部署遍历器接口并不是很必要，因为这时对象实际上被当作 Map 结构使用，ES5 没有 Map 结构，而 ES6 原生提供了
+
+```js
+// 一个对象如果要具备可被for...of循环调用的 Iterator 接口，就必须在Symbol.iterator的属性上部署遍历器生成方法（原型链上的对象具有该方法也可）
+class RangeIterator {
+  constructor(start, stop) {
+    this.value = start;
+    this.stop = stop;
+  }
+
+  [Symbol.iterator]() { return this; }
+
+  next() {
+    var value = this.value;
+    if (value < this.stop) {
+      this.value++;
+      return {done: false, value: value};
+    }
+    return {done: true, value: undefined};
+  }
+}
+
+function range(start, stop) {
+  return new RangeIterator(start, stop);
+}
+
+for (var value of range(0, 3)) {
+  console.log(value); // 0, 1, 2
+}
+
+// 对于类似数组的对象（存在数值键名和length属性），部署 Iterator 接口，有一个简便方法，就是Symbol.iterator方法直接引用数组的 Iterator 接口
+NodeList.prototype[Symbol.iterator] = Array.prototype[Symbol.iterator];
+// 或者
+NodeList.prototype[Symbol.iterator] = [][Symbol.iterator];
+
+[...document.querySelectorAll('div')] // 可以执行了
+
+// 另一个类似数组的对象调用数组的Symbol.iterator方法的例子
+let iterable = {
+  0: 'a',
+  1: 'b',
+  2: 'c',
+  length: 3,
+  [Symbol.iterator]: Array.prototype[Symbol.iterator]
+};
+for (let item of iterable) {
+  console.log(item); // 'a', 'b', 'c'
+}
+
+// 普通对象部署数组的Symbol.iterator方法，并无效果
+let iterable = {
+  a: 'a',
+  b: 'b',
+  c: 'c',
+  length: 3,
+  [Symbol.iterator]: Array.prototype[Symbol.iterator]
+};
+for (let item of iterable) {
+  console.log(item); // undefined, undefined, undefined
+}
+
+// 如果Symbol.iterator方法对应的不是遍历器生成函数（即会返回一个遍历器对象），解释引擎将会报错
+var obj = {};
+
+obj[Symbol.iterator] = () => 1;
+
+[...obj] // TypeError: [] is not a function
+```
+
+- 有了遍历器接口，数据结构就可以用for...of循环遍历，也可以使用while循环遍历
+
+```js
+var $iterator = ITERABLE[Symbol.iterator]();
+var $result = $iterator.next();
+while (!$result.done) {
+  var x = $result.value;
+  // ...
+  $result = $iterator.next();
+}
+```
+
+### 调用 Iterator 接口的场合
+
+- 还有一些场合会默认调用 Iterator 接口（即Symbol.iterator方法）
+- 解构赋值（数组和 Set 结构）
+
+```js
+let set = new Set().add('a').add('b').add('c');
+
+let [x,y] = set;
+// x='a'; y='b'
+
+let [first, ...rest] = set;
+// first='a'; rest=['b','c'];
+```
+
+- 扩展运算符
+
+```js
+// 例一
+var str = 'hello';
+[...str] //  ['h','e','l','l','o']
+
+// 例二
+let arr = ['b', 'c'];
+['a', ...arr, 'd']
+// ['a', 'b', 'c', 'd']
+
+// 这提供了一种简便机制，可以将任何部署了 Iterator 接口的数据结构，转为数组
+// 只要某个数据结构部署了 Iterator 接口，就可以对它使用扩展运算符，将其转为数组
+let arr = [...iterable];
+```
+
+- yield*
+  - yield*后面跟的是一个可遍历的结构，它会调用该结构的遍历器接口
+
+```js
+let generator = function* () {
+  yield 1;
+  yield* [2,3];
+  yield 4;
+};
+
+var iterator = generator();
+
+iterator.next() // { value: 1, done: false }
+iterator.next() // { value: 2, done: false }
+iterator.next() // { value: 3, done: false }
+iterator.next() // { value: 4, done: false }
+iterator.next() // { value: undefined, done: true }
+```
+
+- 其他场合
+  - 由于数组的遍历会调用遍历器接口，所以任何接受数组作为参数的场合，其实都调用了遍历器接口
+  - for...of
+  - Array.from()
+  - Map(), Set(), WeakMap(), WeakSet()（比如new Map([['a',1],['b',2]])）
+  - Promise.all()
+  - Promise.race()
+
+### 字符串的 Iterator 接口
+
+- 字符串是一个类似数组的对象，也原生具有 Iterator 接口
+
+```js
+var someString = "hi";
+typeof someString[Symbol.iterator]
+// "function"
+
+var iterator = someString[Symbol.iterator]();
+
+iterator.next()  // { value: "h", done: false }
+iterator.next()  // { value: "i", done: false }
+iterator.next()  // { value: undefined, done: true }
+
+
+// 可以覆盖原生的Symbol.iterator方法，达到修改遍历器行为的目的
+var str = new String("hi");
+
+[...str] // ["h", "i"]
+
+str[Symbol.iterator] = function() {
+  return {
+    next: function() {
+      if (this._first) {
+        this._first = false;
+        return { value: "bye", done: false };
+      } else {
+        return { done: true };
+      }
+    },
+    _first: true
+  };
+};
+
+[...str] // ["bye"]
+str // "hi"
+```
+
+### Iterator 接口与 Generator 函数
+
+- Generator 函数是 Symbol.iterator方法的最简单实现
+
+```js
+let myIterable = {
+  [Symbol.iterator]: function* () {
+    yield 1;
+    yield 2;
+    yield 3;
+  }
+}
+[...myIterable] // [1, 2, 3]
+
+// 或者采用下面的简洁写法
+
+let obj = {
+  * [Symbol.iterator]() {
+    yield 'hello';
+    yield 'world';
+  }
+};
+
+for (let x of obj) {
+  console.log(x);
+}
+// "hello"
+// "world"
+```
+
+### 遍历器对象的 return()，throw()
+
+- 遍历器对象除了具有next方法，还可以具有return方法和throw方法
+  - next方法是必须部署的，return方法和throw方法是否部署是可选的
+- return方法的使用场合
+  - 如果for...of循环提前退出（通常是因为出错，或者有break语句），就会调用return方法
+  - 如果一个对象在完成遍历前，需要清理或释放资源，就可以部署return方法
+
+```js
+function readLinesSync(file) {
+  return {
+    [Symbol.iterator]() {
+      return {
+        next() {
+          return { done: false };
+        },
+        // return方法必须返回一个对象，这是 Generator 规格决定的
+        return() {
+          file.close();
+          return { done: true };
+        }
+      };
+    },
+  };
+}
+
+// 情况一: 输出文件的第一行以后，就会执行return方法，关闭这个文件
+for (let line of readLinesSync(fileName)) {
+  console.log(line);
+  break;
+}
+
+// 情况二: 会在执行return方法关闭文件之后，再抛出错误
+for (let line of readLinesSync(fileName)) {
+  console.log(line);
+  throw new Error(); // throw方法主要是配合 Generator 函数使用，一般的遍历器对象用不到这个方法
+}
+
+```
+
+- throw方法主要是配合 Generator 函数使用，一般的遍历器对象用不到这个方法
+
+## Generator 函数
+
+- Generator 函数是 ES6 提供的一种异步编程解决方案，语法行为与传统函数完全不同
+- Generator 函数是一个状态机，封装了多个内部状态
+- Generator 函数除了状态机，还是一个遍历器对象生成函数
+  - 执行 Generator 函数会返回一个遍历器对象
+  - 返回的遍历器对象，可以依次遍历 Generator 函数内部的每一个状态
+- 两个特征
+  - function 关键字与函数名之间有一个星号
+  - 函数体内部使用 yield 表达式，定义不同的内部状态
+
+```js
+// 该函数有三个状态：hello，world 和 return 语句（结束执行）
+function* helloWorldGenerator() {
+  yield 'hello';
+  yield 'world';
+  return 'ending';
+}
+
+var hw = helloWorldGenerator();
+
+hw.next()
+// { value: 'hello', done: false }
+
+hw.next()
+// { value: 'world', done: false }
+
+hw.next()
+// { value: 'ending', done: true }
+
+hw.next()
+// { value: undefined, done: true }
+```
+
+- 调用 Generator 函数后，该函数并不执行，返回的也不是函数运行结果，而是一个指向内部状态的指针对象(遍历器对象)
+- 必须调用遍历器对象的next方法，使得指针移向下一个状态
+  - 每次调用next方法，内部指针就从函数头部或上一次停下来的地方开始执行，直到遇到下一个yield表达式（或return语句）为止
+  - Generator 函数是分段执行的，yield表达式是暂停执行的标记，而next方法可以恢复执行
+
+```js
+// 以下写法均可，推荐第三种
+function * foo(x, y) { ··· }
+function *foo(x, y) { ··· }
+function* foo(x, y) { ··· }
+function*foo(x, y) { ··· }
+```
+
+### yield 表达式
+
+- yield表达式只能用在 Generator 函数里面，用在其他地方都会报错
+
+```js
+var arr = [1, [[2, 3], 4], [5, 6]];
+
+var flat = function* (a) {
+
+  // 会产生句法错误，因为forEach方法的参数是一个普通函数，但是在里面使用了yield表达式
+  a.forEach(function (item) {
+    if (typeof item !== 'number') {
+      yield* flat(item);
+    } else {
+      yield item;
+    }
+  });
+
+  // 改用for循环不会报错
+  var length = a.length;
+  for (var i = 0; i < length; i++) {
+    var item = a[i];
+    if (typeof item !== 'number') {
+      yield* flat(item);
+    } else {
+      yield item;
+    }
+  }
+
+};
+
+for (var f of flat(arr)){
+  console.log(f);
+}
+```
+
+- yield表达式就是暂停标志
+- yield表达式后面的表达式，只有当调用next方法、内部指针指向该语句时才会执行，因此等于为 JavaScript 提供了手动的“惰性求值”（Lazy Evaluation）的语法功能
+- 遍历器对象的next方法的运行逻辑
+  - 遇到yield表达式，就暂停执行后面的操作，并将紧跟在yield后面的那个表达式的值，作为返回的对象的value属性值
+  - 下一次调用next方法时，再继续往下执行，直到遇到下一个yield表达式
+  - 如果没有再遇到新的yield表达式，就一直运行到函数结束，直到return语句为止，并将return语句后面的表达式的值，作为返回的对象的value属性值
+  - 如果该函数没有return语句，则返回的对象的value属性值为undefined
+- yield 与 return 的区别
+  - 每次遇到yield，函数暂停执行，下一次再从该位置继续向后执行
+  - return语句不具备位置记忆的功能
+  - Generator 函数可以不用yield表达式，这时就变成了一个单纯的暂缓执行函数
+  
+  ```js
+  function* f() {
+    console.log('执行了！')
+  }
+
+  var generator = f();
+
+  setTimeout(function () {
+    generator.next()
+  }, 2000);
+  ```
+
+- Generator 函数执行后，返回一个遍历器对象, 该对象本身也具有Symbol.iterator属性，执行后返回自身
+
+```js
+function* gen(){
+  // some code
+}
+
+var g = gen();
+
+g[Symbol.iterator]() === g
+// true
+```
+
+### next 方法的参数
+
+- yield表达式本身没有返回值，或者说总是返回undefined
+- 作用：可以在 Generator 函数运行的不同阶段，从外部向内部注入不同的值，从而调整函数行为
+- next方法可以带一个参数，该参数就会被当作上一个yield表达式的返回值
+
+```js
+// 一
+function* f() {
+  for(var i = 0; true; i++) {
+    var reset = yield i;
+    if(reset) { i = -1; }
+  }
+}
+
+var g = f();
+
+g.next() // { value: 0, done: false }
+g.next() // { value: 1, done: false }
+g.next(true) // { value: 0, done: false }
+
+// 二
+function* foo(x) {
+  var y = 2 * (yield (x + 1));
+  var z = yield (y / 3);
+  return (x + y + z);
+}
+
+var a = foo(5);
+a.next() // Object{value:6, done:false}
+a.next() // Object{value:NaN, done:false}
+a.next() // Object{value:NaN, done:true}
+
+var b = foo(5);
+b.next() // { value:6, done:false }
+b.next(12) // { value:8, done:false }
+b.next(13) // { value:42, done:true }
+
+// 三
+function* dataConsumer() {
+  console.log('Started');
+  console.log(`1. ${yield}`);
+  console.log(`2. ${yield}`);
+  return 'result';
+}
+
+let genObj = dataConsumer();
+genObj.next();
+// Started
+genObj.next('a')
+// 1. a
+genObj.next('b')
+// 2. b
+```
+
+- 由于next方法的参数表示上一个yield表达式的返回值，所以在第一次使用next方法时，传递参数是无效的
+  - V8 引擎直接忽略第一次使用next方法时的参数，只有从第二次使用next方法开始，参数才是有效的
+  - 从语义上讲，第一个next方法用来启动遍历器对象，所以不用带有参数
+  - 如果想要第一次调用next方法时，就能够输入值，可以在 Generator 函数外面再包一层
+  
+  ```js
+  function wrapper(generatorFunction) {
+    return function (...args) {
+      let generatorObject = generatorFunction(...args);
+      generatorObject.next();
+      return generatorObject;
+    };
+  }
+
+  const wrapped = wrapper(function* () {
+    console.log(`First input: ${yield}`);
+    return 'DONE';
+  });
+
+  wrapped().next('hello!')
+  // First input: hello!
+  ```
+
+### Generator.prototype.throw()
+
+- Generator 函数返回的遍历器对象，都有一个throw方法，可以在函数体外抛出错误，然后在 Generator 函数体内捕获
+
+```js
+// 第一个错误被 Generator 函数体内的catch语句捕获。i第二次抛出错误，由于 Generator 函数内部的catch语句已经执行过了，不会再捕捉到这个错误了，所以这个错误就被抛出了 Generator 函数体，被函数体外的catch语句捕获
+var g = function* () {
+  try {
+    yield;
+  } catch (e) {
+    console.log('内部捕获', e);
+  }
+};
+
+var i = g();
+i.next();
+
+try {
+  i.throw('a');
+  i.throw('b');
+} catch (e) {
+  console.log('外部捕获', e);
+}
+// 内部捕获 a
+// 外部捕获 b
+```
+
+- throw方法可以接受一个参数，该参数会被catch语句接收，建议抛出Error对象的实例
+
+```js
+var g = function* () {
+  try {
+    yield;
+  } catch (e) {
+    console.log(e);
+  }
+};
+
+var i = g();
+i.next();
+i.throw(new Error('出错了！'));
+// Error: 出错了！(…)
+
+
+var g = function* () {
+  while (true) {
+    try {
+      yield;
+    } catch (e) {
+      if (e != 'a') throw e;
+      console.log('内部捕获', e);
+    }
+  }
+};
+
+var i = g();
+i.next();
+
+try {
+  throw new Error('a');
+  throw new Error('b');
+} catch (e) {
+  console.log('外部捕获', e);
+}
+// 外部捕获 [Error: a]
+// 之所以只捕获了a，是因为函数体外的catch语句块，捕获了抛出的a错误以后，就不会再继续try代码块里面剩余的语句了
+```
+
+- 如果 Generator 函数内部没有部署try...catch代码块，那么throw方法抛出的错误，将被外部try...catch代码块捕获
+
+```js
+var g = function* () {
+  while (true) {
+    yield;
+    console.log('内部捕获', e);
+  }
+};
+
+var i = g();
+i.next();
+
+try {
+  i.throw('a');
+  i.throw('b');
+} catch (e) {
+  console.log('外部捕获', e);
+}
+// 外部捕获 a
+```
+
+- 如果 Generator 函数内部和外部，都没有部署try...catch代码块，那么程序将报错，直接中断执行
+
+```js
+var gen = function* gen(){
+  yield console.log('hello');
+  yield console.log('world');
+}
+
+var g = gen();
+g.next();
+g.throw();
+// hello
+// Uncaught undefined
+```
+
+- throw方法抛出的错误要被内部捕获，前提是必须至少执行过一次next方法
+  - 第一次执行next方法，等同于启动执行 Generator 函数的内部代码，否则 Generator 函数还没有开始执行，这时throw方法抛错只可能抛出在函数外部
+
+```js
+function* gen() {
+  try {
+    yield 1;
+  } catch (e) {
+    console.log('内部捕获');
+  }
+}
+
+var g = gen();
+g.throw(1);
+// Uncaught 1
+```
+
+- throw方法被捕获以后，会附带执行下一条yield表达式。也就是说，会附带执行一次next方法
+
+```js
+var gen = function* gen(){
+  try {
+    yield console.log('a');
+  } catch (e) {
+    // ...
+  }
+  yield console.log('b');
+  yield console.log('c');
+}
+
+var g = gen();
+g.next() // a
+// 只要 Generator 函数内部部署了try...catch代码块，那么遍历器的throw方法抛出的错误，不影响下一次遍
+g.throw() // b
+g.next() // c
+```
+
+- Generator 函数体外抛出的错误，可以在函数体内捕获；反过来，Generator 函数体内抛出的错误，也可以被函数体外的catch捕获
+
+```js
+function* foo() {
+  var x = yield 3;
+  var y = x.toUpperCase();
+  yield y;
+}
+
+var it = foo();
+
+it.next(); // { value:3, done:false }
+
+try {
+  it.next(42);
+} catch (err) {
+  console.log(err);
+}
+```
+
+- 一旦 Generator 执行过程中抛出错误，且没有被内部捕获，就不会再执行下去了。如果此后还调用next方法，将返回一个value属性等于undefined、done属性等于true的对象，即 JavaScript 引擎认为这个 Generator 已经运行结束了
+
+### Generator.prototype.return()
+
+- Generator 函数返回的遍历器对象，还有一个return方法，可以返回给定的值，并且终结遍历 Generator 函数
+
+```js
+function* gen() {
+  yield 1;
+  yield 2;
+  yield 3;
+}
+
+var g = gen();
+
+g.next()        // { value: 1, done: false }
+g.return('foo') // { value: "foo", done: true }
+g.next()        // { value: undefined, done: true }
+```
+
+- 如果return方法调用时，不提供参数，则返回值的value属性为undefined
+
+```js
+function* gen() {
+  yield 1;
+  yield 2;
+  yield 3;
+}
+
+var g = gen();
+
+g.next()        // { value: 1, done: false }
+g.return() // { value: undefined, done: true }
+```
+
+- 如果 Generator 函数内部有try...finally代码块，且正在执行try代码块，那么return方法会导致立刻进入finally代码块，执行完以后，整个函数才会结束
+
+```js
+function* numbers () {
+  yield 1;
+  try {
+    yield 2;
+    yield 3;
+  } finally {
+    yield 4;
+    yield 5;
+  }
+  yield 6;
+}
+var g = numbers();
+g.next() // { value: 1, done: false }
+g.next() // { value: 2, done: false }
+g.return(7) // { value: 4, done: false }
+g.next() // { value: 5, done: false }
+g.next() // { value: 7, done: true }
+```
+
+### next()、throw()、return() 的共同点
+
+- 它们的作用都是让 Generator 函数恢复执行，并且使用不同的语句替换yield表达式
+- next()是将yield表达式替换成一个值
+
+```js
+const g = function* (x, y) {
+  let result = yield x + y;
+  return result;
+};
+
+const gen = g(1, 2);
+gen.next(); // Object {value: 3, done: false}
+
+gen.next(1); // Object {value: 1, done: true}
+// 相当于将 let result = yield x + y
+// 替换成 let result = 1;
+```
+
+- throw()是将yield表达式替换成一个throw语句
+
+```js
+gen.throw(new Error('出错了')); // Uncaught Error: 出错了
+// 相当于将 let result = yield x + y
+// 替换成 let result = throw(new Error('出错了'));
+```
+
+- return()是将yield表达式替换成一个return语句
+
+```js
+gen.return(2); // Object {value: 2, done: true}
+// 相当于将 let result = yield x + y
+// 替换成 let result = return 2;
+```
+
+### yield* 表达式
+
+- 用来在一个 Generator 函数里面执行另一个 Generator 函数
+- 任何数据结构只要有 Iterator 接口，就可以被yield*遍历
+
+```js
+function* bar() {
+  yield 'x';
+  yield* foo();
+  yield 'y';
+}
+
+// 等同于
+function* bar() {
+  yield 'x';
+  yield 'a';
+  yield 'b';
+  yield 'y';
+}
+
+// 等同于
+function* bar() {
+  yield 'x';
+  for (let v of foo()) {
+    yield v;
+  }
+  yield 'y';
+}
+
+for (let v of bar()){
+  console.log(v);
+}
+// "x"
+// "a"
+// "b"
+// "y"
+```
+
+- 如果被代理的 Generator 函数有return语句，那么就可以向代理它的 Generator 函数返回数据
+
+```js
+// 一
+function* foo() {
+  yield 2;
+  yield 3;
+  return "foo";
+}
+
+function* bar() {
+  yield 1;
+  var v = yield* foo();
+  console.log("v: " + v);
+  yield 4;
+}
+
+var it = bar();
+
+it.next()
+// {value: 1, done: false}
+it.next()
+// {value: 2, done: false}
+it.next()
+// {value: 3, done: false}
+it.next();
+// "v: foo"
+// {value: 4, done: false}
+it.next()
+// {value: undefined, done: true}
+
+
+// 二
+function* genFuncWithReturn() {
+  yield 'a';
+  yield 'b';
+  return 'The result';
+}
+function* logReturned(genObj) {
+  let result = yield* genObj;
+  console.log(result);
+}
+
+[...logReturned(genFuncWithReturn())]
+// The result
+// 值为 [ 'a', 'b' ]
+```
+
+- yield*命令可以很方便地取出嵌套数组的所有成员
+
+```js
+function* iterTree(tree) {
+  if (Array.isArray(tree)) {
+    for(let i=0; i < tree.length; i++) {
+      yield* iterTree(tree[i]);
+    }
+  } else {
+    yield tree;
+  }
+}
+
+const tree = [ 'a', ['b', 'c'], ['d', 'e'] ];
+
+for(let x of iterTree(tree)) {
+  console.log(x);
+}
+// a
+// b
+// c
+// d
+// e
+```
+
+### Generator 函数的this
+
+- Generator 函数总是返回一个遍历器，ES6 规定这个遍历器是 Generator 函数的实例，也继承了 Generator 函数的prototype对象上的方法
+
+```js
+function* g() {}
+
+g.prototype.hello = function () {
+  return 'hi!';
+};
+
+let obj = g();
+
+obj instanceof g // true
+obj.hello() // 'hi!'
+```
+
+- 如果把g当作普通的构造函数，并不会生效，因为g返回的总是遍历器对象，而不是this对象
+
+```js
+function* g() {
+  this.a = 11;
+}
+
+let obj = g();
+obj.next();
+obj.a // undefined
+```
+
+- Generator 函数也不能跟new命令一起用，会报错
+- 变通方法：生成一个空对象，使用call方法绑定 Generator 函数内部的this
+
+```js
+// 一
+function* F() {
+  this.a = 1;
+  yield this.b = 2;
+  yield this.c = 3;
+}
+var obj = {};
+var f = F.call(obj);
+
+f.next();  // Object {value: 2, done: false}
+f.next();  // Object {value: 3, done: false}
+f.next();  // Object {value: undefined, done: true}
+
+obj.a // 1
+obj.b // 2
+obj.c // 3
+
+// 二
+function* F() {
+  this.a = 1;
+  yield this.b = 2;
+  yield this.c = 3;
+}
+var f = F.call(F.prototype);
+
+f.next();  // Object {value: 2, done: false}
+f.next();  // Object {value: 3, done: false}
+f.next();  // Object {value: undefined, done: true}
+
+f.a // 1
+f.b // 2
+f.c // 3
+
+// 三
+function* gen() {
+  this.a = 1;
+  yield this.b = 2;
+  yield this.c = 3;
+}
+
+function F() {
+  return gen.call(gen.prototype);
+}
+
+var f = new F();
+
+f.next();  // Object {value: 2, done: false}
+f.next();  // Object {value: 3, done: false}
+f.next();  // Object {value: undefined, done: true}
+
+f.a // 1
+f.b // 2
+f.c // 3
+```
+
+### Generator 与状态机
+
+- Generator 是实现状态机的最佳结构
+  - 少了用来保存状态的外部变量ticking，这样就更简洁，更安全（状态不会被非法篡改）、更符合函数式编程的思想
+  - Generator 之所以可以不用外部变量保存状态，是因为它本身就包含了一个状态信息，即目前是否处于暂停态
+
+```js
+var ticking = true;
+var clock = function() {
+  if (ticking)
+    console.log('Tick!');
+  else
+    console.log('Tock!');
+  ticking = !ticking;
+}
+
+// 转为 Generator 写法
+var clock = function* () {
+  while (true) {
+    console.log('Tick!');
+    yield;
+    console.log('Tock!');
+    yield;
+  }
+};
+```
+
+## 装饰器 (教程有点过时)
+
+- 装饰器（Decorator）是一种与类（class）相关的语法，用来注释或修改类和类方法
+- 装饰器是一种函数，写成@ + 函数名。它可以放在类和类方法的定义前面
+- 装饰器是一个对类进行处理的函数。装饰器函数的第一个参数，就是所要装饰的目标类
+- 装饰器对类的行为的改变，是代码编译时发生的，而不是在运行时。这意味着，装饰器能在编译阶段运行代码。也就是说，装饰器本质就是编译时执行的函数
+
+```js
+@frozen class Foo {
+  @configurable(false)
+  @enumerable(true)
+  method() {}
+
+  @throttle(500)
+  expensiveMethod() {}
+}
+```
+
+### 类的装饰
+
+- 装饰器可以用来装饰整个类
+
+```js
+@decorator
+class A {}
+
+// 等同于
+
+class A {}
+A = decorator(A) || A;
+
+
+// 为类添加一个静态属性
+@testable
+class MyTestableClass {
+  // ...
+}
+
+function testable(target) {
+  target.isTestable = true;
+}
+
+MyTestableClass.isTestable // true
+
+
+// 为类添加一个实例属性
+function testable(target) {
+  target.prototype.isTestable = true;
+}
+
+@testable
+class MyTestableClass {}
+
+let obj = new MyTestableClass();
+obj.isTestable // true
+
+
+// 如果觉得一个参数不够用，可以在装饰器外面再封装一层函数
+function testable(isTestable) {
+  return function(target) {
+    target.isTestable = isTestable;
+  }
+}
+
+@testable(true)
+class MyTestableClass {}
+MyTestableClass.isTestable // true
+
+@testable(false)
+class MyClass {}
+MyClass.isTestable // false
+```
+
+### 方法的装饰
+
+- 装饰器不仅可以装饰类，还可以装饰类的属性
+- 装饰器函数readonly一共可以接受三个参数
+  - 装饰器的本意是要“装饰”类的实例，但是这个时候实例还没生成，所以只能去装饰原型（这不同于类的装饰，那种情况时target参数指的是类本身）
+  - 第二个参数是所要装饰的属性名
+  - 第三个参数是该属性的描述对象
+
+```js
+class Person {
+  @readonly
+  name() { return `${this.first} ${this.last}` }
+}
+
+function readonly(target, name, descriptor){
+  // descriptor对象原来的值如下
+  // {
+  //   value: specifiedFunction,
+  //   enumerable: false,
+  //   configurable: true,
+  //   writable: true
+  // };
+  descriptor.writable = false;
+  // 装饰器（readonly）会修改属性的描述对象（descriptor），然后被修改的描述对象再用来定义属性
+  return descriptor;
+}
+
+readonly(Person.prototype, 'name', descriptor);
+// 类似于
+Object.defineProperty(Person.prototype, 'name', descriptor);
+
+
+// @log装饰器的作用就是在执行原始的操作之前，执行一次console.log，从而达到输出日志的目的
+class Math {
+  @log
+  add(a, b) {
+    return a + b;
+  }
+}
+
+function log(target, name, descriptor) {
+  var oldValue = descriptor.value;
+
+  descriptor.value = function() {
+    console.log(`Calling ${name} with`, arguments);
+    return oldValue.apply(this, arguments);
+  };
+
+  return descriptor;
+}
+
+const math = new Math();
+
+// passed parameters should get logged now
+math.add(2, 4);
+```
+
+- 如果同一个方法有多个装饰器，会像剥洋葱一样，先从外到内进入，然后由内向外执行
+
+```js
+function dec(id){
+  console.log('evaluated', id);
+  return (target, property, descriptor) => console.log('executed', id);
+}
+
+class Example {
+    @dec(1)
+    @dec(2)
+    method(){}
+}
+// evaluated 1
+// evaluated 2
+// executed 2
+// executed 1
+```
+
+- 除了注释，装饰器还能用来类型检查。所以，对于类来说，这项功能相当有用。从长期来看，它将是 JavaScript 代码静态分析的重要工具
+
+### 装饰器不能用于函数
+
+- 装饰器只能用于类和类的方法
+  - 由于存在函数提升，使得装饰器不能用于函数。类是不会提升的，所以就没有这方面的问题
+
+```js
+// 情况一
+var counter = 0;
+
+var add = function () {
+  counter++;
+};
+
+@add
+function foo() {
+}
+
+// 等同于
+@add
+function foo() {
+}
+
+var counter;
+var add;
+
+counter = 0;
+
+add = function () {
+  counter++;
+};
+
+
+// 情况二
+var readOnly = require("some-decorator");
+
+@readOnly
+function foo() {
+}
+
+// 等同于
+var readOnly;
+
+@readOnly
+function foo() {
+}
+
+readOnly = require("some-decorator");
+
+```
+
+### core-decorators.js
+
+- [core-decorators.js](https://github.com/jayphelps/core-decorators.js)是一个第三方模块，提供了几个常见的装饰器，通过它可以更好地理解装饰器
+- @autobind
+  - autobind装饰器使得方法中的this对象，绑定原始对象
+
+```js
+import { autobind } from 'core-decorators';
+
+class Person {
+  @autobind
+  getPerson() {
+    return this;
+  }
+}
+
+let person = new Person();
+let getPerson = person.getPerson;
+
+getPerson() === person;
+// true
+```
+
+- @readonly
+  - readonly装饰器使得属性或方法不可写
+
+```js
+import { readonly } from 'core-decorators';
+
+class Meal {
+  @readonly
+  entree = 'steak';
+}
+
+var dinner = new Meal();
+dinner.entree = 'salmon';
+// Cannot assign to read only property 'entree' of [object Object]
+```
+
+- @override
+  - override装饰器检查子类的方法，是否正确覆盖了父类的同名方法，如果不正确会报错
+
+```js
+import { override } from 'core-decorators';
+
+class Parent {
+  speak(first, second) {}
+}
+
+class Child extends Parent {
+  @override
+  speak() {}
+  // SyntaxError: Child#speak() does not properly override Parent#speak(first, second)
+}
+
+// or
+
+class Child extends Parent {
+  @override
+  speaks() {}
+  // SyntaxError: No descriptor matching Child#speaks() was found on the prototype chain.
+  //
+  //   Did you mean "speak"?
+}
+```
+
+- @deprecate (别名@deprecated)
+  - deprecate或deprecated装饰器在控制台显示一条警告，表示该方法将废除
+
+```js
+import { deprecate } from 'core-decorators';
+
+class Person {
+  @deprecate
+  facepalm() {}
+
+  @deprecate('We stopped facepalming')
+  facepalmHard() {}
+
+  @deprecate('We stopped facepalming', { url: 'http://knowyourmeme.com/memes/facepalm' })
+  facepalmHarder() {}
+}
+
+let person = new Person();
+
+person.facepalm();
+// DEPRECATION Person#facepalm: This function will be removed in future versions.
+
+person.facepalmHard();
+// DEPRECATION Person#facepalmHard: We stopped facepalming
+
+person.facepalmHarder();
+// DEPRECATION Person#facepalmHarder: We stopped facepalming
+//
+//     See http://knowyourmeme.com/memes/facepalm for more details.
+//
+```
+
+- @suppressWarnings
+  - suppressWarnings装饰器抑制deprecated装饰器导致的console.warn()调用。但是，异步代码发出的调用除外
+
+```js
+import { suppressWarnings } from 'core-decorators';
+
+class Person {
+  @deprecated
+  facepalm() {}
+
+  @suppressWarnings
+  facepalmWithoutWarning() {
+    this.facepalm();
+  }
+}
+
+let person = new Person();
+
+person.facepalmWithoutWarning();
+// no warning is logged
+```
+
+### 使用装饰器实现自动发布事件
+
+```js
+const postal = require("postal/lib/postal.lodash");
+
+export default function publish(topic, channel) {
+  const channelName = channel || '/';
+  const msgChannel = postal.channel(channelName);
+  msgChannel.subscribe(topic, v => {
+    console.log('频道: ', channelName);
+    console.log('事件: ', topic);
+    console.log('数据: ', v);
+  });
+
+  return function(target, name, descriptor) {
+    const fn = descriptor.value;
+
+    descriptor.value = function() {
+      let value = fn.apply(this, arguments);
+      msgChannel.publish(topic, value);
+    };
+  };
+}
+
+// index.js
+import publish from './publish';
+
+class FooComponent {
+  @publish('foo.some.message', 'component')
+  someMethod() {
+    return { my: 'data' };
+  }
+  @publish('foo.some.other')
+  anotherMethod() {
+    // ...
+  }
+}
+
+let foo = new FooComponent();
+
+foo.someMethod();
+foo.anotherMethod();
+
+// 执行
+$ bash-node index.js
+频道:  component
+事件:  foo.some.message
+数据:  { my: 'data' }
+
+频道:  /
+事件:  foo.some.other
+数据:  undefined
+```
+
+### Mixin模式
+
+- Mixin模式，就是对象继承的一种替代方案，意为在一个对象之中混入另外一个对象的方法
+- 在装饰器的基础上，可以实现Mixin模式
+- '混入'模式的简单实现
+
+```js
+const Foo = {
+  foo() { console.log('foo') }
+};
+
+class MyClass {}
+
+Object.assign(MyClass.prototype, Foo);
+
+let obj = new MyClass();
+obj.foo() // 'foo'
+```
+
+- 通用'混入'模式脚本示例
+
+```js
+// mixins.js
+export function mixins(...list) {
+  return function (target) {
+    // 方法会改写MyClass类的prototype对象
+    Object.assign(target.prototype, ...list);
+  };
+}
+
+// index.js
+import { mixins } from './mixins';
+
+const Foo = {
+  foo() { console.log('foo') }
+};
+
+@mixins(Foo)
+class MyClass {}
+
+let obj = new MyClass();
+obj.foo() // "foo"
+```
+
+- 通过类的继承实现 Mixin (不会改写MyClass类的prototype对象)
+
+```js
+// 在MyClass和MyBaseClass之间插入一个混入类，这个类具有foo方法，并且继承了MyBaseClass的所有方法，然后MyClass再继承这个类
+let MyMixin = (superclass) => class extends superclass {
+  foo() {
+    console.log('foo from MyMixin');
+  }
+};
+
+class MyClass extends MyMixin(MyBaseClass) {
+  /* ... */
+}
+
+let c = new MyClass();
+c.foo(); // "foo from MyMixin"
+```
+
+- 如果需要“混入”多个方法，就生成多个混入类
+
+```js
+class MyClass extends Mixin1(Mixin2(MyBaseClass)) {
+  /* ... */
+}
+```
+
+- 生成多个混入类时，可以调用super，因此可以避免在“混入”过程中覆盖父类的同名方法
+
+```js
+let Mixin1 = (superclass) => class extends superclass {
+  foo() {
+    console.log('foo from Mixin1');
+    if (super.foo) super.foo();
+  }
+};
+
+let Mixin2 = (superclass) => class extends superclass {
+  foo() {
+    console.log('foo from Mixin2');
+    if (super.foo) super.foo();
+  }
+};
+
+class S {
+  foo() {
+    console.log('foo from S');
+  }
+}
+
+class C extends Mixin1(Mixin2(S)) {
+  foo() {
+    console.log('foo from C');
+    super.foo();
+  }
+}
+
+new C().foo()
+// foo from C
+// foo from Mixin1
+// foo from Mixin2
+// foo from S
+```
+
+### Trait
+
+- Trait 也是一种装饰器，效果与 Mixin 类似，但是提供更多功能，比如防止同名方法的冲突、排除混入某些方法、为混入的方法起别名等等
+- [traits-decorator](https://github.com/CocktailJS/traits-decorator)模块提供的traits装饰器，不仅可以接受对象，还可以接受 ES6 类作为参数
+
+```js
+import { traits } from 'traits-decorator';
+
+class TFoo {
+  foo() { console.log('foo') }
+}
+
+const TBar = {
+  bar() { console.log('bar') }
+};
+
+@traits(TFoo, TBar)
+class MyClass { }
+
+let obj = new MyClass();
+obj.foo() // foo
+obj.bar() // bar
+```
+
+- Trait 不允许“混入”同名方法
+
+```js
+import { traits } from 'traits-decorator';
+
+class TFoo {
+  foo() { console.log('foo') }
+}
+
+const TBar = {
+  bar() { console.log('bar') },
+  foo() { console.log('foo') }
+};
+
+@traits(TFoo, TBar)
+class MyClass { }
+// 报错
+// throw new Error('Method named: ' + methodName + ' is defined twice.');
+//        ^
+// Error: Method named: foo is defined twice.
+
+
+// 排除TBar的foo方法解决同名冲突
+@traits(TFoo, TBar::excludes('foo'))
+class MyClass { }
+
+let obj = new MyClass();
+obj.foo() // foo
+obj.bar() // bar
+
+
+// 为TBar的foo方法起一个别名解决同名冲突
+@traits(TFoo, TBar::alias({foo: 'aliasFoo'}))
+class MyClass { }
+
+let obj = new MyClass();
+obj.foo() // foo
+obj.aliasFoo() // foo
+obj.bar() // bar
+
+
+// 结合两种方法
+@traits(TExample::excludes('foo','bar')::alias({baz:'exampleBaz'}))
+class MyClass {}
+
+
+// 使用as方法表述上述写法
+@traits(TExample::as({excludes:['foo', 'bar'], alias: {baz: 'exampleBaz'}}))
+class MyClass {}
 ```
