@@ -15,7 +15,7 @@
 
 - 返回新的字符串
 - stringObject.replace(regexp/substr,"$1 $& $` $' $$")
-- $1 与 regexp 中的第 1 个子表达式相匹配的文本。
+- $1 与 regexp 中的第 1 个子表达式相匹配的文本
 - $& 与regexp相匹配的子串
 - $` 位于匹配子串左侧的文本
 - $' 位于匹配子串右侧的文本
@@ -45,7 +45,7 @@
 
 ### arrayObject.slice(start,end)
 
-- 返回一个新的数组副本，包含从 start 到 end （不包括该元素）的 arrayObject 中的元素。
+- 返回一个新的数组副本，包含从 start 到 end （不包括该元素）的 arrayObject 中的元素
 - 可以不传参数，只是单纯的为数组创建并返回一个新数组
 - end为可选参数
 - 不传参数时对类数组对象调用slice会将其转换成数组
@@ -58,14 +58,15 @@ var obj = {
     3: "prop3",
     length: 4
 };
+// obj 的 key值必须是数字或者是数字字符串
 var kkk = Array.prototype.slice.call(obj); // ['prop0','prop1','prop2','prop3']
 ```
 
 ### arrayObject.splice(index,howmany,item1,.....,itemX)
 
-- 从数组中添加/删除项目，改变原数组。
-- index为添加/删除项目的位置。
-- howmany为删除项目的数量，为0 则不删除项目，且item1,.....,itemX一定在数组索引index位置开始填入。
+- 从数组中添加/删除项目，改变原数组
+- index为添加/删除项目的位置
+- howmany为删除项目的数量，为0 则不删除项目，且item1,.....,itemX一定在数组索引index位置开始填入
 - 返回被删除的元素组成的数组
 
 ```javascript
@@ -75,9 +76,9 @@ var kkk = Array.prototype.slice.call(obj); // ['prop0','prop1','prop2','prop3']
 
 ### arrayObject.pop() 删除并返回数组的最后一个元素
 
-### arrayObject.push(newelement1,newelement2,....,newelementX) 向数组的末尾添加一个或多个元素，并返回新的长度
-
 ### arrayObject.shift() 删除并返回数组的第一个元素
+
+### arrayObject.push(newelement1,newelement2,....,newelementX) 向数组的末尾添加一个或多个元素，并返回新的长度
 
 ### arrayObject.unshift(newelement1,newelement2,....,newelementX) 向数组的开头添加一个或多个元素，并返回新的长度
 
@@ -200,7 +201,7 @@ function arrayUniq(arr) {
 ```
 
 - 对象深拷贝
-  - 简单字面量对象的深拷贝可以使用 JSON.parse(JSON.stringify(obj)) 方法进行拷贝 （注意undefined 和 function 会丢失）
+  - 简单字面量对象的深拷贝可以使用 JSON.parse(JSON.stringify(obj)) 方法进行拷贝 （注意Symbol值、undefined 和 function 会丢失）
   - Objext.assign() 或者extends方法
 
 ```js
@@ -272,7 +273,7 @@ function arrayUniq(arr) {
   - [1,2,3,4].constructor.toString() 返回 "function Array() { [native code] }" 搜索字段Array即可
 - arr instanceof Array 返回Boolean值
   - 数组和对象 instanceof Object 都返回true
-- toString.call(param) === '[object Array]' ? [] : {} 可以用来区分数组和对象
+- toString.call(param) === '[object Array]' ? [] : {} 可以用来区分数组、对象和Date
 
 ## call | apply | bind
 
