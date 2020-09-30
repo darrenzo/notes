@@ -63,6 +63,7 @@
 
 ## v-bind 双向绑定
 
+- [原理](https://github.com/bison1994/two-way-data-binding/blob/master/index.html#L46)
 - 双大括号会将数据解释为普通文本，而非 HTML 代码
 - 当这些数据改变时，视图会进行重渲染。值得注意的是只有当实例被创建时 data 中存在的属性是响应式的。也就是说如果你添加一个新的属性app.b=2,那么对 b 的改动将不会触发任何视图的更新。如果你知道你会在晚些时候需要一个属性，但是一开始它为空或不存在，那么你仅需要设置一些初始值
 - 除了 data 属性，Vue 实例暴露了一些有用的实例属性与方法。它们都有前缀 $，以便与用户定义的属性区分开来
@@ -312,7 +313,7 @@ computed: {
 
 - 给select标签加上multiple属性
 - data里绑定的属性应该是个数组 data() { return { selected: [] } }
-- 数据要绑定到一个数组,即使写引号，选中数据依旧会新建中括号再显示数据
+- 数据要绑定到一个数组,即使写引号，选中数据依旧更改为数组再填入数据
 
 ### select应用，动态选项
 
@@ -788,7 +789,7 @@ Vue.directive('focus', {
             transition: all 0.3s;    /* 动画期间 */
         }
         .slide-enter, .slide-leave-to {
-            opacity: 0; /* 不能给原样式 显示设置 opacity: 1, 否则无效  */
+            opacity: 0; /* 不能给原样式 显式设置 opacity: 1, 否则无效  */
             transform: translate3d(100%, 0, 0);  /* 动画开始和结束位置 */
         }
     </style>
@@ -801,7 +802,7 @@ Vue.directive('focus', {
 ## vue获取DOM元素的方法
 
 ```html
-    <scroll class="list" ref="list"></scrill>
+    <scroll class="list" ref="list"></scroll>
     <script>
         this.$refs.list.$el.style  // this.$refs.list获取的是vue对象
     </script>
@@ -812,18 +813,7 @@ Vue.directive('focus', {
 - 子组件在父组件slot标签位置处插入
 
 ```html
-    <!-- 父组件 -->
-    <children>
-        <template slot="header">
-            This is header
-        </template>
-        <!-- slot-scope作用域插槽，声明一个参数 "slotPorps"，作为插槽的作用域,可以通过这个作用域来调用子组件传过来的数据 -->
-        <template slot="footer" slot-scope="slotPorps">
-            Our link: {{slotPorps.url}}
-        </template>
-    </children>
-
-    <!-- 子组件 -->
+    <!-- 子组件 写好模板-->
     <template>
         <header>
             <slot name="header"></slot>
@@ -836,6 +826,17 @@ Vue.directive('focus', {
             <slot name="footer" :link="url" :text="ptext"></slot>
         </footer>
     </template>
+
+    <!-- 父组件 -->
+    <children>
+        <template slot="header">
+            This is header
+        </template>
+        <!-- slot-scope作用域插槽，声明一个参数 "slotPorps"，作为插槽的作用域,可以通过这个作用域来调用子组件传过来的数据 -->
+        <template slot="footer" slot-scope="slotPorps">
+            Our link: {{slotPorps.url}}
+        </template>
+    </children>
 
     <!-- 编译结果 -->
      <header>
@@ -1006,7 +1007,7 @@ obj = {...obj}
     }
 ```
 
-- 在Vue中，如果需要修改数组的某个元素，或者修改数组的长度，需要用vue提供的内置方法。否则vue无法监听到对应的变化。
+- 在Vue中，如果需要修改数组的某个元素，或者修改数组的长度，需要用vue提供的内置方法(直接修改时，数组的引用地址没有变化)。否则vue无法监听到对应的变化。
   - 利用索引直接设置一个项  
 
   ```js
@@ -1138,7 +1139,7 @@ new Vue({
 
 ## DOM 模板解析说明
 
-- 当使用 DOM 作为模板时 (例如，将 el 选项挂载到一个已存在的元素上)，你会受到 HTML 的一些限制，因为 Vue 只有在浏览器解析和标准化 HTML 后才能获取模板内容。尤其像这些元素 `<ul>`，`<ol>`，`<table>`，`<select>` 限制了能被它包裹的元素，而一些像 `<option>` 这样的元素只能出现在某些其它元素内部。
+- 当使用 DOM 作为模板时 (例如，将 el 选项挂载到一个已存在的元素上)，你会受到 HTML 的一些限制，因为 Vue 只有在浏览器解析和标准化 HTML 后才能获取模板内容。尤其像这些元素 `<ul>`，`<ol>`，`<table>`，`<select>` 限制了能被它包裹的元素，而一些像 `<option>` 这样的元素只能出现在某些元素内部。
 
 ```html
     <table>
@@ -1153,9 +1154,10 @@ new Vue({
 
 ## vue-router 路由
 
-- Vue工程中，路由的作用是通过不同的`url`映射到不同的视图，支持`hash`模式和`history`模式，默认为`hash`模式。
+- [原理](https://github.com/webfansplz/article/tree/master/webRouter)
+- Vue工程中，路由的作用是通过不同的`url`映射到不同的视图，支持`hash`模式和`history`模式，默认为`hash`模式
 - 参数(query)或查询(search)的改变并不会触发进入/离开的导航守卫
-- `hash`模式：通过`url`的`hash`值来模拟完整的`path`。
+- `hash`模式：通过`url`的`hash`值来模拟完整的`path`
 - `history`模式：通过`history.pushState`在浏览器中创建一条新的历史纪录，从而可以无需刷新页面进行跳转。可以避免显示复杂的URL
   - 你要在服务端增加一个覆盖所有情况的候选资源：如果 URL 匹配不到任何静态资源，则应该返回同一个 index.html 页面，这个页面就是你 app 依赖的页面
   - 这么做以后，你的服务器就不再返回 404 错误页面，因为对于所有路径都会返回 index.html 文件。为了避免这种情况，你应该在 Vue 应用里面覆盖所有的路由情况，然后在给出一个 404 页面
@@ -1176,20 +1178,22 @@ new Vue({
 
 ### 路由解析流程
 
-- 导航被触发。
-- 在失活的组件里调用 beforeRouteLeave 守卫。
-- 调用全局的 beforeEach 守卫。
-- 在重用的组件里调用 beforeRouteUpdate 守卫 (2.2+)。
-- 在路由配置里调用 beforeEnter。
-- 解析异步路由组件。
-- 在被激活的组件里调用 beforeRouteEnter。
-- 调用全局的 beforeResolve 守卫 (2.5+)。
-- 导航被确认。
-- 调用全局的 afterEach 钩子。
-- 触发 DOM 更新。
-- 用创建好的实例调用 beforeRouteEnter 守卫中传给 next 的回调函数。
+- 导航被触发
+- 在失活的组件里调用 beforeRouteLeave 守卫
+- 调用全局的 beforeEach 守卫
+- 在重用的组件里调用 beforeRouteUpdate 守卫 (2.2+)
+- 在路由配置里调用 beforeEnter
+- 解析异步路由组件
+- 在被激活的组件里调用 beforeRouteEnter
+- 调用全局的 beforeResolve 守卫 (2.5+)
+- 导航被确认
+- 调用全局的 afterEach 钩子
+- 触发 DOM 更新
+- 用创建好的实例调用 beforeRouteEnter 守卫中传给 next 的回调函数
 
 ### 路由匹配
+
+- 同一个路径可以匹配多个路由, 谁先定义的，谁的优先级就最高
 
 ```js
 const router = new VueRouter({
@@ -1197,45 +1201,104 @@ const router = new VueRouter({
         {
             path: '/',
             name: 'index',
-            component: Index,
-            // 路由独享的守卫
-            beforeEnter: (to, from, next) => {
-                // ...
+            component: Index
+        },
+        // 别名：/a 的别名是 /b，意味着，当用户访问 /b 时，URL 会保持为 /b，但是路由匹配则为 /a
+        {
+            path: '/user/:id',
+            component: () => import('@/views/system/user'),
+            alias: '/usercopy/:id' // 可以自由地将 UI 结构映射到任意的 URL，而不是受限于配置的嵌套路由结构
+        },
+        {
+            path: '/article/:id/:page',
+            component: Article
+        },
+        // 重定向： 当用户访问 /a时，URL 将会被替换成 /b，然后匹配路由为 /b
+        {
+            // 重定向, 需要传参
+            path: '/redirect/:id',
+            redirect: '/user/:id'  // 也支持 { name: 'foo' }
+        },
+        {
+            // 重定向, 需要传参而没有传参，则不会改变地址，页面不会报错但是也不会显示内容
+            path: '/redirect',
+            redirect: '/user/:id'
+        },
+        {
+            // 重定向, 动态返回重定向目标
+            path: '/redirect/:id',
+            redirect: to => {
+                // 方法接收 目标路由 作为参数
+                // return 重定向的 字符串路径/路径对象
             }
         },
         {
-            path: '/user/:id/',
-            component: User
-        },
-        {
-            path: '/article/:id/',
-            component: Article,
-            // props配置为true时可将id当做prop传入组件
-            props: true
-        },
-        {
-            // 重定向
-            path: '/redirect/',
-            redirect: {name: index}
-        }
-        {
-            path: '/product/',
+            path: '/product',
             name: 'product',
             component: Product,
             // 子路由
             children: [
                 {
-                    path: 'argus/',
+                    path: '/argus',
                     component: ProductArgus
                 },
                 {
-                    path: 'c2-pro/',
+                    path: '/c2-pro',
                     component: ProductC2Pro
                 }
             ]
         }
     ]
 });
+```
+
+#### 响应路由参数的变化
+
+- 当使用路由参数时，例如从 /user/foo 导航到 /user/bar，原来的组件实例会被复用
+  - 两个路由都渲染同个组件，比起销毁再创建，复用则显得更加高效。不过，这也意味着组件的生命周期钩子不会再被调用
+
+```js
+// 复用组件时
+const User = {
+  template: '...',
+
+  // 第一种方法
+  watch: {
+    $route(to, from) {
+      // 对路由变化作出响应...
+    }
+  }
+  // 第二种方法
+  beforeRouteUpdate (to, from, next) {
+    // react to route changes...
+    // don't forget to call next()
+  }
+}
+```
+
+#### 路由通配符
+
+- 当使用通配符路由时，请确保路由的顺序是正确的，也就是说含有通配符的路由应该放在最后
+  - 路由 { path: '*' } 通常用于客户端 404 错误
+  - 如果你使用了History 模式，请确保正确配置你的服务器, 且前端需要通配符匹配路由，返回一个404组件
+  
+```js
+{
+  // 会匹配所有路径
+  path: '*'
+}
+{
+  // 会匹配以 `/user-` 开头的任意路径
+  path: '/user-*'
+}
+
+// 当使用一个通配符时，$route.params 内会自动添加一个名为 pathMatch 参数。它包含了 URL 通过通配符被匹配的部分
+// 给出一个路由 { path: '/user-*' }
+this.$router.push('/user-admin')
+this.$route.params.pathMatch // 'admin'
+// 给出一个路由 { path: '*' }
+this.$router.push('/non-existing')
+this.$route.params.pathMatch // '/non-existing'
 ```
 
 ### 全局方法
@@ -1277,10 +1340,23 @@ router.afterEach((to, from) => {
 const router = new VueRouter({
   routes: [
     {
-      path: '/foo',
+      path: '/foo/:id',
       component: Foo,
       beforeEnter: (to, from, next) => {
-        // ...
+        // to 的参数举例
+        //   {
+        //       hash: '',
+        //       fullPath: '/product/argus',
+        //       path: '/product/argus',
+        //       name: 'product.argus',
+        //       matched: [{...}, {...}],
+        //       meta: {
+        //           needLogin: true,
+        //           mustAgent: true
+        //       },
+        //       params: {id: 222},
+        //       query: {aa: 'bbb'}
+        //   }
       }
     }
   ]
@@ -1292,7 +1368,7 @@ const router = new VueRouter({
 ```js
 beforeRouteEnter (to, from, next) {
     // 在渲染该组件的对应路由被 confirm 前调用
-    // 不！能！获取组件实例 `this`，因为当守卫执行前，组件实例还没被创建
+    // 不！能！获取组件实例 `this`，因为当守卫执行前，组件实例还没被创建。(在组件周期钩子函数beforeCreate前执行)
     // 可以通过传一个回调给 next来访问组件实例。在导航被确认的时候执行回调，并且把组件实例作为回调方法的参数
     next(vm => {
         // 通过 `vm` 访问组件实例
@@ -1331,34 +1407,39 @@ beforeRouteLeave (to, from , next) {
 ### 路由元信息
 
 - `routes`配置中的每个路由对象为`路由记录`,路由记录可以是嵌套的，因此，当一个路由匹配成功后，他可能匹配多个路由记录
+  - 即如果路由是‘/foo/bar’的话，‘/foo’也会触发
 - 一个路由匹配到的所有路由记录会暴露为 $route 对象 (还有在导航守卫中的路由对象) 的 $route.matched 数组。因此，我们需要遍历 $route.matched 来检查路由记录中的 meta 字段
+  - 如果使用 $route.meta.requiresAuth 来检查，则对应路由极其所有子路由，都必须要加上requiresAuth字段，才能确保都是有登录校验的，而使用 $route.matched 可以遍历所有匹配到的路由，所以只需要最高级的路由加上requiresAuth字段即可
 
 ```js
 // `/foo/bar` 这个 URL 将会匹配父路由记录以及子路由记录
 const router = new VueRouter({
   routes: [
     {
-      path: '/foo',
-      component: Foo,
-      children: [
-        {
-          path: 'bar',
-          component: Bar,
-          // 定义路由的时候可以配置 meta 字段
-          meta: { requiresAuth: true }
-        }
-      ]
+        path: '/foo',
+        component: Foo,
+        // 定义路由的时候可以配置 meta 字段
+        meta: { requiresAuth: true }
+        children: [
+            {
+                path: '/bar',
+                component: Bar
+            },
+            {
+                path: '/baraa',
+                component: Bar
+            }
+        ]
     }
   ]
 })
 
 router.beforeEach((to, from, next) => {
   if (to.matched.some(record => record.meta.requiresAuth)) {
-    // this route requires auth, check if logged in
-    // if not, redirect to login page.
     if (!auth.loggedIn()) {
       next({
         path: '/login',
+        // 把要跳转的地址作为参数传到下一步 例如：/login?redirect=%2Fa, 在登录页登录成功后即可利用query跳转
         query: { redirect: to.fullPath }
       })
     } else {
@@ -1368,6 +1449,57 @@ router.beforeEach((to, from, next) => {
     next() // 确保一定要调用 next()
   }
 })
+```
+
+### 路由参数 props
+
+- 一般我们获取路由的参数是通过 this.$route.params 来获取
+- 让组件和路由解耦，尽量不要在组件中使用 $route,$router 方法
+- 三种写法
+
+```javascript
+const router = new VueRouter({
+    routes: [
+        {
+            path: '/',
+            name: 'index',
+            component: index
+        },
+
+        // 对应test组件中 props: ['id', 'page'] 来引入路由中的值
+        {
+            path: '/test/:id/:page',
+            name: 'test',
+            component: test,
+            props: true
+        },
+
+        // 对应 login组件中 props：["country"，“time”] 来引入路由配置中的设置的静态值
+        {
+            path: '/login/:id/:page',
+            name: 'login',
+            component: login,
+            props: {
+                country: 'China',
+                time: '6pm'
+            }
+        },
+
+        // 对应 logout 组件中 props：["country"，“time”] 来引入路由配置中的设置的值
+        {
+            path: '/logout/123?a=234&b=345',
+            name: 'logout',
+            component: logout,
+            props: (route) => ({
+                    // 可以将静态值与基于路由的值结合
+                    country: route.query.a,
+                    time: route.query.b
+                })
+        }
+    ]
+})
+
+
 ```
 
 ### 路由跳转
@@ -1406,6 +1538,30 @@ router.beforeEach((to, from, next) => {
 
 - 每次路由切换时，对应页面都会执行钩子destroyed(),此时可以清掉计时器等相关操作 destroyed() {clearTimeout(this.timer)}
 
+### 动态路由
+
+- 通过 Router.addRoutes([...routes]) 动态添加路由配置，一般用在权限管理时
+  - 应用初始化的时候先挂载不需要权限控制的路由，比如登录页，404等错误页
+  - 在路由的导航守卫router.beforeEach中判断当前是页面刷新还是路由切换，利用vuex的状态值在页面刷新就会重新初始化的特性和本地缓存localStorage存的登录状态值来判断页面刷新还是路由切换
+- 权限管理中遇到的问题：路由添加成功，并且能正常的跳转。但是，当我刷新页面后页面路由出错了，直接进入了错误页面404
+  - 原因：vue在初始化的时候，vue-router的实例对象已经生成了，当前路由只包含了如登录页和404等静态页面，用户权限获取的路由需要在登录成功后单独请求权限接口再动态添加到路由当中，所以页面在刷新的时候页面会找不到对应动态的路由
+- 权限管理思路：在路由的导航守卫router.beforeEach中判断当前是页面刷新还是路由切换，利用vuex的状态值在页面刷新就会重新初始化的特性和本地缓存localStorage存的登录状态值来判断页面刷新还是路由切换
+- 权限管理的实现：
+  - 1. 用户登录—> 本地缓存用户token和id，vuex中存入登录用户id（存的具体那个值,对还是错都不重要，值只是用来判断页面刷新还是路由切换，随意存。。只是用于后续的判断） —>接口获取当前用户的菜单信息—>格式化菜单信息（格式化成，路由格式）—>使用router.addRoutes动态加入路由
+  - 2. 在导航守卫router.beforeEach的方法中，进入路由后，判断 1、本地缓存的token是否有值，没有的话，说明用户没有登录过，直接跳转登录页面 2、token值有的，vuex中的用户id存在的话，页面只是路由切换，用next让路由正常流转下去 2、token值有的，vuex中的用户id的值不存在的话，说明页面刷新了，这个时候需要做两个件事情，A：设置vuex中的id的为本地缓存的用户id ， B：重新请求权限接口，格式化后，动态添加到路由，然后重新用next实现接下来的路由跳转，这里需要注意，请求的权限接口需要用async/wait 改成同步接口方便使用
+
+### 路由懒加载
+
+- 即路由配置中的component使用的是 () => import( './Foo.vue') 方式按需加载，当路由被访问时才加载对应的组件
+- 把某个路由下的所有组件都打包在同个异步块 (chunk) 中, 把组件按组分块
+
+```js
+// 注释语法会将这三个模块都打包到同一个异步块(chunk)中
+const Foo = () => import(/* webpackChunkName: "group-foo" */ './Foo.vue')
+const Bar = () => import(/* webpackChunkName: "group-foo" */ './Bar.vue')
+const Baz = () => import(/* webpackChunkName: "group-foo" */ './Baz.vue')
+```
+
 ## mounted 严格保证初始化成功挂载应用
 
  ```js
@@ -1425,6 +1581,8 @@ router.beforeEach((to, from, next) => {
  ```
 
 ## vuex
+
+- [原理](https://zhuanlan.zhihu.com/p/78981485)
 
 ### state.js
 
@@ -1635,12 +1793,12 @@ methods: {
             topInfo
 
         },
-        strict: debug,
+        strict: debug, // 严格模式下，不是mutation函数引起的状态变化都会抛出错误, 正式版本不能开启严格模式
         plugins: debug ? [createLogger()] : []
 
     });
     // 取值时得用this.$store.state.user获取到模块user的state对象
-    // 因为getters是全局使用的，所以取值时得用this.$store.getters获取到的是所有模块合在一起的state对象
+    // 因为getters是全局使用的，所以this.$store.getters获取到的是所有模块合在一起的state对象
 ```
 
 ### vue2.0 + ts 中的 vuex写法
@@ -1720,20 +1878,21 @@ Vue.use(VueI18n);
 
 const i18n = new VueI18n({
     // 默认语言
-    locale: 'en',
+    locale: 'en-US',
     // 以下为属性
     messages: {
-        en: {
+        'en-US': {
             hi: 'Hi',
             plan: 'Cloud {planname}',
             cycle: 'Daily | {count}-Day'
         },
         'zh-CN': {
             hi: '你好'
-        }
+        },
+        fr: require('./common/lang/fr')
     },
     numberFormats: {
-        en: {
+        'en-US': {
             decimal: {
                 style: 'decimal'
             }
@@ -1753,8 +1912,10 @@ new Vue({
     components: { App },
     template: '<App/>',
     i18n,
-    store
-});
+    store,
+    render: h => h(App),
+}).$mount('#app')
+
 
 ```
 
@@ -1770,7 +1931,7 @@ new Vue({
 
 <!-- 区分单复数 -->
 <!-- 根据第二个参数传入的值选用 'Daily | {count}-Day' 里面的值，单数选第一个，复数选第二个格式（完整的为 a | b | c， 传 0 则使用 a , 传 1 则使用 b， 复数使用 c） -->
-<p>Cycle: {{ $t('cycle', 20, {count: 20}) }}<p>
+<p>Cycle: {{ $tc('cycle', 20, {count: 20}) }}<p>
 
 <!-- 数字本地化 -->
 <!-- 例如10000.69在德语中显示 10.000,69，在英语中显示10,000.69 -->
@@ -1780,3 +1941,35 @@ new Vue({
 
 - 注意，存储i18n文案的变量，需要是计算属性或者是一个返回文案的方法，才能即时响应语言的切换
 - 注意$tc()方法的使用
+
+```js
+// vue-i18n.js
+function loadLocaleMessages(): LocaleMessages {
+    const defaultLocales = require.context('@/assets/locales', true, /[A-Za-z0-9-_,\s]+\.json$/i);
+    let locales: __WebpackModuleApi.RequireContext;
+    if (CONFIG.IS_CLIENT) {
+        try {
+            if (process.env.VUE_APP_APP_PROTOCOL !== 'reolink') {
+                locales = require.context(`@src/renderer/assets/locales-${process.env.VUE_APP_APP_PROTOCOL}`, true, /[A-Za-z0-9-_,\s]+\.json$/i);
+            }
+        } catch (error) {
+            //
+        }
+    }
+    const messages: LocaleMessages = {};
+    defaultLocales.keys().forEach(key => {
+        const matched = key.match(/([A-Za-z0-9-_]+)\./i);
+        if (matched && matched.length > 1) {
+            const locale = matched[1];
+            (messages as any)[locale] = locales !== undefined && locales.keys().includes(key) ? Object.assign(defaultLocales(key), locales(key)) : defaultLocales(key);
+        }
+    });
+    return messages;
+}
+
+export default new VueI18n({
+    locale: 'en',
+    fallbackLocale: 'en',
+    messages: loadLocaleMessages()
+});
+```
