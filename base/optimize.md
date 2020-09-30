@@ -2,32 +2,18 @@
 
 ## 性能分析工具
 
-- 在线网站
-  - [WebPageTest](http://www.webpagetest.org/)
-    - 在该网站输入你的url，就会生成1个url加载的时间瀑布图，对所有加载的资源(css,js,image等等)列出优化的清单
-  - [ShowSlow](http://www.showslow.com/)
-    - showslow是yslow的数据收集与展示平台
-    - 它是开源的php项目，可以用来与firefox的yslow插件、page speed插件或者dynatrace通信，收集插件或程序所发送过来的信息并集中展示
-    - 只需要在dynatrace安装目录下进行一些设置，即可自动实现上传结果到showslow平台作为存档、分析及监控
 - 浏览器插件
-  - FireBug
-    - Firebug 是firefox中最为经典的开发工具，可以监控请求头，响应头，显示资源加载瀑布
   - Page Speed
-    - 基于firebug的web页面优化的评测工具，同时还有支持chrome的插件，因为是google产的
-    - 直接打开FF的firebug或[chrome的开发人员工具](https://developers.google.com/speed/)，切换到page speed标签，浏览一个网页然后点击分析即可，分析完成后会针对规则打出一个成绩，并告诉你哪些规则你没有符合
+    - 直接打开[chrome的开发人员工具](https://developers.google.com/speed/)，切换到page speed标签，浏览一个网页然后点击分析即可，分析完成后会针对规则打出一个成绩，并告诉你哪些规则你没有符合
     - [评分规则](https://developers.google.com/speed/docs/best-practices/rules_intro)
     - 其实这个更像是代码的白盒测试分析工具，因为其都是根据一定的规范来检测网页的优化程度，而不是实际的去监听和过滤页面访问所花费的时间
-    - 如果想看页面访问时间的细节，firebug和chrome的开发人员工具本身就已经有了
+    - 如果想看页面访问时间的细节，firefox和chrome的devtools本身就已经有了
   - [Speed Tracer](https://developers.google.com/web-toolkit/speedtracer/get-started)
     - 基于chrome的插件，同样是google产的，这个是web前端页的性能记录和分析工具，同时还提供一个规则和建议的评测
     - 这个工具收集的东西主要是资源或事件消耗的时间，它会实时的记录某个页面的加载过程，并且一直跟踪所有的事件
     - 优势点是用于监控JS的解析执行时间，还可以监控页面的重绘、回流
     - 安装这个插件，需要安装 [Google Chrome Developer Channel](http://dev.chromium.org/getting-involved/dev-channel#TOC-Subscribing-to-a-channel) 版本
       - 如果打不开，可以去[http://www.google.com/chrome/eula.html?extra=devchannel](http://www.google.com/chrome/eula.html?extra=devchannel)下载
-- [Yslow](http://yslow.org/)
-  - 基于firebug的评测分析工具，yahoo产, page speed的增强版
-  - 和page speed类似工具，会给出页面的评分和优化说规则，同时会提供页面下载资源的统计分析功能，还提供了一些小工具，如js运行检测，图片的优化工具，未符合规则的资源有哪些等等
-  - [Yslow优化建议23条规则](http://developer.yahoo.com/performance/rules.html)
 - 独立程序类
   - DynaTrace Ajax Edition
     - 基于IE，firefox的插件，对于FF需要版本支持，需要独立安装文件（50多M）
@@ -44,6 +30,93 @@
     - httpwatch包含IE和firefox插件。不过httpwatch专业版本是收费的，免费版本有些功能限制
 - 通常意义上的web前端性能测试的话，可以选择一个固定的方案，比如：DynaTrace + showslow，前者获取非常丰富的数据，后者则在服务端专门展示这些数据，即方便使用又方便存储
 - 要支持持续测试的话，可以写自动化的脚本来跑具体的页面，每次新版本都执行一次自动化测试即可
+
+## [yahoo关于加快网站运行速度的35条最佳实践](http://developer.yahoo.com/performance/rules.html)
+
+- 最少化HTTP请求数
+  - 合并文件
+  - css精灵图
+  - 10KB以内的图片使用base64编码格式内联
+- 使用CDN
+- 减少DNS查找
+  - 浏览器自身会缓存DNS查询记录，可以不向主机host文件查询
+    - IE缓存半分钟，firfox缓存1分钟
+  - 浏览器中下载资源的域名越少，需要的DNS查询就更少，在Http1.x时，浏览器有同域名并发限制数，所以两者之间折中一下，建议下载的资源使用2~4个不同的域名
+- 避免301和302重定向
+- 添加 "Expires" 和 "Cache-Control" 头，配置ETags
+- 利用 Ajax 缓存
+  - 只要请求地址不变，包括查询参数，就会自动利用缓存
+- 使用Ajax的GET请求
+  - POST在浏览器中实现为两个步骤的过程:首先发送头部，然后发送数据。所以最好使用GET，它只需要发送一个TCP包(除非您有很多cookie)
+- 避免404错误
+  - 占用请求资源
+- 减少Cookie大小
+  - 关于cookie的信息在web服务器和浏览器之间的HTTP报头中交换
+  - 清除不必要的Cookie
+  - 请注意在适当的域级别设置cookie，以免其他子域受到影响
+  - 设置合理的过期时间
+- 对资源使用无cookie的域
+  - 当浏览器对静态图像发出请求并同时发送cookie时，服务器对这些cookie没有任何用处。所以它们只会毫无理由地产生网络流量，应该确保使用无cookie的请求来请求静态组件。创建一个子域甚至新域并托管所有静态组件
+  - 如果已经在顶级域名example.org(而不是www.example.org)上设置了cookie，那么对static.example.org的所有请求将包括这些cookie
+  - 在无cookie域中托管静态组件的另一个好处是，一些代理可能拒绝缓存使用cookie请求的资源
+- css样式文件在html head 中引入
+- js文件在html body 的底部引入
+- 使用link标签而不是 @import
+  - 在IE中，@import的行为和在页面底部使用`<link>`是一样的，所以最好不要使用它
+- 让favicon.ico小并且可缓存
+  - 即使不设置ico, 浏览器也一定会请求它
+  - 由于它在同一台服务器上，每次请求它时都会发送cookie
+  - 大小限制在1KB以内
+  - 设置 “Expires” 控制头
+- 避免css表达式 expression()
+  - 触发频率过高
+- 使用外部的css和js文件
+- 压缩组件
+  - 从HTTP/1.1开始，web客户端在HTTP请求中使用接受编码头表示对压缩的支持（deflate 已过时，应禁用）
+    - Accept-Encoding: gzip, deflate
+  - 如果web服务器在请求中看到这个头，它可以使用客户机列出的方法之一压缩响应。web服务器通过响应中的内容编码头通知web客户机
+    - Content-Encoding: gzip
+- 压缩css和js
+- 删除重复的js脚本
+  - 脚本管理模块或者方法
+- 及时输出可用部分
+  - 当用户请求一个页面时，后端服务器需要200到500ms的时间来将HTML页面拼接在一起。在此期间，浏览器是空闲的，因为它等待数据到达
+  - 在PHP中有函数flush()。它允许您发送您的部分准备好的HTML响应到浏览器
+  
+  ```php
+    ... <!-- css, js -->
+    </head>
+    <?php flush(); ?>
+    <body>
+    ... <!-- content -->
+  ```
+
+- 延迟加载组件
+- 预加载组件
+- 减少DOM元素数量
+- 减少 iframe 的使用
+  - iframe的特点
+    - 利于缓慢的第三方内容，如徽章和广告
+    - 安全沙盒
+    - 并行下载脚本
+    - 即使是空白页也消耗资源
+    - 内容是一个页面
+    - 没有语义
+- 减少DOM的访问次数
+  - 使用JavaScript访问DOM元素很慢，且会导致回流
+  - 缓存已经访问过的元素
+  - “脱机”更新节点，然后将它们添加到树中，比如createDocumentFragment()
+  - 避免使用JavaScript固定布局
+- 尽可能使用事件委托机制
+- 优化图片
+  - 尽可能是用PNG而不是GIF
+- 优化CSS精灵图
+  - 不要在sprite图像之间留下大的差距
+- 不要再HTML中缩放图片，尽可能选用适应尺寸的图片
+- 移动端保证组件在25KB以下
+  - iPhone浏览器不会缓存大于25KB的组件，可以缓存最多19个25KB的组件
+- img标签避免出现空的src
+  - 部分浏览器依旧会发出请求
 
 ## 输入网址到页面呈现的过程
 
@@ -66,7 +139,7 @@
 - 成本（时间和资源）：
   - 一个完整的请求都需要经过 DNS寻址、与服务器建立连接、发送数据、等待服务器响应、接收数据这样的过程
   - 每个请求都需要携带数据，因此每个请求都需要占用带宽
-  - 浏览器进行并发请求的请求数是有上限的，因此请求数多了以后，浏览器需要分批进行请求，会增加用户的等待时间
+  - 浏览器进行http1.x并发请求的请求数是有上限的，因此请求数多了以后，浏览器需要分批进行请求，会增加用户的等待时间
 - 解决途径
   - 对于以目录形式访问的HTTP链接，如果服务器对链接末尾是否带'/'有区别对待的话,那么其中很可能隐藏了301跳转，增加了多余请求
   - 有可能多个模块中请求了同样的资源，导致资源的重复请求
@@ -107,7 +180,7 @@
     - 重定向会增加http请求数，但必要的重定向有利于提高用户体验
     - 定义链接URL时使用最完整的、最直接的地址
   - 减少cookie传输
-    - ookie包含在每次请求和响应中，太大的cookie会严重影响数据传输，因此尽量减少cookie中传输的数据量
+    - cookie包含在每次请求和响应中，太大的cookie会严重影响数据传输，因此尽量减少cookie中传输的数据量
   - 首屏优化
     - 2s时间是用户的最佳体验，一旦超出这个时间，将会导致用户的流失
     - 首屏只加载部分HTML
