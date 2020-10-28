@@ -53,7 +53,7 @@
 ```javascript
     function checkCookie() {
         var username=getCookie("username");
-        if (username!="") {
+        if (!username&&username!==0) {
             alert("Welcome again " + username);
         }else {
             username = prompt("Please enter your name:","");
