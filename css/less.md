@@ -588,7 +588,7 @@ a {
 
 ## 继承(扩展)
 
-- extend 是 Less 的一个伪类。它可继承所匹配声明中的全部样式。
+- extend 是 Less 的一个伪类。它可继承所匹配声明中的全部样式
 - #wrap :extend(dev pre) 允许选择器与扩展之间有空格
 - 可以同时有多个扩展pre:hover:extend(div pre):extend(.bucket tr)或者pre:hover:extend(div pre, .bucket tr)
 - pre:hover.nth-child(odd):extend(div pre) 扩展必须写在最后

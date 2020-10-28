@@ -399,7 +399,7 @@ import(/* webpackChunkName: "print" */ './print').then(module => {
 
 - 解析路径后，解析器(resolver)将检查路径是否指向文件或目录
   - 路径指向一个文件
-    - 如果路径具有文件扩展名，则被直接将文件打包
+    - 如果路径具有文件扩展名，则直接将文件打包
     - 否则，将使用 resolve.extensions 选项作为文件扩展名来解析，此选项告诉解析器在解析中能够接受哪些扩展名（例如 .js, .jsx）
   - 路径指向一个文件夹, 则采取以下步骤找到具有正确扩展名的正确文件
     - 如果文件夹中包含 package.json 文件，则按照顺序查找 resolve.mainFields 配置选项中指定的字段, 并且根据 package.json 中的第一个这样的字段确定文件路径
