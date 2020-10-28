@@ -508,6 +508,7 @@ module.exports = {
   - **public** 目录提供的是一个应急手段，当你通过绝对路径引用它时，留意应用将会部署到哪里
     - 如果你的应用没有部署在域名的根部，那么你需要为你的 URL 配置 **publicPath** 前缀：
       - 在 public/index.html 或其它通过 html-webpack-plugin 用作模板的 HTML 文件中，你需要通过 <%= BASE_URL %> 设置链接前缀：`<link rel="icon" href="<%= BASE_URL %>favicon.ico">`
+        - 配置publicPath属性
       - 在模板中，你首先需要向你的组件传入基础 URL：
 
       ```html
