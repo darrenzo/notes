@@ -434,6 +434,36 @@ ctx.putImageData(imgData,10,10);
 var imgData2=context.createImageData(imageData);
 ```
 
+## 绘制图片
+
+- `drawImage(image, sx, sy, sWidth, sHeight, dx, dy, dWidth, dHeight)`
+  - 参数 1：要绘制的 img 或者另一个 canvas 的引用 或者 video
+  - `sx, sy, sWidth, sHeight` 是定义图像源的切片位置和大小，`dx, dy, dWidth, dHeight` 则是定义切片的目标显示位置和大小
+    - ctx.drawImage(img, 0, 0, 400, 200, 10, 10, 200, 100)
+
+```js
+// 考虑到图片是从网络加载，如果 drawImage 的时候图片还没有完全加载完成，则什么都不做，个别浏览器会抛异常。所以我们应该保证在 img 绘制完成之后再 drawImage
+var img = new Image(); // 创建img元素
+img.onload = function(){
+    ctx.drawImage(img, 0, 0)
+}
+img.src = 'myImage.png'; // 设置图片源地址
+
+// img 可以 new 也可以来源于我们页面的 <img>标签
+<img src="./six.jpg" alt="" width="300"><br>
+<canvas id="tutorial" width="600" height="400"></canvas>
+function draw(){
+    var canvas = document.getElementById('tutorial');
+    if (!canvas.getContext) return;
+    var ctx = canvas.getContext("2d");
+    var img = document.querySelector("img");
+    ctx.drawImage(img, 0, 0);
+}
+document.querySelector("img").onclick = function (){
+    draw();
+}
+```
+
 ## 渐变样式
 
 - createLinearGradient(x0,y0,x1,y1) 创建线性的 gradient 渐变对象
@@ -498,36 +528,6 @@ var pat=ctx.createPattern(img,"repeat");
 ctx.rect(0,0,150,100);
 ctx.fillStyle=pat;
 ctx.fillRect(0,0,150,100);
-```
-
-## 绘制图片
-
-- `drawImage(image, sx, sy, sWidth, sHeight, dx, dy, dWidth, dHeight)`
-  - 参数 1：要绘制的 img 或者另一个 canvas 的引用
-  - `sx, sy, sWidth, sHeight` 是定义图像源的切片位置和大小，`dx, dy, dWidth, dHeight` 则是定义切片的目标显示位置和大小
-    - ctx.drawImage(img, 0, 0, 400, 200, 10, 10, 200, 100)
-
-```js
-// 考虑到图片是从网络加载，如果 drawImage 的时候图片还没有完全加载完成，则什么都不做，个别浏览器会抛异常。所以我们应该保证在 img 绘制完成之后再 drawImage
-var img = new Image();   // 创建img元素
-img.onload = function(){
-    ctx.drawImage(img, 0, 0)
-}
-img.src = 'myImage.png'; // 设置图片源地址
-
-// img 可以 new 也可以来源于我们页面的 <img>标签
-<img src="./six.jpg" alt="" width="300"><br>
-<canvas id="tutorial" width="600" height="400"></canvas>
-function draw(){
-    var canvas = document.getElementById('tutorial');
-    if (!canvas.getContext) return;
-    var ctx = canvas.getContext("2d");
-    var img = document.querySelector("img");
-    ctx.drawImage(img, 0, 0);
-}
-document.querySelector("img").onclick = function (){
-    draw();
-}
 ```
 
 ## 状态的保存和恢复
@@ -657,7 +657,7 @@ draw();
 ```
 
 - 每当调用 transform() 时，它都会在前一个变换矩阵上构建
-- transform() 方法的行为相对于由 rotate(), scale(), translate(), or transform() 完成的其他变换。例如：如果已经将绘图设置为放到两倍，则 transform() 方法会把绘图放大两倍，绘图最终将放大四倍
+- transform() 方法的行为相对于由 rotate(), scale(), translate(), or transform() 完成的其他变换。例如：如果已经将绘图设置为放大两倍，则 transform() 方法会把绘图放大两倍，绘图最终将放大四倍
 
 ### setTransform(a, b, c, d, e, f)
 
