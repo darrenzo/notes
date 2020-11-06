@@ -258,13 +258,26 @@ $width: 5em;
 }
 ```
 
-### 变量定义 !default
+### 变量默认定义 !default
 
-- 可以在变量的结尾添加 !default 给一个未通过 !default 声明赋值的变量赋值
-- 如果变量已经被赋值，不会再被重新赋值，但是如果变量还没有被赋值，则会被赋予新的值
-- 相当于给变量设置一个默认值
+- 可以在变量的结尾添加 !default，如果在此之前变量已经赋值，那就不使用默认值，如果没有赋值，则使用默认值
 - 变量是 null 空值时将视为未被 !default 赋值
 - 可以设置在任意地方，如果同一个变量有多个!default，只有第一个会生效
+
+```less
+/* 如果之前已经赋值,则不再使用默认值 */
+$const: "Hi";
+$const: "hello" !default;
+
+div{
+    const: $const;
+}
+
+//output
+div {
+  const: "Hi";
+}
+```
 
 ### 插值语句 #{}
 
@@ -277,12 +290,6 @@ $attr: border;
 p.#{$name} {
   #{$attr}-color: blue;
 }
-```
-
-`output`
-
-```css
-p { font: 12px/30px; }
 ```
 
 ## 数据类型（6种）
