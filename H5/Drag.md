@@ -89,7 +89,7 @@
 ```js
 function dragstart_handler(ev) {
   var img = new Image();
-  // 如果把'example.gif' 改为一个存在的图片或者图片没有创建成功，则会使用默认图片
+  // 如果把'example.gif' 改为一个不存在的图片或者图片没有创建成功，则会使用默认图片
   img.src = 'example.gif';
   ev.dataTransfer.setDragImage(img, 10, 10);
 }
@@ -165,8 +165,8 @@ function drop_handler(ev) {
 
 <script>
 function doDragOver(ev) {
-    if ([...event.dataTransfer.types].includes("text/plain")) {
-        event.preventDefault();
+    if ([...ev.dataTransfer.types].includes("text/plain")) {
+        ev.preventDefault();
     }
 }
 function dragstart_handler(ev) {
@@ -179,7 +179,7 @@ function dragover_handler(ev) {
 }
 function drop_handler(ev) {
    doDragOver(ev);
-   var data = ev.dataTransfer.getData("text");
+   var data = ev.dataTransfer.getData("text/plain");
    ev.target.appendChild(document.getElementById(data));
 }
 </script>
