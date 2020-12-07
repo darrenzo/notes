@@ -465,8 +465,71 @@
     - IOS尽量使用局部滚动，android尽量使用全局滚动
     - 同时需要给body添加上-webkit-overflow-scrolling: touch来优化移动端的滚动
   - 函数防抖和函数节流 （涉及到滚动等会被频繁触发的DOM事件，需要做好防抖和节流的工作）
-    - 函数防抖：当调用动作过n毫秒后，才会执行该动作，若在这n毫秒内又调用此动作则将重新计算执行时间
-    - 函数节流：预先设定一个执行周期，当调用动作的时刻大于等于执行周期则执行该动作，然后进入下一个新周期
+    - 函数防抖：在事件被触发n秒后再执行回调，如果在这n秒内又被触发，则重新计时
+      - 适用场景：防止多次提交，只执行最后提交的一次
+
+    ```js
+    function debounce(func, wait, immediate) {
+        let timeout, result;
+        return function() {
+            const context = this;
+            const args = arguments;
+            if (timeout) clearTimeout(timeout);
+            if (immediate) {
+                // 立即执行函数，然后等到停止触发n秒后，才可以重新触发执行
+                const callNow = !timeout;
+                timeout = setTimeout(() => {
+                    timeout = null;
+                }, wait);
+                if (callNow) result = func.apply(context, args);
+            }
+            else {
+               // 只需要延迟执行
+                timeout = setTimeout(() => {
+                    func.apply(context, args);
+                }, wait);
+            }
+            // 部分方法会有返回值，由于setTimeout回调里的返回值无法拿到return,所以只在immediate为true时返回
+            return result;
+        }
+    }
+    ```
+
+    - 函数节流：规定在一个单位时间内，只能触发一次函数，如果这个单位时间内触发多次函数，只有一次生效
+      - 适用场景：拖拽时固定时间内只执行一次，浏览器resize时
+
+    ```js
+    // 使用时间戳实现
+    function throttle(func, wait) {
+        let context, args;
+        let previous = 0;
+        return function() {
+            let now = +new Date();
+            context = this;
+            args = arguments;
+            if (now - previous > wait) {
+                func.apply(context, args)
+                previous = now;
+            }
+        }
+    }
+
+    // 使用定时器实现
+    function throttle(func, wait) {
+        let timeout;
+        return function() {
+            const context = this;
+            const args = arguments;
+            if (!timeout) {
+                timeout = setTimeout(() => {
+                    timeout = null;
+                    func.apply(context, args);
+                }, wait);
+            }
+        }
+    }
+    ```
+
     - 两者都是为了限制函数的执行频次，以优化函数触发频率过高导致的响应速度跟不上触发频率，出现延迟，假死或卡顿的现象
   - touchstart、touchend代替click（或者使用fastclick或者zepto的tap事件代替click事件）
     - click在移动端会有300ms延时，点击事件的执行顺序是touchstart->touchmove->touchend->click
