@@ -96,6 +96,25 @@ if(!content){
 //上述内容相当于判断content=""、content=0、content=null、content = undefined
 ```
 
+## 连等与对象点号运算符优先级问题
+
+- 点号的优先级大于等号
+- 等号的执行顺序是从右向左执行
+
+```js
+var a = {k1: 1};
+var b = a;
+a.k3 = a = {k2: 2};
+console.log(a); // {k2: 2}
+console.log(b); // {k1: 1, k3: {k2: 2}}
+
+// b 和 a 指向同一个地址
+// . 的优先级高于 = ，所以先执行 a.k3, 于是 a 和 b 都是 {k1: 1, k3: undefined}
+// 连等中先执行 a = {k2: 2}, 于是 a 指向了 {k2: 2}
+// 再执行 a.k3 = a, 此时 a.k3 的 a 已经是 {k1: 1, k3: undefined} 的地址，已不是一开始的a
+// a.k3 = a 可以看成 {k1: 1, k3: undefined}.k3 = a; 或者 b.k3 = a
+```
+
 ## 函数显式参数(Parameters)与隐式参数(Arguments)
 
 - 函数显式参数在函数定义时列出，函数隐式参数在函数调用时传递给函数真正的值
@@ -213,6 +232,308 @@ if(!content){
 
 - 返回窗口相对于屏幕的X和Y坐标。
 
+## IntersectionObserver
+
+- IntersectionObserver接口(从属于Intersection Observer API)为开发者提供了一种可以异步监听目标元素与其祖先或视窗(viewport)交叉状态的手段。祖先元素与视窗(viewport)被称为根(root)。
+- var io = new IntersectionObserver(callback, options)   具体查看MDN
+
+```js
+// 懒加载实现
+const io = new IntersectionObserver(entries => {   // 实例化 默认基于当前视窗
+  entries.forEach((item) => { // 遍历entries数组
+      if(item.isIntersecting){ // 当前元素可见
+          item.target.src = item.target.dataset.src  // 替换src
+          io.unobserve(item.target)  // 停止观察当前元素 避免不可见时候再次调用callback函数
+      }
+  })
+})  
+
+let imgs = document.querySelectorAll('[data-src]') // 将图片的真实url设置为data-src src属性为占位图 元素可见时候替换src
+
+imgs.forEach((item)=>{  // io.observe接受一个DOM元素，添加多个监听 使用forEach
+    io.observe(item)
+})
+```
+
+## css initial inherit unset 三者的区别
+
+- initial
+  - 关键字用于设置css属性为它的默认值，可作用于任何css样式（IE不支持）
+- inherit
+  - 每一个css属性都有一个特性就是，这个属性必然是默认继承的（inherited: Yes） 或者是默认不继承的（inherited: no） 其中之一
+  - 例如： border 默认是不可继承的，可以通过inherit进行改变
+- unset
+  - 即不设置，是 initial 和 inherit 的组合
+  - 设置后的效果：
+    - 优先用inherit的样式
+    - 如果该属性是默认继承属性，则等同于inherit
+    - 如果该属性是非继承属性，则等同于 initial
+
+## 当使用赋值表达式作为判断条件或return的对象时，返回的都是等号右边的值
+
+```js
+function fbb() {
+  var a = {};
+  return a.b = 0;//返回的是等号右边的值0；
+}
+```
+
+## 函数柯里化
+
+- 参数长度固定
+
+```js
+// 判断传入的参数args 与 fn方法需要的参数个数是否一致，一致则直接把args给fn执行，否则，把返回一个函数，函数体把新函数接受的参数与args合并后传给judge()再次走一遍判断
+const curry = (fn) => (judge = (...args) => args.length === fn.length ? fn(...args) : (...arg) => judge(...args, ...arg));
+
+const add = (a, b, c) => a + b + c;
+
+const curryAdd = curry(add);
+
+console.log(curryAdd(1,2,3));
+console.log(curryAdd(1)(2)(3));
+console.log(curryAdd(1,2)(3));
+console.log(curryAdd(1)(2,3));
+```
+
+- 参数长度不固定
+
+```js
+function add(...args) {
+  // 求和
+  return args.reduce((a, b) => a + b);
+}
+
+function currying(fn) {
+  // 闭包里的存储参数的数组
+  let args = [];
+  return function temp (...newArgs) {
+    if (newArgs.length) {
+      args = [
+        ...args,
+        ...newArgs
+      ]
+      return temp;
+    } else {
+      let val = fn.apply(this, args);
+      args = []; // 保证再次调用时清空
+      return val;
+    }
+  }
+}
+
+let addCurry = currying(add);
+console.log(addCurry(1)(2)(3)(4, 5)()); // 15
+console.log(addCurry(1)(2)(3, 4, 5)()); // 15
+console.log(addCurry(1)(2, 3, 4, 5)()); // 15
+```
+
+## js在某个数据类型前使用‘+’，这个操作目的是为了将该数据类型转换为Number类型，如果转换失败，则返回NaN
+
+```js
++'2'+1 // 3
++[1]   // NaN
+
+// 以下都会返回时间戳
++new Date()
+new Date().getTime();
+new Date().valueOf();
+new Date() * 1
+```
+
+## lodash方法集中 _.get(object, path, [defaultValue]) 的实现
+
+```js
+// 考虑source中有数组的情况
+function get(source, path, defaultValue = undefined) {
+  // path字符串写法有   a[3].b -> a.3.b -> [a, 3, b]
+  const paths = path.replace(/\[(\d+)\]/g, '.$1').split('.');
+  let res = source;
+  for(const p of paths ) {
+    // null 和 undefined 取属性会报错， 所以用 Object 包装一下，Object(null)[0] 返回undefine
+    res = Object(res)[p];
+    if (res === undefined) {
+      return defaultValue;
+    }
+  }
+  return res;
+}
+console.log(get({a: null}, 'a.b.c', 3)); // 3
+
+// 不考虑source中有数组的情况
+const get = (object, keys, val) => (kyes.split('.').reduce(
+    (o, j) => ( (o || {})[j] ), object
+  ) || val );
+```
+
+## 手动实现订阅
+
+```ts
+type Callback = (data?: unknown) => void;
+
+interface CacheProps {
+    [key: string]: Array<(Callback)>;
+}
+
+class Observer {
+    private caches: CacheProps = {};
+    on(eventName: string, fn: Callback) {
+        this.caches[eventName] = this.caches[eventName] || [];
+        this.caches[eventName].push(fn);
+    }
+    emit(eventName: string, data?: unknown) {
+        if (this.caches[eventName]) {
+            this.caches[eventName].forEach(fn => fn(data));
+        }
+    }
+    off(eventName: string, fn?: Callback) {
+        if (this.caches[eventName]) {
+            const newCaches = fn ? this.caches[eventName].filter(item => item !== fn) : [];
+            this.caches[eventName] = newCaches;
+        }
+    }
+}
+```
+
+## 手动数组转树
+
+```js
+let demo = [
+    {id: 1, val: 'xuexiao', parentId: null},
+    {id: 2, val: 'banji1', parentId: 1},
+    {id: 3, val: 'banji2', parentId: 1},
+    {id: 4, val: 'xuesheng1', parentId: 2},
+    {id: 5, val: 'xuesheng2', parentId: 3},
+    {id: 6, val: 'xuesheng3', parentId: 3}
+]
+
+function arrToTree(demoArr) {
+    let root = demoArr[0];
+    demoArr.shift();
+    let tree = {
+        id: root.id,
+        val: root.val,
+        children: demoArr.length > 0 ? toTree(root.id, demoArr) : []
+    }
+    return tree;
+}
+
+function toTree(parentId, demoArr) {
+    let children = [];
+    for (const item of demoArr) {
+        if (item.parentId === parentId) {
+            children.push({
+                id: item.id,
+                val: item.val,
+                children: toTree(item.id, demoArr)
+            })
+        }
+    }
+    return children;
+}
+
+arrToTree(demo);
+```
+
+## 声明提升问题
+
+- 函数声明中（在同一作用域）
+  - var a = function(){}, 由于函数表达式是在函数运行阶段才赋值给变量a, 所以函数只有在var语句声明之后才能被调用
+    - 编译后变量声明a 会“被提前”了，但是他的赋值（也就是a）并不会被提前
+  - function a(){}，由于函数表达式是在代码运行阶段之前, 也就是代码解析阶段才赋值给标识符a，所以函数可以在function声明之前被调用
+    - 编译后函数声明和他的赋值都会被提前
+
+```js
+var a = 10;
+if (false) {
+  var a = 11;
+}
+console.log(a); // 10
+// =>
+var a;
+var a;
+a = 10;
+if (false) {
+  a = 11;
+}
+console.log(a);
+
+
+var c = 10;
+var c;
+console.log(c); // 10
+// =>
+var c;
+var c;
+c = 10;
+console.log(c);
+
+
+var b = 10;
+(function () {
+  if (false) {
+    var b = 11;
+  }
+  console.log(b); // undefined
+})();
+// =>
+var b;
+b = 10;
+(function () {
+  var b;
+  if (false) {
+    b = 11;
+  }
+  console.log(b);
+})();
+
+
+function test() {
+  console.log('out');
+}
+(function() {
+  if (false) {
+    function test() {
+      console.log('in');
+    }
+  }
+  test();
+})(); // test is not a function
+// =>
+var test;
+test = function() {
+  console.log('out');
+}
+(function() {
+  var test;
+  if (false) {
+    test = function() {
+      console.log('in');
+    }
+  }
+})();
+
+// 如果是在函数外，在不同的浏览器就会有不同的结果
+function test() {
+  console.log(1);
+}
+if (true) {
+  function test() {
+    console.log(3);
+  }
+} else {
+  function test() {
+    console.log(2);
+  }
+}
+test(); // 最新的浏览器输出3，safari 输出2，在早期的一些过度版本中输出1
+```
+
+## 前端错误上报
+
+- [AST实现函数错误上报原理参考](https://segmentfault.com/a/1190000037630766)
+- Sentry 是一个开源的实时错误追踪系统，可以帮助开发者实时监控并修复异常问题, 有Docker和Python两种安装方式
+
 ## 浏览器语言
 
 - navigator 对象包含有关浏览器的信息，以下为对象中的这几个与 language 相关的属性
@@ -274,6 +595,7 @@ if(!content){
 ## input range
 
 - 可通过修改样式自定义滑动条
+- firefox中 滑动条操作绑定异步操作实时生效时，点击偶尔会出现回弹现象（点击后异步操作成功，滑动条会又回弹至上一个状态，并触发相应异步操作）
 
 ```html
 <!-- vue 模板 -->
