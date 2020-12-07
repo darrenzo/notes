@@ -11,7 +11,7 @@
   - npm list -g --depth=0
 - 查看 yarn 全局安装过的包
   - yarn global list --depth=0
-- 全局安装脚手架的包时，推荐用npm。 yarn安装全局包时不会去设置环境变量，是的脚手架的全局命令找不到
+- 全局安装脚手架的包时，推荐用npm。 yarn安装全局包时不会去设置环境变量，有的脚手架的全局命令找不到
 - 如果npm 安装全局包失败时，可以先清楚缓存再进行尝试
   - npm cache clean --force
 - 如果有些包我们只会使用一次，或者只想尝试以下，不想安装到全局，也不想作为当前项目的依赖可以使用 npx 的方式来执行（npx 是 npm 5.2+ 版本之后自带的工具）
@@ -30,11 +30,12 @@
 - npm 设置淘宝镜像
   - npm get registry
   - npm config set registry http://registry.npm.taobao.org/
+  - npm config set disturl https://npm.taobao.org/dist
+  - npm config set electron_mirror https://npm.taobao.org/mirrors/electron/
   - 还原
     - npm config set registry https://registry.npmjs.org/
   - 安装 cnpm
     - npm install -g cnpm --registry=https://registry.npm.taobao.org
-
 
 ## yarn
 
@@ -50,6 +51,8 @@ yarn config get registry
 
 ## 设置淘宝镜像
 yarn config set registry https://registry.npm.taobao.org
+yarn config set electron_mirror https://npm.taobao.org/mirrors/electron/
+yarn config set disturl https://npm.taobao.org/dist
 
 yarn init
 
@@ -73,7 +76,7 @@ yarn global add [package]
 yarn upgrade [package]@ver
 
 ## 升级到最新
-yarn upgrade –latest [package]
+yarn upgrade –-latest [package]
 
 # 查看yarn缓存存放路径
 yarn cache dir
