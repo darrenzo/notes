@@ -41,6 +41,68 @@
 
 ### charCodeAt() 返回指定索引位置字符的 Unicode 值
 
+## 数组的空元素empty与undefined的区别
+
+- 数组的空元素empty表示空位, 它不是一种数据类型, 而是由于人为修改arr.length 或者写入时多写了逗号造成的
+
+```js
+var arr = [1,2,3,4,,,5];
+arr.length; // 7
+
+arr.length = 10;
+arr; // [1, 2, 3, 4, empty × 2, 5, empty × 3]
+```
+
+- undefined是一种数据类型, 在数组中表示这个位置的值未定义, 但它仍然指向某个内存地址, 这个内存地址指向的是undefined
+
+```js
+var arr = [1,2,3,undefined,4,5];
+arr.length; // 6
+```
+
+- empty和undefined在操作数组时的主要区别在于:
+  - 使用数组的forEach()方法遍历时会自动忽略空位, 而使用for循环则会将empty转换为undefined并遍历
+
+## 类数组 和 数组 的区别
+
+- 数组是一个特殊对象，与常规对象的区别：
+  - 当由新元素添加到列表中时，自动更新length属性
+  - 设置length属性，可以截断数组
+  - 从Array.prototype中继承了方法
+  - 属性为'Array'
+- 类数组是一个拥有length属性，并且其他属性为非负整数的普通对象，类数组不能直接调用数组方法
+- 类数组转换为数组
+  - 转换方法：
+    - Array.from()
+    - Array.prototype.slice.call()
+    - Array.prototype.forEach() 进行属性遍历并组成新的数组
+  - 转换须知：
+
+    ```js
+        // 转换后的数组长度由length属性决定，索引不连续时转换结果是连续的，会自动补位
+        let al1 = {length: 4, 0: 0, 1: 1, 3: 3, 4: 4, 5: 5};
+        console.log(Array.from(al1)); // [0, 1, undefined, 3]
+
+        // 仅考虑0或正整数的索引
+        let al2 = {length: 4, '-1': -1, '0': 0, a: 'a', 1: 1};
+        console.log(Array.from(al2)); // [0, 1, undefined, undefined]
+
+        // 使用slice转换产生稀疏数组
+        let al2 = {length: 4, '-1': -1, '0': 0, a: 'a', 1: 1};
+        console.log(Array.prototype.slice.call(al2)); // [0, 1, empty * 2]
+
+        // 使用数组方法操作类数组, 此处push操作的是索引值为length的位置，根据length与索引号进行覆盖或添加
+        let al3 = {length: 2, 2: 3, 3: 4, push: Array.prototype.push};
+        al3.push(1);
+        console.log(al3); // {2: 1, 3: 4, length: 3, push: f}
+
+        al3.push(2);
+        console.log(al3); // {2: 1, 3: 2, length: 4, push: f}
+
+        al3.push(3);
+        console.log(al3); // {2: 1, 3: 2, 4: 3, length: 5, push: f}
+    ```
+
 ## 数组操作
 
 ### arrayObject.slice(start,end)
@@ -86,6 +148,8 @@ var kkk = Array.prototype.slice.call(obj); // ['prop0','prop1','prop2','prop3']
 
 - 直接改变原数组，返回新的数组
 - 字母升序（包括纯数字组成的字符串） fruits.sort()
+  - 数字和字母对比时，数字小, 不论是数字还是数字字符串
+  - ["1", "2c", 3, "a", "b", "d6", "g"]
 - 数字升序 points.sort( (a, b) => a - b );
 - 数字降序 points.sort( (a, b) => b - a );
 - 反转排序 arrayObject.reverse()
@@ -205,11 +269,21 @@ function arrayUniq(arr) {
   - Objext.assign() 或者extends方法
 
 ```js
-    function deepCopy(obj) {
-        if(obj === null) return null;
-        if(typeof obj !== 'object') return obj;
-        if(obj.constructor===Date) return new Date(obj);
-        var result = Array.isArray(obj) ? [] : {};
+function deepCopy(obj) {
+    if(typeof obj !== 'object') return obj;
+    if(obj === null) return null;
+    if(obj.constructor === Date) return new Date(obj);
+    const isArr = Array.isArray(obj);
+    var result = isArr ? [] : {};
+    if (isArr) {
+        for (const item of obj) {
+            if (typeof item === 'object') {
+                result.push(deepCopy(item));   //递归复制
+            } else {
+                result.push(item);
+            }
+        }
+    } else {
         for (var key in obj) {
           if (obj.hasOwnProperty(key)) {
             if (typeof obj[key] === 'object') {
@@ -219,8 +293,9 @@ function arrayUniq(arr) {
             }
           }
         }
-        return result;
     }
+    return result;
+}
 ```
 
 ## Object.keys(myObject)
