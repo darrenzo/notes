@@ -1,5 +1,17 @@
 # Module
 
+## 模块化导出导入例子
+
+```js
+export = ZipCodeValidator;
+// 引入文件
+import zip = require("./ZipCodeValidator");
+
+module.exports = SayModule;
+// 引入文件
+var Say = require('./sayModule.js');
+```
+
 ## CommonJS
 
 - 最开始的目的是让浏览器之外的 JavaScript （比如服务器端或者桌面端）能够通过模块化的方式来开发和协作
@@ -328,8 +340,8 @@ define(['./lib/sayModule', './lib/talkModule'], function (say, talk){
     });
 }(
     typeof module === 'object' && module.exports && typeof define !== 'function' ?
-    function (factory) { module.exports = factory(); } :
-    define
+      function (factory) { module.exports = factory(); } :
+      define
 ));
 ```
 
