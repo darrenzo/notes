@@ -1,4 +1,4 @@
-# TS
+# TS(3.x)
 
 - [类型检查工具](https://github.com/litert/type-guard)
 - 案例项目
@@ -250,9 +250,8 @@ let newArr = new Map([...sourceArr, ...arr]) as Map<string, string>;
     }
     // 定义上述一种此函数类型，仅表示此函数的类型, 常用的有2种写法, 即函数声明的左右2侧的写法
     type IFn = (x: number, y: number) => number; // 通过箭头函数形式表示函数类型
-
     interface IFn2 {
-        (x: number, y: number): number;
+        (x: number, y: number): number; // 未指定方法名，则表示构造函数
     }
 
     const aaa: IFn = aa;
@@ -336,7 +335,7 @@ a[item] = b[item] 改为 (a as any)[item] = b[item]; // 跳过类型检查
 
 // 解决办法2
 a[item] = b[item] 改为
-(<K extends keyof A(k: K, v: A[K]) => {
+(<K extends keyof A>(k: K, v: A[K]) => {
 
     a[k] = v; // 通过参数明确了等号左右的值类型一定是正确对应的
 
@@ -417,30 +416,30 @@ a[item] = b[item] 改为
     // error: 'colour' not expected in type 'SquareConfig'
 ```
 
-- 绕开检查的方法
+- 绕开检查的方法(尽量不使用)
 
-- 最简单的就是使用类型断言
+  - 最简单的就是使用类型断言
 
-```typescript
-    let mySquare = createSquare({ width: 100, opacity: 0.5 } as SquareConfig);
-```
+  ```typescript
+      let mySquare = createSquare({ width: 100, opacity: 0.5 } as SquareConfig);
+  ```
 
-- 最佳的方式是能够添加一个字符串索引签名，前提是你能够确定这个对象可能具有某些做为特殊用途使用的额外属性
+  - 最佳的方式是能够添加一个字符串索引签名，前提是你能够确定这个对象可能具有某些做为特殊用途使用的额外属性
 
-```typescript
-    interface SquareConfig {
-        color?: string;
-        width?: number;
-        [propName: string]: any;  // 任意数量的其它属性 只要它们不是color和width，那么就无所谓它们的类型是什么
-    }
-```
+  ```typescript
+      interface SquareConfig {
+          color?: string;
+          width?: number;
+          [propName: string]: any;  // 任意数量的其它属性 只要它们不是color和width，那么就无所谓它们的类型是什么
+      }
+  ```
 
-- 将这个参数对象赋值给另一个变量再传入
+  - 将这个参数对象赋值给另一个变量再传入
 
-```typescript
-    let squareOptions = { colour: "red", width: 100 };
-    let mySquare = createSquare(squareOptions); // squareOptions不会经过额外属性检查，所以编译器不会报错
-```
+  ```typescript
+      let squareOptions = { colour: "red", width: 100 };
+      let mySquare = createSquare(squareOptions); // squareOptions不会经过额外属性检查，所以编译器不会报错
+  ```
 
 ### 函数类型
 
@@ -539,7 +538,7 @@ a[item] = b[item] 改为
         new (x?: number, y?: number): IPoint; // 不用new，就是指函数了，用new就表示的是类
     }
 
-    let ip: IPointFactory; // 指定 ip是指向某个类类型的类或者实现某个接口的类类型的类 (不是实例，实例就是把类里的所有方法和属性列在interface里)
+    let ip: IPointFactory; // 指定 ip是指向某个类（如IPoint）的类型的类或者实现某个接口（如ClockInterface）的类的类型的类 (不是实例，实例就是把类里的所有方法和属性列在interface里)
 
 
 
@@ -1007,7 +1006,7 @@ a[item] = b[item] 改为
 ```typescript
     let suits = ["hearts", "spades", "clubs", "diamonds"];
 
-    function pickCard(x: {suit: string; card: number; }[]): number; // 传入对象参数 ？？？？？为什么加个[]
+    function pickCard(x: {suit: string; card: number; }[]): number; // 传入对象参数
     function pickCard(x: number): {suit: string; card: number; }; // 传入number
 
     function pickCard(x: any): any {
@@ -1111,10 +1110,9 @@ function loggingIdentity<T extends string[] | number = number>(arg: T): T {
 
 ### 泛型类
 
-- 类有两部分：静态部分和实例部分。 泛型类指的是实例部分的类型，所以类的静态属性不能使用这个泛型类型  ?????????
+- 类有两部分：静态部分和实例部分。 泛型类指的是实例部分的类型，所以类的静态属性不能使用这个泛型类型
 
 ```typescript
-    // ?????????
     class GenericNumber<T> {
         zeroValue: T;
         add: (x: T, y: T) => T;
@@ -1246,7 +1244,7 @@ function loggingIdentity<T extends string[] | number = number>(arg: T): T {
     - 常量表达式：
       - 一个枚举表达式字面量（主要是字符串字面量或数字字面量）
       - 一个对之前定义的常量枚举成员的引用（可以是在不同的枚举类型中定义的，此时需要加上限定前缀）
-      - 带括号的常量枚举表达式 ？？？？
+      - 带括号的常量枚举表达式
       - 一元运算符 +, -, ~其中之一应用在了常量枚举表达式
       - 常量枚举表达式做为二元运算符 +, -, *, /, %, <<, >>, >>>, &, |, ^的操作对象。 若常数枚举表达式求值后为 NaN或 Infinity，则会在编译阶段报错。
 
@@ -1257,7 +1255,7 @@ function loggingIdentity<T extends string[] | number = number>(arg: T): T {
             Read    = 1 << 1,
             Write   = 1 << 2,
             ReadWrite  = Read * Write,
-            // computed member  ？？？？
+            // computed member
             G = "123".length
         }
     ```
@@ -1446,7 +1444,7 @@ function loggingIdentity<T extends string[] | number = number>(arg: T): T {
   - 一些模块会设置一些全局状态供其它模块使用。 这些模块可能没有任何的导出或用户根本就不关注它的导出
 
   ```typescript
-    import "./my-module.js"; // 没有设置名字怎么引用执行
+    import "./my-module.js";
   ```
 
 ### 默认导出
@@ -1471,7 +1469,7 @@ function loggingIdentity<T extends string[] | number = number>(arg: T): T {
     import validate from "./StaticZipCodeValidator";
 ```
 
-### export = module 和 import module = require("module")  ？？？？？
+### export = module 和 import module = require("module")
 
 - CommonJS和AMD都有一个exports对象的概念，它包含了一个模块的所有导出内容。
 - export = 语法定义一个模块的导出对象。 它可以是类，接口，命名空间，函数或枚举
@@ -1491,7 +1489,7 @@ function loggingIdentity<T extends string[] | number = number>(arg: T): T {
 
 ### 外部模块
 
-- .d.ts集中声明文件(类似于头文件) 于js，ts放在一起
+- .d.ts集中声明文件(类似于头文件) 与js，ts放在一起
 - 当有外部文件引用该项目时，js中变量的类型就是通过头文件判断的
 - 所有变量的类型都放在头文件中，在ts编译成js文件时，会同时生成一个头文件
 - tsconfig.json设置中
