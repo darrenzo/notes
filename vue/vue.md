@@ -956,7 +956,7 @@ props: {
 ```
 
 - props是单向数据流，子组件不能改变props值，可以使用computed处理一下props值
-- 注意在 JavaScript 中对象和数组是引用类型，指向同一个内存空间，如果 prop 是一个对象或数组，在子组件内部改变它会影响父组件的状态。
+- 注意在 JavaScript 中对象和数组是引用类型，指向同一个内存空间，如果 prop 是一个对象或数组，在子组件内部改变它会影响父组件的状态
 - 自定义验证函数
 
 ```js
@@ -1105,8 +1105,8 @@ new Vue({
 ## 实例的生命周期
 
 - 每个 Vue 实例在被创建之前都要经过一系列的初始化过程。例如需要设置数据监听、编译模板、挂载实例到DOM、在数据变化时更新DOM等。同时在这个过程中也会运行一些叫做生命周期钩子的函数，给予用户机会在一些特定的场景下添加他们自己的代码
-- 如 created、mounted、updated、destroyed等，钩子的 this 指向调用它的 Vue 实例。
-- 不要在选项属性或回调上使用箭头函数，比如 created: () => console.log(this.a) 或 vm.$watch('a', newValue => this.myMethod()。因为箭头函数是和父级上下文绑定在一起的，this 不会是如你所预期的 Vue 实例，且 this.a 或 this.myMethod 也会是未定义的。
+- 如 created、mounted、updated、destroyed等，钩子的 this 指向调用它的 Vue 实例
+- 不要在选项属性或回调上使用箭头函数，比如 created: () => console.log(this.a) 或 vm.$watch('a', newValue => this.myMethod()。因为箭头函数是和父级上下文绑定在一起的，this 不会是如你所预期的 Vue 实例，且 this.a 或 this.myMethod 也会是未定义的
 - beforeCreate() {}
   - 在实例初始化之后，data、watch、methods之前。 $route对象存在，可以进行重定向
 - created() {}
@@ -1306,10 +1306,10 @@ this.$route.params.pathMatch // '/non-existing'
 - to: Route: 即将要进入的目标 路由对象 $route
 - from: Route: 当前导航正要离开的路由对象 $route
 - next: Function: 一定要调用该方法来 resolve 这个钩子。执行效果依赖 next 方法的调用参数
-  - next(): 进行管道中的下一个钩子。如果全部钩子执行完了，则导航的状态就是 confirmed (确认的)。
-  - next(false): 中断当前的导航。如果浏览器的 URL 改变了 (可能是用户手动或者浏览器后退按钮)，那么 URL 地址会重置到 from 路由对应的地址。
-  - next('/') 或者 next({ path: '/' }): 跳转到一个不同的地址。当前的导航被中断，然后进行一个新的导航。你可以向 next 传递任意位置对象，且允许设置诸如 replace: true、name: 'home' 之类的选项以及任何用在`router-link`的`to`prop 或 router.push 中的选项。
-  - next(error): 如果传入 next 的参数是一个 Error 实例，则导航会被终止且该错误会被传递给 router.onError() 注册过的回调。
+  - next(): 进行管道中的下一个钩子。如果全部钩子执行完了，则导航的状态就是 confirmed (确认的)
+  - next(false): 中断当前的导航。如果浏览器的 URL 改变了 (可能是用户手动或者浏览器后退按钮)，那么 URL 地址会重置到 from 路由对应的地址
+  - next('/') 或者 next({ path: '/' }): 跳转到一个不同的地址。当前的导航被中断，然后进行一个新的导航。你可以向 next 传递任意位置对象，且允许设置诸如 replace: true、name: 'home' 之类的选项以及任何用在`router-link`的`to`prop 或 router.push 中的选项
+  - next(error): 如果传入 next 的参数是一个 Error 实例，则导航会被终止且该错误会被传递给 router.onError() 注册过的回调
 
 - 全局守卫
 
@@ -1366,8 +1366,8 @@ const router = new VueRouter({
 - 组件内的路由守卫(写法同生命周期钩子)
 
 ```js
+// 在渲染该组件的对应路由在 confirm 前调用
 beforeRouteEnter (to, from, next) {
-    // 在渲染该组件的对应路由被 confirm 前调用
     // 不！能！获取组件实例 `this`，因为当守卫执行前，组件实例还没被创建。(在组件周期钩子函数beforeCreate前执行)
     // 可以通过传一个回调给 next来访问组件实例。在导航被确认的时候执行回调，并且把组件实例作为回调方法的参数
     next(vm => {
@@ -1376,8 +1376,8 @@ beforeRouteEnter (to, from, next) {
     // 这是能给 next 传递回调的唯一守卫
 }
 
+// 在当前路由改变，但是该组件被复用时调用
 beforeRouteUpdate (to, from, next) {
-    // 在当前路由改变，但是该组件被复用时调用
     // 举例来说，对于一个带有动态参数的路径 /foo/:id，在 /foo/1 和 /foo/2 之间跳转的时候，
     // 由于会渲染同样的 Foo 组件，因此组件实例会被复用。而这个钩子就会在这个情况下被调用。
     // 可以访问组件实例 `this`
@@ -1409,7 +1409,7 @@ beforeRouteLeave (to, from , next) {
 - `routes`配置中的每个路由对象为`路由记录`,路由记录可以是嵌套的，因此，当一个路由匹配成功后，他可能匹配多个路由记录
   - 即如果路由是‘/foo/bar’的话，‘/foo’也会触发
 - 一个路由匹配到的所有路由记录会暴露为 $route 对象 (还有在导航守卫中的路由对象) 的 $route.matched 数组。因此，我们需要遍历 $route.matched 来检查路由记录中的 meta 字段
-  - 如果使用 $route.meta.requiresAuth 来检查，则对应路由极其所有子路由，都必须要加上requiresAuth字段，才能确保都是有登录校验的，而使用 $route.matched 可以遍历所有匹配到的路由，所以只需要最高级的路由加上requiresAuth字段即可
+  - 如果使用 $route.meta.requiresAuth 来检查，则对应路由及其所有子路由，都必须要加上requiresAuth字段，才能确保都是有登录校验的，而使用 $route.matched 可以遍历所有匹配到的路由，所以只需要最高级的路由加上requiresAuth字段即可
 
 ```js
 // `/foo/bar` 这个 URL 将会匹配父路由记录以及子路由记录
@@ -1515,6 +1515,7 @@ const router = new VueRouter({
     <router-link to="/product/">product</router-link>
 
     <div>
+        <!-- 界面上多个router-view时跳转路由会发生什么 ？？？？？？ -->
         <router-view></router-view>
     </div>
  ```
@@ -1542,12 +1543,11 @@ const router = new VueRouter({
 
 - 通过 Router.addRoutes([...routes]) 动态添加路由配置，一般用在权限管理时
   - 应用初始化的时候先挂载不需要权限控制的路由，比如登录页，404等错误页
-  - 在路由的导航守卫router.beforeEach中判断当前是页面刷新还是路由切换，利用vuex的状态值在页面刷新就会重新初始化的特性和本地缓存localStorage存的登录状态值来判断页面刷新还是路由切换
 - 权限管理中遇到的问题：路由添加成功，并且能正常的跳转。但是，当我刷新页面后页面路由出错了，直接进入了错误页面404
   - 原因：vue在初始化的时候，vue-router的实例对象已经生成了，当前路由只包含了如登录页和404等静态页面，用户权限获取的路由需要在登录成功后单独请求权限接口再动态添加到路由当中，所以页面在刷新的时候页面会找不到对应动态的路由
 - 权限管理思路：在路由的导航守卫router.beforeEach中判断当前是页面刷新还是路由切换，利用vuex的状态值在页面刷新就会重新初始化的特性和本地缓存localStorage存的登录状态值来判断页面刷新还是路由切换
 - 权限管理的实现：
-  - 1. 用户登录—> 本地缓存用户token和id，vuex中存入登录用户id（存的具体那个值,对还是错都不重要，值只是用来判断页面刷新还是路由切换，随意存。。只是用于后续的判断） —>接口获取当前用户的菜单信息—>格式化菜单信息（格式化成，路由格式）—>使用router.addRoutes动态加入路由
+  - 1. 用户登录—> 本地缓存用户token和id，vuex中存入登录用户id（存的值,对还是错都不重要，值只是用来判断页面刷新还是路由切换，随意存。。只是用于后续的判断） —>接口获取当前用户的菜单信息—>格式化菜单信息（格式化成，路由格式）—>使用router.addRoutes动态加入路由
   - 2. 在导航守卫router.beforeEach的方法中，进入路由后，判断 1、本地缓存的token是否有值，没有的话，说明用户没有登录过，直接跳转登录页面 2、token值有的，vuex中的用户id存在的话，页面只是路由切换，用next让路由正常流转下去 2、token值有的，vuex中的用户id的值不存在的话，说明页面刷新了，这个时候需要做两个件事情，A：设置vuex中的id的为本地缓存的用户id ， B：重新请求权限接口，格式化后，动态添加到路由，然后重新用next实现接下来的路由跳转，这里需要注意，请求的权限接口需要用async/wait 改成同步接口方便使用
 
 ### 路由懒加载
@@ -1724,9 +1724,23 @@ methods: {
 
  ```
 
+ computed: {
+     ...mapGetters([
+         'play'
+     ])
+ },
+ methods: {
+     ...mapMutations({
+         set: 'SET'
+     }),
+     ...mapActions([
+         'inset'
+     ])
+ }
+
 ### modules 文件
 
-- 在store文件下新建modules文件，内部新建各个不同功能的store文件，也就是把一类的状态管理写在一个文件中，方便维护
+- 在store文件夹下新建modules文件，内部新建各个不同功能的store文件，也就是把一类的状态管理写在一个文件中，方便维护
 - 一个模块文件可以包含state、mutation、getters、actions全部或者部分，不包含的部分可以使用外部的文件
 
 ```js
