@@ -408,8 +408,7 @@ let demo = [
 ]
 
 function arrToTree(demoArr) {
-    let root = demoArr[0];
-    demoArr.shift();
+    const root = demoArr.shift();
     let tree = {
         id: root.id,
         val: root.val,
@@ -433,6 +432,39 @@ function toTree(parentId, demoArr) {
 }
 
 arrToTree(demo);
+// {
+//   "id": 1,
+//   "val": "xuexiao",
+//   "children": [
+//     {
+//       "id": 2,
+//       "val": "banji1",
+//       "children": [
+//         {
+//           "id": 4,
+//           "val": "xuesheng1",
+//           "children": []
+//         }
+//       ]
+//     }, 
+//     {
+//       "id": 3,
+//       "val": "banji2",
+//       "children": [
+//         {
+//           "id": 5,
+//           "val": "xuesheng2",
+//           "children": []
+//         }, 
+//         {
+//           "id": 6,
+//           "val": "xuesheng3",
+//           "children": []
+//         }
+//       ]
+//     }
+//   ]
+// }
 ```
 
 ## 声明提升问题
@@ -527,6 +559,47 @@ if (true) {
   }
 }
 test(); // 最新的浏览器输出3，safari 输出2，在早期的一些过度版本中输出1
+```
+
+## 闭包
+
+- 函数执行后返回结果是一个内部函数，并被外部变量所引用，如果内部函数持有被执行函数作用域的变量，即形成了闭包
+- 优点：
+  - 可以从内部函数访问外部函数的作用域中的变量，且访问到的变量长期驻扎在内存中，可供之后使用
+  - 可以将函数中的变量存储在内存中，保护变量不被污染
+  - 把变量存到独立的作用域，作为私有成员存在
+- 缺点：
+  - 闭包会把函数中的变量值存储在内存中，会对内存有消耗，所以不能滥用闭包，否则会影响网页性能，造成内存泄漏，可将内层函数对象的变量赋值为null
+  - 对处理速度具有负面影响。闭包的层级决定了引用的外部变量在查找时经过的作用域链长度
+  - 可能获取到意外的值
+- 应用
+
+```js
+// 模块封装，在各模块规范出现之前，都以闭包的方式防止变量污染全局
+var Yideng = (function() {
+  var foo = 0;
+  function Yideng(){};
+  Yideng.prototype.bar = function bar(){
+    return foo;
+  };
+  return Yideng;
+})()
+
+// 在循环中创建闭包，防止取到意外的值
+for(var i = 0; i < 3; i++) {
+  document.getElementById('id' + i).onfocus = function() {
+    alert(i); // 都会弹出3
+  }
+}
+
+function makeCallback(num) {
+  return function() {
+    alert(num);
+  }
+}
+for (var i = 0; i < 3; i++) {
+  document.getElementById('id' + i).onfocus = makeCallback(i);
+}
 ```
 
 ## 前端错误上报
