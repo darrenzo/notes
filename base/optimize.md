@@ -311,7 +311,7 @@
         - `<link rel="preload" href="bg-image-narrow.png" as="image" media="(max-width: 600px)">`
       - 脚本化与预加载
         - 当你需要预加载一个脚本，但需要推迟到需要的时候才令其执行时，这种方式会特别有用
-          - IE可以直接使用script标签的**defer**属性实现
+          - 可以直接使用script标签的**defer**属性实现
 
       ```js
         // 浏览器将预加载这个JavaScript文件，但并不实际执行它
@@ -346,7 +346,7 @@
   - 可以将脚本置底
   - 异步执行：
     - 使用setTimeout、window.onload()或者**JQuery**中的$(function(){})
-    - 使用**script**元素的**defer**属性, 用法同disabled（只有IE支持）
+    - 使用**script**元素的**defer**属性, 用法同disabled
       - 规定是否对脚本执行进行延迟，直到页面加载为止
       - 如果脚本不会改变文档的内容，可将 defer 属性加入到 `<script>` 标签中，以便加快处理文档的速度
       - 使用defer属性的脚本执行顺序可以得到保证
