@@ -86,3 +86,37 @@ $4 = ddd
   - {n,m} 中间不能有空格
 - a{n,} 至少匹配 n 次
 - a{,m} 至多匹配 m 次
+
+## 例子：验证邮箱
+
+```js
+function valudateEmail(email) {
+  if (typeof email !== 'string') { return false; }
+  /**
+   * 总长度不超过255个字符，不小于3个字符
+   */
+  if(email.length < 3 || email.length > 255) { return false; }
+  const [ prefix, suffix, ...rest ] = email.split('@');
+  /**
+   * 有且只有一个@
+   */
+  if (rest.length) { return false; }
+  /**
+   * 不能以小数点开头或结尾，也不能出现连续两个小数点
+   */
+  if ( /(^\.)|(\.$)|(\.{2,})/.test(prefix) ) { return false; }
+  /**
+   * 域名部分以小数点隔开，每一段最多63个字符
+   */
+  if (
+    suffix.length === 0 ||
+    !/^[-\w]{1,63}(\.[-\w]{1,63})*$/.test(prefix)
+  ) {
+    return false;
+  }
+  /**
+   * @前的名称部分，只能由字符、数字、下划线、横线、小数点组成
+   */
+  return /^[-.\w]+$/.test(prefix);
+}
+```
