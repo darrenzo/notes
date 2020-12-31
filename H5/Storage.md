@@ -69,7 +69,7 @@
 - 在部分浏览器的隐私模式下无效
 
 ```js
-function isLocalStorageSupport() {
+function supportLocalStorage() {
     let testKey = 'test';
     let storage = window.localStorage;
     try {
