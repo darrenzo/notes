@@ -1,5 +1,7 @@
 # html5 Element
 
+## [BFC 原理参考地址](https://juejin.im/entry/6844903496970420237)
+
 ## 全局属性
 
 - class：规定元素的一个或多个类名（引用样式表中的类）
@@ -47,7 +49,7 @@
   - error: 在错误发生时
   - haschange: 当文档已改变时
   - load: 页面结束加载之后
-  - unload：一旦页面已下载时触发（或者浏览器窗口已被关闭）
+  - unload：离开当前页面时（或者重新加载或关闭浏览器窗口）
   - message：在消息被触发时
   - offline：当文档离线时
   - online：当文档上线时
@@ -129,7 +131,7 @@
 - map 元素包含若干 area 元素，定义图像映射中的可点击区域
 
 ```html
-<img src="planets.gif" alt="Planets" usemap ="#planetmap" />
+<img src="planets.gif" alt="Planets" usemap="#planetmap" />
 
 <map name="planetmap">
    <area shape ="rect" coords ="0,0,110,260" href ="sun.htm" alt="Sun" />
@@ -195,7 +197,8 @@
 
 ```html
 <bdo dir="rtl">Here is some text</bdo>
-<!-- 输出 Here is some text -->
+
+<!-- 页面显示 txet emos si ereH -->
 <!-- 复制此处文本，得到的则会是正序的 -->
 ```
 
@@ -203,7 +206,7 @@
 
 - 定义摘自另一个源的块引用
 - `<blockquote>` 与 `</blockquote>` 之间的所有文本都会从常规文本中分离出来，经常会在左、右两边进行缩进，而且有时会使用斜体。也就是说，块引用拥有它们自己的空间
-- blockquote 只应该应用于来自另一个源的引用
+- blockquote 只应用于来自另一个源的引用
 - 如果标记是不需要段落分隔的短引用，请使用 `<q>` 元素
 - 属性
   - cite：引用的 URL，如果引用来自网络的话
@@ -395,9 +398,9 @@
       - `<meta http-equiv="Refresh" content="2;URL=http://www.jb51.net" />`, 网页在2秒后跳转到对应的URL，如果不设置URL，则跳转到当前页，即刷新
     - Set-Cookie：cookie设定
       - 如果网页过期，那么存盘的cookie将被删除
-      - `<meta http-equiv="Set-Cookie" content="cookievalue=xxx;expires=Friday,12-Jan-200118:18:18GMT；path=/" />`, 必须使用GMT格式
+      - `<meta http-equiv="Set-Cookie" content="cookievalue=xxx;expires=Friday,12-Jan-200118:18:18GMT;path=/" />`, 必须使用GMT格式
     - Pragma：禁止浏览器从本地计算机的缓存中访问页面内容
-      - `<meta http-equiv="Pragma" content="no-cache" />` 禁止缓存，则访问者无法脱机浏览
+      - `<meta http-equiv="Pragma" content="no-cache" />` 强制每次都得去服务器校验缓存，访问者无法脱机浏览
     - Window-target：显示窗口的设定
       - 强制页面在当前窗口以独立页面显示，用来防止别人在框架里调用自己的页面
       - `<meta http-equiv="Window-target" content="_top" />`
