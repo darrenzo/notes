@@ -4,6 +4,7 @@
 
 - [参考地址](https://www.cnblogs.com/yulinlewis/p/10441180.html)
 - [nvm下npm安装相关设置](https://www.cnblogs.com/ejll/p/11229557.html)
+- 装32位的node和使用32位的node， 都得在版本后空格加 32
 
 ## npm
 
