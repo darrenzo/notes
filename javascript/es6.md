@@ -3163,7 +3163,7 @@ person.name = '李四';
 
 - 异步编程的一种解决方案
 - 特点：
-  - 对象的状态不受外界影响，有 进行中(pending)、已成功(fulfilled)、已失败(rejected) 三种状态。只有异步操作的结果，可以决定当前是哪一种状态，任何其他操作都无法改变这个状态。
+  - 对象的状态不受外界影响，有 进行中(pending)、已成功(fulfilled)、已失败(rejected) 三种状态。只有异步操作的结果，可以决定当前是哪一种状态，任何其他操作都无法改变这个状态
   - 一旦状态改变，就不会再变，任何时候都可以得到这个结果
     - Promise对象的状态改变，只有两种可能：从pending变为fulfilled和从pending变为rejected
   - Promise 对象接受一个回调函数作为参数，该回调函数接受两个参数，分别是 成功时的回调resolve 和 失败时的回调reject
@@ -3180,7 +3180,7 @@ person.name = '李四';
   - Promise.resolve() 将现有对象转为 Promise 对象
     - 如果该方法的参数为一个 Promise 对象，Promise.resolve() 将不做任何处理
     - 如果参数为 thenable 对象(即具有then方法)，Promise.resolve() 将该对象转为 Promise 对象并立即执行then方法
-    - 如果参数是一个原始值，或者是一个不具有then方法的对象，则 Promise.resolve 方法返回一个新的 Promise 对象，状态为 fulfilled, 其参数将会作为 then 方法中 onResolved 回调函数的参数，
+    - 如果参数是一个原始值，或者是一个不具有then方法的对象，则 Promise.resolve 方法返回一个新的 Promise 对象，状态为 fulfilled, 其参数将会作为 then 方法中 onResolved 回调函数的参数
     - 如果 Promise.resolve 方法不带参数，会直接返回一个 fulfilled 状态的 Promise 对象
       - 立即 resolve() 的 Promise 对象，是在本轮 '事件循环' 的结束时执行，而不是在下一轮 '事件循环' 的开始时
   - Promise.reject() 同样返回一个新的 Promise 对象，状态为 rejected, 无论传入任何参数都将作为 reject() 的参数
@@ -3240,22 +3240,29 @@ promise.then(
 - Promise 简单手写实现（无法处理异步）
 
 ```js
+
+const PENDING = 'pending';
+
+const FULFILLED = 'fulfilled';
+
+const REJECTED = 'rejected';
+
 class Mypromise {
     constructor(executor) {
-        this.state = 'pending'  //状态值
+        this.state = PENDING  //状态值
         this.value = undefined //成功的返回值
         this.reason = undefined //失败的返回值
         // 成功
         let resolve = (value) => {
-            if (this.state == 'pending') {
-                this.state = 'fullFilled'
+            if (this.state == PENDING) {
+                this.state = FULFILLED
                 this.value = value
             }
         }
         // 失败
         let reject = (reason) => {
-            if (this.state == 'pending') {
-                this.state = 'rejected'
+            if (this.state == PENDING) {
+                this.state = REJECTED
                 this.reason = reason
             }
         }
@@ -3267,14 +3274,18 @@ class Mypromise {
             reject(err)
         }
     }
-    then(onFullFilled, onRejected) {
-        // 状态为fulfuilled，执行onFullFilled，传入成功的值
-        if (this.state == 'fullFilled') {
-            onFullFilled(this.value)
-        }
-        // 状态为rejected，执行onRejected，传入失败的值
-        if (this.state == 'rejected') {
-            onRejected(this.reason)
+    then(onfulfilled, onRejected) {
+        switch (key) {
+            case FULFILLED:
+                // 状态为fulfuilled，执行onfulfilled，传入成功的值
+                onfulfilled(this.value)
+                break;
+            case REJECTED:
+                // 状态为rejected，执行onRejected，传入失败的值
+                onRejected(this.reason)
+                break;
+            default:
+                break;
         }
     }
 }
@@ -3285,71 +3296,71 @@ class Mypromise {
 ```js
 const PENDING = 'pending';
 
-const RESOLVED = 'fulFilled';
+const FULFILLED = 'fulfilled';
 
 const REJECTED = 'rejected';
 
-const resolvePromise = (promise2, x, resolve, reject) => {
-    if (promise2 === x) {
+const isPromise = value => {
+    return (value !== null && typeof value === 'object' || typeof value === 'function') &&
+        typeof value.then === 'function';
+}
+
+const resolvePromise = (promise2, res, resolve, reject) => {
+
+    if (promise2 === res) {
         return reject(
             new TypeError('chaining cycle detected for promise #<promise>')
         )
     }
 
-    if ( (typeof x === 'object' && x !== null || typeof x === 'function') ) {
-        let called;
-        try {
-            let then = x.then;
-            if (typeof then === 'function') {
-                then.call(x, y => {
-                    if (called) {
-                        return;
-                    }
-                    called = true;
-                    resolvePromise(promise2, y, resolve, reject);
-                }, r => {
-                    if (called) {
-                        return;
-                    }
-                    called = true;
-                    reject(r);
-                })
-            } else {
-                if (called) {
-                    return;
-                }
-                called = true;
-                resolve(x);
-            }
-        } catch (error) {
-            if (called) {
-                return;
-            }
-            called = true;
-            reject(error);
+    if (!isPromise(res)) {
+        return resolve(res);
+    }
+
+    let called;
+    res.then.call(res, data => {
+        if (called) {
+            return;
         }
-    } else {
-        resolve(x);
+        called = true;
+        resolvePromise(promise2, data, resolve, reject);
+    }, err => {
+        if (called) {
+            return;
+        }
+        called = true;
+        reject(err);
+    })
+}
+
+const formatSettledResult = (suc, value) => {
+    return suc ? {
+        status: FULFILLED,
+        value: value
+    } : {
+        status: REJECTED,
+        reason: value
     }
 }
 
-class Mypromise {
+class MyPromise {
+
     constructor(executor) {
-        this.status = PENDING;
+        this.state = PENDING;
         this.value = undefined;
         this.reason = undefined;
         this.onResolvedCallbacks = [];
         this.onRejectedCallbacks = [];
         let resolve = value => {
-            if (this.status === PENDING) {
-                this.status = RESOLVED;
+            if (this.state === PENDING) {
+                this.state = FULFILLED;
                 this.value = value;
                 this.onResolvedCallbacks.forEach(fn => fn());
             }
         }
         let reject = reason => {
-            if (this.status === PENDING) {
-                this.status = REJECTED;
+            if (this.state === PENDING) {
+                this.state = REJECTED;
                 this.reason = reason;
                 this.onRejectedCallbacks.forEach(fn => fn());
             }
@@ -3361,59 +3372,154 @@ class Mypromise {
             reject(err);
         }
     }
-    then(onFulFilled, onRejected) {
-        onFulFilled = typeof onFulFilled === 'function' ? onFulFilled : data => data;
-        onRejected = typeof onRejected === 'function' ? onRejected : err => {throw err};
+
+    then(onFulfilled, onRejected) {
+        onFulfilled = typeof onFulfilled === 'function' ? onFulfilled : data => data;
+        onRejected = typeof onRejected === 'function' ? onRejected : err => { throw err };
         let promise2 = new Mypromise((resolve, reject) => {
-            if (this.status === RESOLVED) {
-                setTimeout(() => {
-                    try {
-                        let x = onFulFilled(this.value);
-                        resolvePromise(promise2, x, resolve, reject);
-                    } catch (error) {
-                        reject(error);
-                    }
-                }); // 同步无法使用promise2, 所以借用setTimeout 异步的方式 ？？？
-            }
-
-            if (this.status === REJECTED) {
-                setTimeout(() => {
-                    try {
-                        let x = onRejected(this.reason);
-                        resolvePromise(promise2, x, resolve, reject);
-                    } catch (error) {
-                        reject(error);
-                    }
-                });
-            }
-
-            if (this.status === PENDING) {
-                this.onResolvedCallbacks.push(() => {
+            switch (this.state) {
+                case FULFILLED:
                     setTimeout(() => {
                         try {
-                            let x = onFulFilled(this.value);
-                            resolvePromise(promise2, x, resolve, reject);
+                            const result = onFulfilled(this.value);
+                            resolvePromise(promise2, result, resolve, reject);
                         } catch (error) {
-                            reject(err);
+                            // 如果不设置回调函数，Promise内部抛出的错误，不会反应到外部
+                            reject(error);
                         }
-                    });
-                })
-                this.onRejectedCallbacks.push(() => {
+                    }); // 若不使用setTimeout包装，则会在声明promise2之前执行此段代码
+                    break;
+                case REJECTED:
                     setTimeout(() => {
                         try {
-                            let x = onRejected(this.reason);
-                            resolvePromise(promise2, x, resolve, reject);
+                            const result = onRejected(this.reason);
+                            resolvePromise(promise2, result, resolve, reject);
                         } catch (error) {
                             reject(error);
                         }
                     });
-                })
+                    break;
+            
+                default:
+                    this.onResolvedCallbacks.push(() => {
+                        setTimeout(() => {
+                            try {
+                                const result = onFulfilled(this.value);
+                                resolvePromise(promise2, result, resolve, reject);
+                            } catch (error) {
+                                reject(err);
+                            }
+                        });
+                    })
+                    this.onRejectedCallbacks.push(() => {
+                        setTimeout(() => {
+                            try {
+                                const result = onRejected(this.reason);
+                                resolvePromise(promise2, result, resolve, reject);
+                            } catch (error) {
+                                reject(error);
+                            }
+                        });
+                    })
+                    break;
             }
         })
         return promise2;
     }
-}
 
+    catch(onRejected) {
+        return this.then(undefined, onRejected);
+    }
+
+    finally(callback) {
+        return this.then(
+            value => MyPromise.resolve(callback()).then(() => value),
+            err => MyPromise.reject(callback()).catch(() => { throw err })
+        );
+    }
+
+    static all(promises) {
+        return new MyPromise((resolve, reject) => {
+            const promisesList = Array.from(promises);
+            const promisesLen = promisesList.length;
+            let resList = Array(promisesLen);
+            let index = 0;
+            
+            let processData = (i, data) => {
+                resList[i] = data;
+                if (++index === promisesLen) {
+                    resolve(resList);
+                }
+            }
+    
+            promisesList.forEach((promise, i) => {
+                if (isPromise(promise)) {
+                    promise.then(
+                        data => processData(i, data),
+                        err => reject(err)
+                    );
+                } else {
+                    processData(i, promise);
+                }
+            })
+        })
+    }
+
+    static allSettled(promises) {
+        return new MyPromise(resolve => {
+            const promisesList = Array.from(promises);
+            const promisesLen = promisesList.length;
+            let resList = Array(promisesLen);
+            let index = 0;
+    
+            let processData = (i, data, isResolve) => {
+                resList[i] = formatSettledResult(isResolve, data);
+                if (++index === promisesLen) {
+                    resolve(resList)
+                }
+            }
+    
+            promisesList.forEach((promise, i) => {
+                if (isPromise(promise)) {
+                    promise.then(
+                        data => processData(i, data, true), 
+                        err => processData(i, err, false)
+                    );
+                } else {
+                    processData(i, promise, true);
+                }
+            })
+        })
+    }
+
+    static race(promises) {
+        return new MyPromise( (resolve, reject) => {
+            const promisesList = Array.from(promises);
+            for (let index = 0; index < promisesList.length; index++) {
+                const promise = promisesList[index];
+                if (isPromise(promise)) {
+                    promise.then(
+                        data => resolve(data),
+                        err => reject(err)
+                    )
+                } else {
+                    return resolve(promise)
+                }
+            }
+        })
+    }
+
+    static resolve(value) {
+        if (isPromise(value)) {
+            return value.then();
+        }
+        return new MyPromise(resolve => resolve(value))
+    }
+    
+    static reject(value) {
+        return new MyPromise((resolve, reject) => reject(value));
+    }
+}
 ```
 
 - resolve函数的参数除了正常的值以外，还可能是另一个 Promise 实例
@@ -3502,14 +3608,6 @@ promise.catch(function(error) {
   console.log(error);
 });
 // Error: test
-```
-
-- catch 方法手写实现
-
-```js
-MyPromise.prototype.catch = function(onRejected) {
-  return this.then(undefined, onRejected);
-}
 ```
 
 - 如果 Promise 状态已经变成resolved，再抛出错误是无效的
@@ -3618,7 +3716,7 @@ Promise.prototype.finally = function (callback) {
   return this.then(
     // finally其实就是一个promise的then方法的别名，在执行then方法之前，先处理callback函数
     value  => P.resolve(callback()).then(() => value),
-    reason => P.reject(callback()).then(() => { throw reason })
+    reason => P.reject(callback()).catch(() => { throw reason })
   );
 };
 ```
@@ -3658,40 +3756,6 @@ Promise.all([p1, p2])
 // ["hello", Error: 报错了]
 ```
 
-- all 方法手写实现
-
-```js
-const isPromise = value => {
-    return (value !== null && typeof value === 'object' || typeof value === 'function') &&
-        typeof value.then === 'function';
-}
-MyPromise.all = lists => {
-    return new MyPromise((resolve, reject) => {
-        let resArr = Array(lists.length);
-        let index = 0;
-
-        function processData(i, data) {
-            resArr[i] = data;
-            index ++;
-            if (index === lists.length) {
-                resolve(resArr);
-            }
-        }
-        for (let i = 0; i < lists.length; i++) {
-            if (isPromise(lists[i])) {
-                lists[i].then(data => {
-                    processData(i, data);
-                }, err => {
-                    return reject(err);
-                })
-            } else {
-                processData(i, lists[i]);
-            }
-        }
-    })
-}
-```
-
 ### Promise.race()
 
 ```js
@@ -3715,30 +3779,6 @@ p
 .catch(console.error);
 ```
 
-- race 手写实现
-
-```js
-const isPromise = value => {
-    return (value !== null && typeof value === 'object' || typeof value === 'function') &&
-        typeof value.then === 'function';
-}
-MyPromise.race = lists => {
-    return new MyPromise((resolve, reject) => {
-        for (let i = 0; i < lists.length; i++) {
-            if (isPromise(lists[i])) {
-                lists[i].then(data => {
-                    return resolve(data);
-                }, err => {
-                    return reject(err);
-                })
-            } else {
-                return resolve(lists[i]);
-            }
-        }
-    })
-}
-```
-
 ### Promise.resolve()
 
 - 将现有对象转为 Promise 对象
@@ -3749,24 +3789,6 @@ const jsPromise = Promise.resolve($.ajax('/whatever.json'));
 Promise.resolve('foo')
 // 等价于
 new Promise(resolve => resolve('foo'))
-```
-
-- 静态方法resolve() 手写实现
-
-```js
-const isPromise = value => {
-    return (value !== null && typeof value === 'object' || typeof value === 'function') &&
-        typeof value.then === 'function';
-}
-MyPromise.resolve = value => {
-    if (isPromise(value)) {
-        return value;
-    } else {
-        return new MyPromise((resolve, reject) => {
-            resolve(value);
-        })
-    }
-}
 ```
 
 #### 四种参数形式
@@ -3830,16 +3852,6 @@ Promise.reject(thenable)
 // true
 ```
 
-- 静态方法 reject() 手写实现
-
-```js
-MyPromise.reject = (value) => {
-    return new MyPromise((resolve, reject) => {
-        reject(value)
-    })
-}
-```
-
 ### 应用：加载图片
 
 ```js
@@ -3894,51 +3906,6 @@ Promise.allSettled([resolved, rejected]).then(res => {
   //   {status: 'rejected', reason: -1},
   // ]
 })
-```
-
-- 手写实现
-
-```js
-const formatSettledResult = (suc, value) => suc ? {
-  status: 'fulfilled',
-  value: value
-} : {
-  status: 'rejected',
-  reason: value
-}
-const isPromise = value => {
-    return (value !== null && typeof value === 'object' || typeof value === 'function') &&
-        typeof value.then === 'function';
-}
-Promise.all_settled = (iterators) => {
-  const promises = Array.from(iterators);
-  const num = promises.length;
-  const reslist = new Array(num);
-  let resNum = 0;
-  function processData(i, data, isResolve) {
-    reslist[i] = formatSettledResult(isResolve, data);
-    if (++index === lists.length) {
-        // 处理异步，要使用计数器，不能使用 reslist === lists.length ????
-        resolve(reslist);
-    }
-  }
-  promises.foreach((promise, index) => {
-    if (isPromise(promise)) {
-      Promise.resolve(promise)
-      .then(val => {
-        processData(index, val, true);
-      }, err => {
-        processData(index, err, false);
-      })
-    } else {
-      processData(index, val, true);
-    }
-  });
-}
-
-const res1 = Promise.resolve(42);
-const res2 = Promise.reject(-1);
-Promise.all_settled([res1, res2]).then((res) => console.log(res));
 ```
 
 ## Iterator
