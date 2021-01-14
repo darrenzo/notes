@@ -33,62 +33,96 @@ setTimeout(function () {
         console.log('3');
     })
     setTimeout(function () {
-        console.log('16')
+        console.log('4')
     })
     new Promise(function (resolve) {
-        console.log('4');
+        console.log('5');
         resolve();
     }).then(function () {
-        console.log('5')
+        console.log('6')
     })
 })
 new Promise(function (resolve) {
-    console.log('6');
+    console.log('7');
     resolve();
 }).then(function () {
-    console.log('7');
+    console.log('8');
     new Promise(function (resolve) {
-        console.log('8');
+        console.log('9');
         resolve();
     }).then(function () {
       new Promise(function (resolve) {
-          console.log('9');
+          console.log('10');
           resolve();
       }).then(function () {
-          console.log('10')
+          console.log('11')
       })
     })
 })
-process.nextTick(function () {
-    console.log('11');
-})
-setTimeout(function () {
+
+Promise.resolve(new Promise((resolve) => {
     console.log('12');
-    process.nextTick(function () {
-        console.log('13');
-    })
+    resolve()
+})).then(function() {
+    console.log('13'); 
+});
+
+new Promise(function (resolve) {
+    console.log('14');
+    resolve();
+}).then(function () {
+    console.log('15');
     new Promise(function (resolve) {
-        console.log('14');
+        console.log('16');
         resolve();
     }).then(function () {
-        console.log('15')
+      new Promise(function (resolve) {
+          console.log('17');
+          resolve();
+      }).then(function () {
+          console.log('18')
+      })
+    })
+})
+
+process.nextTick(function () {
+    console.log('19');
+})
+
+setTimeout(function () {
+    console.log('20');
+    process.nextTick(function () {
+        console.log('21');
+    })
+    new Promise(function (resolve) {
+        console.log('22');
+        resolve();
+    }).then(function () {
+        console.log('23')
     })
 })
 
 // 1
-// 6
-// 11
 // 7
-// 8
-// 9
-// 10
-// 2
-// 4
-// 3
-// 5
 // 12
 // 14
+// 19
+// 8
+// 9
 // 13
 // 15
 // 16
+// 10
+// 17
+// 11
+// 18
+// 2
+// 5
+// 3
+// 6
+// 20
+// 22
+// 21
+// 23
+// 4
 ```
