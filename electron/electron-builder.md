@@ -26,6 +26,7 @@
 
 ## 代码签名
 
+- [一种方法](https://www.cnblogs.com/mmykdbc/p/11468908.html)
 - Windows是双代码签名的(SHA1和SHA256哈希算法)
 - 在macOS开发机器上，将自动使用来自密钥链的有效且适当的标识
 
