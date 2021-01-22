@@ -521,7 +521,8 @@ computed: {
     <template>
         <div id="app">
             <ol>
-                <li v-for="(todo,index) in todos" :key="index">
+                <!-- key绑定的值不要用index,要用对象自身带的唯一id -->
+                <li v-for="todo in todos" :key="todo.text">
                     {{ todo.text }}
                 </li>
             </ol>
