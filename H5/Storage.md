@@ -22,7 +22,7 @@
 
 - document.cookie="username=John Doe; domain=.baidu.com; expires=Thu, 18 Dec 2013 12:00:00 GMT; path=/";
 - 内容，过期时间，cookie路径（当前页面）
-- 注：document.cookie返回字符串，只返回"username=John Doe;username2=John Doe2;",不会包含demain、expires和path信息
+- 注：document.cookie返回字符串，只返回"username=John Doe;username2=John Doe2;",不会包含domain、expires和path信息
 
 ```javascript
     function setCookie(cname,cvalue,exdays)
