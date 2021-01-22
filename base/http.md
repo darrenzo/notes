@@ -175,3 +175,9 @@
 ![响应头属性](/img/response-headers.jpg)
 
 ## [http1.0、http1.1、http2.0的区别](https://juejin.im/entry/6844903489596833800)
+
+## token授权
+
+- 发送请求时通常要在请求头中设置token
+  - headers: {Authorization: `Bearer ${token}`}
+
