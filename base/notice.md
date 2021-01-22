@@ -278,13 +278,64 @@ function fbb() {
 }
 ```
 
+## 斐波那契数组
+
+```js
+// 基础解法
+function fibonacci(n) {
+    let num1 = 1;
+    let num2 = 1;
+    let sum;
+    let arr = [1, 1];
+    for (let i = 3; i < n; i++) {
+        sum = num1 + num2;
+        num1 = num2;
+        num2 = sum;
+        arr.push(sum);
+    }
+    return arr;
+}
+
+let aa = fibonacci(50);
+
+// es6 Generator 函数解法
+function *fibonacci(n) {
+  let num1 = 1;
+  let num2 = 1;
+  let index = 0;
+  while (index < n) {
+    yield num1;
+    [num1, num2] = [num2, num1 + num2];
+    index++;
+  }
+}
+
+let aa = fibonacci(50);
+aa.next(); // {value: 1, done: false}
+aa.next(); // {value: 1, done: false}
+aa.next(); // {value: 2, done: false}
+aa.next(); // {value: 3, done: false}
+aa.next(); // {value: 5, done: false}
+```
+
 ## 函数柯里化
 
 - 参数长度固定
 
 ```js
 // 判断传入的参数args 与 fn方法需要的参数个数是否一致，一致则直接把args给fn执行，否则，把返回一个函数，函数体把新函数接受的参数与args合并后传给judge()再次走一遍判断
-const curry = (fn) => (judge = (...args) => args.length === fn.length ? fn(...args) : (...arg) => judge(...args, ...arg));
+// const curry = (fn) => (judge = (...args) => args.length === fn.length ? fn(...args) : (...arg) => judge(...args, ...arg));
+
+function curry(fn) {
+    let judge = (...args) => {
+        if (args.length === fn.length) {
+            return fn(...args);
+        } else {
+            return (...arg) => judge(...args, ...arg);
+        }
+    }
+    return judge;
+}
 
 const add = (a, b, c) => a + b + c;
 
