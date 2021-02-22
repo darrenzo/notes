@@ -468,30 +468,38 @@
     - 函数防抖：在事件被触发n秒后再执行回调，如果在这n秒内又被触发，则重新计时
       - 适用场景：防止多次提交，只执行最后提交的一次
 
-    ```js
-    function debounce(func, wait, immediate) {
-        let timeout, result;
-        return function() {
+    ```ts
+    function debounce<R>(func: (...args: any[]) => R, waitMs: number, immediate?: boolean) {
+        let timeout: NodeJS.Timeout | null = null;
+        let result: R | undefined;
+        // TS 方法内使用this时，只需要在第一个参数注明this类型即可，编译时会忽略第一个参数this
+        return function(this: any, ...newArgs: any[]) {
             const context = this;
-            const args = arguments;
-            if (timeout) clearTimeout(timeout);
+            if (timeout) {
+                clearTimeout(timeout);
+            }
             if (immediate) {
                 // 立即执行函数，然后等到停止触发n秒后，才可以重新触发执行
                 const callNow = !timeout;
+
                 timeout = setTimeout(() => {
                     timeout = null;
-                }, wait);
-                if (callNow) result = func.apply(context, args);
+                }, waitMs);
+
+                if (callNow) {
+                  result = func.apply(context, newArgs);
+                }
             }
             else {
                // 只需要延迟执行
                 timeout = setTimeout(() => {
-                    func.apply(context, args);
-                }, wait);
+                    func.apply(context, newArgs);
+                }, waitMs);
             }
             // 部分方法会有返回值，由于setTimeout回调里的返回值无法拿到return,所以只在immediate为true时返回
             return result;
-        }
+        };
+
     }
     ```
 
