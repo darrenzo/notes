@@ -120,7 +120,7 @@ console.log(b); // {k1: 1, k3: {k2: 2}}
 - 函数显式参数在函数定义时列出，函数隐式参数在函数调用时传递给函数真正的值
 - 如果函数在调用时未提供隐式参数，参数会默认设置为： undefined
 
-```jaicascript
+```js
     function myFunction(x, y) {
         y = y || 0;
     }
@@ -395,21 +395,24 @@ new Date() * 1
 ## lodash方法集中 _.get(object, path, [defaultValue]) 的实现
 
 ```js
-// 考虑source中有数组的情况
-function get(source, path, defaultValue = undefined) {
-  // path字符串写法有   a[3].b -> a.3.b -> [a, 3, b]
-  const paths = path.replace(/\[(\d+)\]/g, '.$1').split('.');
-  let res = source;
-  for(const p of paths ) {
-    // null 和 undefined 取属性会报错， 所以用 Object 包装一下，Object(null)[0] 返回undefine
-    res = Object(res)[p];
-    if (res === undefined) {
-      return defaultValue;
+export function lodashGet(source: object, path: string, defaultValue?: undefined): object | undefined;
+export function lodashGet<TX>(source: object, path: string, defaultValue?: undefined): TX | undefined;
+export function lodashGet<TX>(source: object, path: string, defaultValue: TX): TX;
+export function lodashGet(source: object, path: string, defaultValue: any) {
+    // path字符串写法有   a[3].b -> a.3.b -> [a, 3, b]
+    const paths = path.replace(/\[(\d+)\]/g, '.$1').split('.');
+    let res = source;
+    for (const p of paths) {
+        // null 和 undefined 取属性会报错， 所以用 Object 包装一下，Object(null)[0] 返回undefine
+        res = Object(res)[p];
+        if (res === undefined) {
+            return defaultValue;
+        }
     }
-  }
-  return res;
+    return res;
+    // console.log(lodashGet({a: null}, 'a.b.c', 3)); // 3
 }
-console.log(get({a: null}, 'a.b.c', 3)); // 3
+console.log(lodashGet({a: null}, 'a.b.c', 3)); // 3
 
 // 不考虑source中有数组的情况
 const get = (object, keys, val) => (kyes.split('.').reduce(
