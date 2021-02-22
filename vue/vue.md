@@ -125,7 +125,7 @@
                     }
                 }，
                 computed: {
-                    classObject2: function () {
+                    classObj2: function () {
                         return {
                             active: this.isActive && !this.error,
                             'text-danger': this.error && this.error.type === 'fatal'
@@ -243,9 +243,9 @@ computed: {
 ### 单选框
 
 ```html
-    <input type="radio" name="gender" value="man" id="man" v-model="gender"/>
+    <input id="man" type="radio" name="gender" value="man" v-model="gender"/>
     <label for="man">男</label>
-    <input type="radio" name="gender" value="woman" id="women" v-model="gender"/>
+    <input id="women" type="radio" name="gender" value="woman" v-model="gender"/>
     <label for="women">女</label>
 ```
 
@@ -253,7 +253,7 @@ computed: {
 
 ```html
     <!-- 显示为勾选true,取消勾选为false -->
-    <input type="checkbox" id="checkbox" v-model="checked">
+    <input id="checkbox" type="checkbox" v-model="checked">
     <label for="checkbox">{{ checked }}</label>
 ```
 
@@ -262,9 +262,9 @@ computed: {
 ```html
     <template>
         <div id="app">
-            <input type="checkbox" id="jack" value="Jack" v-model="checkedNames">
+            <input id="jack" type="checkbox" value="Jack" v-model="checkedNames">
             <label for="jack">Jack</label>
-            <input type="checkbox" id="john" value="John" v-model="checkedNames">
+            <input id="john" type="checkbox" value="John" v-model="checkedNames">
             <label for="john">John</label>
             <br>
             <span>Checked names: {{ checkedNames }}</span>
@@ -350,8 +350,8 @@ computed: {
 ### 表单输入的v-model修饰符
 
 - v-model.lazy 在 "change" 而不是 "input" 事件中更新, 不再即时更新
-- v-model.number 如果想自动将用户的输入值转为 Number 类型 (如果原值的转换结果为 NaN 则返回原值)，可以添加一个修饰符 number 给 v-model 来处理输入值. 这通常很有用，因为在 type="number" 时 HTML 中输入的值也总是会返回字符串类型。
-- v-model.trim  如果要自动过滤用户输入的首尾空格，可以添加 trim 修饰符到 v-model 上过滤输入：
+- v-model.number 如果想自动将用户的输入值转为 Number 类型 (如果原值的转换结果为 NaN 则返回原值)，可以添加一个修饰符 number 给 v-model 来处理输入值. 这通常很有用，因为在 type="number" 时 HTML 中输入的值也总是会返回字符串类型
+- v-model.trim  如果要自动过滤用户输入的首尾空格，可以添加 trim 修饰符到 v-model 上过滤输入
 
 ## v-once 只执行一次插值
 
@@ -363,8 +363,8 @@ computed: {
 
 ## v-html 输出原始html
 
-- 这个 div 的内容将会被替换成为属性值 rawHtml，直接作为 HTML —— 会忽略解析属性值中的数据绑定。注意，你不能使用 v-html 来复合局部模板，因为 Vue 不是基于字符串的模板引擎。反之，对于用户界面 (UI)，组件更适合作为可重用和可组合的基本单位。
-- 站点上动态渲染的任意 HTML 可能会非常危险，因为它很容易导致 XSS 攻击。请只对可信内容使用 HTML 插值，绝不要对用户提供的内容使用插值。
+- 这个 div 的内容将会被替换成为属性值 rawHtml，直接作为 HTML —— 会忽略解析属性值中的数据绑定。注意，你不能使用 v-html 来复合局部模板，因为 Vue 不是基于字符串的模板引擎。反之，对于用户界面 (UI)，组件更适合作为可重用和可组合的基本单位
+- 站点上动态渲染的任意 HTML 可能会非常危险，因为它很容易导致 XSS 攻击。请只对可信内容使用 HTML 插值，绝不要对用户提供的内容使用插值
 
 ```html
     <div v-html="rawHtml"></div>
@@ -415,7 +415,7 @@ computed: {
   - @click.capture 添加事件侦听器时使用事件捕获模式
   - @click.self 只当事件在该元素本身 (比如不是子元素) 触发时触发回调
   - @click.once 点击事件将只会触发一次
-- 使用修饰符时，顺序很重要；相应的代码会以同样的顺序产生。因此，用 @click.prevent.self 会阻止所有的点击，而 @click.self.prevent 只会阻止元素上的点击。
+- 使用修饰符时，顺序很重要；相应的代码会以同样的顺序产生。因此，用 @click.prevent.self 会阻止所有的点击，而 @click.self.prevent 只会阻止元素上的点击
 
 ## 键值修饰符
 
@@ -434,7 +434,7 @@ computed: {
 
 ## 修饰键
 
-- 修饰键与正常的按键不同；修饰键和 keyup 事件一起用时，事件引发时必须按下正常的按键。换一种说法：如果要引发 keyup.ctrl，必须按下 ctrl 时释放其他的按键；单单释放 ctrl 不会引发事件。
+- 修饰键与正常的按键不同；修饰键和 keyup 事件一起用时，事件引发时必须按下正常的按键。换一种说法：如果要引发 keyup.ctrl，必须按下 ctrl 时释放其他的按键；单单释放 ctrl 不会引发事件
 - .ctrl
 - .alt
 - .shift
@@ -444,14 +444,14 @@ computed: {
 
 ## 鼠标按钮修饰符
 
-- 这些修饰符会限制处理程序监听特定的滑鼠按键。
+- 这些修饰符会限制处理程序监听特定的滑鼠按键
 - .left
 - .right
 - .middle
 
 ## v-if 条件判断
 
-- 类似于 v-else，v-else-if 必须紧跟在 v-if 或者 v-else-if 元素之后。
+- 类似于 v-else，v-else-if 必须紧跟在 v-if 或者 v-else-if 元素之后
 
 ```html
     <template>
@@ -508,10 +508,10 @@ computed: {
 
 ## v-if 和 v-show 的区别
 
-- v-if 是“真正的”条件渲染，因为它会确保在切换过程中条件块内的事件监听器和子组件适当地被销毁和重建。
-- v-if 也是惰性的：如果在初始渲染时条件为假，则什么也不做——直到条件第一次变为真时，才会开始渲染条件块。
-- v-show 就简单得多——不管初始条件是什么，元素总是会被渲染，并且只是简单地基于 CSS 进行切换。
-- 一般来说，v-if 有更高的切换开销，而 v-show 有更高的初始渲染开销。因此，如果需要非常频繁地切换，则使用 v-show 较好；如果在运行时条件不太可能改变，则使用 v-if 较好。
+- v-if 是“真正的”条件渲染，因为它会确保在切换过程中条件块内的事件监听器和子组件适当地被销毁和重建
+- v-if 也是惰性的：如果在初始渲染时条件为假，则什么也不做——直到条件第一次变为真时，才会开始渲染条件块
+- v-show 就简单得多——不管初始条件是什么，元素总是会被渲染，并且只是简单地基于 CSS 进行切换
+- 一般来说，v-if 有更高的切换开销，而 v-show 有更高的初始渲染开销。因此，如果需要非常频繁地切换，则使用 v-show 较好；如果在运行时条件不太可能改变，则使用 v-if 较好
 
 ## v-for 循环 （可以用of代替in）
 
@@ -967,7 +967,7 @@ props: {
         validator: function (value) {
             return value === 'fade' || value === 'slide'
         },
-        defalut: 'slide'
+        default: 'slide'
     }
 }
 ```
@@ -1539,6 +1539,7 @@ const router = new VueRouter({
  ```
 
 - 每次路由切换时，对应页面都会执行钩子destroyed(),此时可以清掉计时器等相关操作 destroyed() {clearTimeout(this.timer)}
+  <!-- - 在keep-alive组件中也会执行destroyed()吗？？？？？？ -->
 
 ### 动态路由
 

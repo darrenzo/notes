@@ -74,11 +74,11 @@
 
 ```javascript
     //将对象彻底冻结
-    var constantize = (obj) => {
+    var constantans = (obj) => {
         Object.freeze(obj);
         Object.keys(obj).forEach( (item, index) => {
             if ( typeof obj[item] === 'object' ) {
-                constantize( obj[item] );
+                constantans( obj[item] );
             }
         });
     };
