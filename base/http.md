@@ -7,7 +7,7 @@
 ## 协议
 
 - http： HTTP、TCP、IP
-- https: HTTP、TCP、IP、SSL(或TLS)
+- https: HTTP、SSL(或TLS)、TCP、IP
 
 ## TCP/IP
 
