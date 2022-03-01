@@ -28,7 +28,7 @@
 - 找不到返回-1
 - 对大小写敏感
 
-### stringObject.indexOf(searchvalue,fromindex)
+### stringOrArr.indexOf(searchvalue,fromindex)
 
 - searchvalue需检索的字符串值
 - fromindex字符串中开始检索的位置
@@ -66,7 +66,7 @@ arr.length; // 6
 ## 类数组 和 数组 的区别
 
 - 数组是一个特殊对象，与常规对象的区别：
-  - 当由新元素添加到列表中时，自动更新length属性
+  - 当有新元素添加到列表中时，自动更新length属性
   - 设置length属性，可以截断数组
   - 从Array.prototype中继承了方法
   - 属性为'Array'
@@ -196,7 +196,7 @@ function arrayUniq(arr) {
 
 ### stringObject.split(" ",5)
 
-- 5为规定返回数组的最大长度，可选参数。
+- 5为规定返回数组的最大长度，可选参数
 
 ## 数组转为字符串
 
@@ -209,6 +209,8 @@ function arrayUniq(arr) {
 
 ### booleanObject.toString() 或者 String(booleanObject) 返回"true"或"false"
 
+- 避免使用String()
+
 ## 合并操作
 
 ### arrayObject.concat(arrayX,stringX,......,numberX)
@@ -220,7 +222,7 @@ function arrayUniq(arr) {
 
 ### item, index
 
-- arr.forEach( function  (item, index, arr ) { } [, thisValue] )
+- arr.forEach( function ( item, index, arr ) { } [, thisValue] )
   - thisValue为传递给函数的值,一般用 "this" 值。如果这个参数为空， "undefined" 会传递给 "this" 值
 
 - arr.map( function ( item, index, arr ) {  return } )
@@ -266,7 +268,7 @@ function arrayUniq(arr) {
 
 - 对象深拷贝
   - 简单字面量对象的深拷贝可以使用 JSON.parse(JSON.stringify(obj)) 方法进行拷贝 （注意Symbol值、undefined 和 function 会丢失）
-  - Objext.assign() 或者extends方法
+  - Object.assign() 或者extends方法
 
 ```js
 function deepCopy(obj) {
@@ -277,21 +279,13 @@ function deepCopy(obj) {
     var result = isArr ? [] : {};
     if (isArr) {
         for (const item of obj) {
-            if (typeof item === 'object') {
-                result.push(deepCopy(item));   //递归复制
-            } else {
-                result.push(item);
-            }
+            result.push(deepCopy(item));   //递归复制
         }
     } else {
         for (var key in obj) {
-          if (obj.hasOwnProperty(key)) {
-            if (typeof obj[key] === 'object') {
-              result[key] = deepCopy(obj[key]);   //递归复制
-            } else {
-              result[key] = obj[key];
+            if (obj.hasOwnProperty(key)) {
+                result[key] = deepCopy(obj[key]);   //递归复制
             }
-          }
         }
     }
     return result;
@@ -325,7 +319,7 @@ function deepCopy(obj) {
 - object
 - function
 
-### 3 种对象类型
+### 3 种对象类型（构造函数）
 
 - Object
 - Date
@@ -341,11 +335,12 @@ function deepCopy(obj) {
 - null为对象类型，undefined为undefined类型，NaN为数值类型
 - 值相等，类型不相等
 
-### 分别数组和date类型
+### 分别数组和Date类型
 
 - js无法通过typeOf来分辨
-- constructor 属性 返回所有 JavaScript 变量的构造函数。
+- constructor 属性 返回所有 JavaScript 变量的构造函数
   - [1,2,3,4].constructor.toString() 返回 "function Array() { [native code] }" 搜索字段Array即可
+  - [1,2,3,4].constructor === Array 为真
 - arr instanceof Array 返回Boolean值
   - 数组和对象 instanceof Object 都返回true
 - toString.call(param) === '[object Array]' ? [] : {} 可以用来区分数组、对象和Date
@@ -356,6 +351,7 @@ function deepCopy(obj) {
 
 - 只有传参形式的区别
 - `apply` 方法传入两个参数：一个是作为函数上下文的对象，另外一个是作为函数参数所组成的数组
+- `call` 方法第一个参数也是作为函数上下文的对象，但是后面传入的是一个参数列表，而不是单个数组
 
 ```js
 // obj 是作为函数上下文的对象，函数 func 中 this 指向了 obj 这个对象。参数 A 和 B 是放在数组中传入 func 函数，分别对应 func 参数的列表元素
@@ -367,21 +363,9 @@ function func(firstName, lastName){
     console.log(firstName + ' ' + this.name + ' ' + lastName);
 }
 
-func.apply(obj, ['A', 'B']);    // A study B
-```
+func.apply(obj, ['A', 'B']); // A study B
 
-- `call` 方法第一个参数也是作为函数上下文的对象，但是后面传入的是一个参数列表，而不是单个数组
-
-```js
-var obj = {
-    name: 'study'
-}
-
-function func(firstName, lastName) {
-    console.log(firstName + ' ' + this.name + ' ' + lastName);
-}
-
-func.call(obj, 'C', 'D');       // C study D
+func.call(obj, 'C', 'D'); // C study D
 ```
 
 - 如果你的参数本来就存在一个数组中，那自然就用 `apply`，如果参数比较散乱相互之间没什么关联，就用 `call`

@@ -16,6 +16,8 @@
   - 以git@开头的均为ssh操作方式
 - git remote rm origin 删除当前关联的远端仓库
 - git remote add origin [url] 添加关联的远端仓库
+- git remote prune origin
+  - 清理本地的远程分支记录
 - git pull
   - 拉取远端分支最新代码覆盖更新本地分支
 - git fetch --all
@@ -28,9 +30,12 @@
   - 跳过当前的commit rebase 冲突
 - git rebase --abort
   - 退出当前rebase，代码回复到rebase之前的状态
-- git merge origin dev
+- git merge origin/dev
   - 将origin dev合并到当前分支,冲突以当前分支为准
-  - PS：此命令建议仅用在origin dev分支已经rebase了当前分支之后
+- git merge origin/dev --no-ff
+  - 将origin dev合并到当前分支,冲突以当前分支为准, graph 树中两分支记录不会自动合并
+- git merge origin/dev --no-commit
+  - 将origin dev合并到当前分支,冲突以当前分支为准, 合并时即使没有冲突也不会自动合并打commit，此时可以手动检查差异
 - git tag
   - 查看tag
 - git tag v1.0.0
@@ -43,10 +48,16 @@
   - 删除远端对应分支 tag v1.0.1
 - git tag -l "*-production*" --sort=-creatordate | head -n 1
   - 返回最新的带'-production'字段的tag,例如 v3.6.17-20181219-production
-- git remote prune origin
-  - 清理本地的远程分支记录
 - git branch
-  - 查看当前分支
+  - 查看本地工作空间的分支
+- git branch -r
+  - 查看本地远端仓库的分支
+- git branch -v
+  - 查看本地工作空间的分支及对应的最新commit记录
+- git branch -rv
+  - 查看本地远端仓库的分支及对应的最新commit记录
+- git branch -av
+  - 查看本地所有的分支及对应的最新commit记录
 - git branch dev-press
   - 新建分支 dev-press，但当前分支不会切换到dev-press分支
 - git branch dev-press origin/master

@@ -8,7 +8,7 @@
 - id: 规定元素的唯一 id
 - style: 规定元素的行内 CSS 样式
 - title：规定有关元素的额外信息
-- contenteditable：规定元素内容是否可编辑，
+- contenteditable：规定元素内容是否可编辑
   - 值是 true|false
   - 如果元素未设置 contenteditable 属性，那么元素会从其父元素继承该属性
 - data-*：用于存储页面或应用程序的私有定制数据
@@ -622,7 +622,7 @@
 - 定义声音，比如音乐或其他音频流
 - 标签内的内容只会在浏览器不识别 audio 标签时显示
 - 属性
-  - autoplay：**音频在就绪后马上播放**
+  - autoplay：音频在就绪后马上播放
     - autoplay
   - controls：向用户显示控件，比如播放按钮
     - controls

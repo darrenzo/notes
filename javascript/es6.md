@@ -74,11 +74,11 @@
 
 ```javascript
     //将对象彻底冻结
-    var constantize = (obj) => {
+    var constantans = (obj) => {
         Object.freeze(obj);
         Object.keys(obj).forEach( (item, index) => {
             if ( typeof obj[item] === 'object' ) {
-                constantize( obj[item] );
+                constantans( obj[item] );
             }
         });
     };
@@ -3247,7 +3247,7 @@ const FULFILLED = 'fulfilled';
 
 const REJECTED = 'rejected';
 
-class Mypromise {
+class MyPromise {
     constructor(executor) {
         this.state = PENDING  //状态值
         this.value = undefined //成功的返回值
@@ -3275,16 +3275,15 @@ class Mypromise {
         }
     }
     then(onfulfilled, onRejected) {
-        switch (key) {
+        switch (this.state) {
             case FULFILLED:
                 // 状态为fulfuilled，执行onfulfilled，传入成功的值
-                onfulfilled(this.value)
+                onfulfilled && onfulfilled(this.value)
                 break;
             case REJECTED:
-                // 状态为rejected，执行onRejected，传入失败的值
-                onRejected(this.reason)
-                break;
             default:
+                // 状态为rejected，执行onRejected，传入失败的值
+                onRejected && onRejected(this.reason)
                 break;
         }
     }
@@ -3376,7 +3375,7 @@ class MyPromise {
     then(onFulfilled, onRejected) {
         onFulfilled = typeof onFulfilled === 'function' ? onFulfilled : data => data;
         onRejected = typeof onRejected === 'function' ? onRejected : err => { throw err };
-        let promise2 = new Mypromise((resolve, reject) => {
+        let promise2 = new MyPromise((resolve, reject) => {
             switch (this.state) {
                 case FULFILLED:
                     setTimeout(() => {
@@ -3399,7 +3398,7 @@ class MyPromise {
                         }
                     });
                     break;
-            
+                case PENDING:
                 default:
                     this.onResolvedCallbacks.push(() => {
                         setTimeout(() => {
@@ -3447,7 +3446,6 @@ class MyPromise {
             
             let processData = (i, data) => {
                 resList[i] = data;
-                // 不能用resList长度来判断
                 if (++index === promisesLen) {
                     resolve(resList);
                 }
@@ -3619,7 +3617,7 @@ const promise = new Promise(function(resolve, reject) {
   // 无效,不会执行
   throw new Error('test'); // 相当于 reject，而promise在状态改变便不再改变
 
-  // 有效
+  // 不会执行
   console.log('1');
 });
 ```

@@ -1,3 +1,7 @@
-# frontend study notes
+# 概述
 
-## Do! My best
+- 平日里工作和学习时积累的笔记
+
+## 有用的一些资源
+
+- [某个人开发者自制的博客网站，案例较详细，容易上手](https://www.mdzz.wiki)
