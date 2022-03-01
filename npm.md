@@ -55,7 +55,7 @@ yarn config set registry https://registry.npm.taobao.org
 yarn config set electron_mirror https://npm.taobao.org/mirrors/electron/
 yarn config set disturl https://npm.taobao.org/dist
 
-yarn init
+npm init ## 需要用npm初始化得到package.json
 
 yarn add [package]
 yarn add [package]@[version]
@@ -135,6 +135,6 @@ serve .
 // 执行 yarn rebuild 生成 运行时代码
 // 执行 npm publish --dry-run 模仿 publish 过程但不会实际发布，查看会发布的东西是否正确
 // 执行 npm login --registry 'https://npm.reolink.dev' 填写登录信息登录（此步需要账户有登录的权限）
-// 执行 npm publish --tag dev 发布dev 开发版本，项目中使用，可以 npm i @reolink/cli.ref@dev 使用开发版
+// 执行 npm publish --tag dev 发布dev 开发版本，项目中使用，可以 npm i @reolink/cli.ref@dev 使用开发版 (tag概念类似于分支，version不能与已有的重复)
 // 执行 npm publish 发布正式版
 ```
