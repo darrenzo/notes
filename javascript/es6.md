@@ -3447,6 +3447,7 @@ class MyPromise {
             
             let processData = (i, data) => {
                 resList[i] = data;
+                // 不能用resList长度来判断
                 if (++index === promisesLen) {
                     resolve(resList);
                 }

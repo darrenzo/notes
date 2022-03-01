@@ -1,0 +1,342 @@
+<article class="h_oi_right h_ol_right h_fr3right">
+    <h1 class="h_d_title h_wd_title1 h_ol_title h_fr4title">湖北省水文水资源中心主任信箱</h1>
+        <section class="clearfix h_f4_footer">
+            <div class="h_c_notes h_f4_letter">写信须知：
+               <div class="h_f4_search">
+                    <div class="input-group">
+                        <input type="text" value="2021030724754131" style="width:252px;" class="form-control" id="queryNumber" placeholder="请输入查询码查询你的答复信息" />
+                        <input type="text" vlaue="713826" style="width:252px;" class="form-control" id="queryPwd" placeholder="输入密码" />
+                        <span class="input-group-btn">
+                            <button class="btn btn-primary" type="button" id="search">
+                                搜索
+                            </button>
+                        </span>
+                       </div><!-- /input-group -->
+                  
+                 </div><!-- /.col-lg-6 -->
+            </div>
+            <ul class="h_c_ul2 h_mailul1">
+                <li>一、请您填写真实姓名、住址和联系方式，以便承办单位调查核实和反馈办理结果；</li>
+                <li>二、请您简明扼要填写信件内容，写清事情发生的时间、地点、简要经过、需要解决的问题和诉求；</li>
+                <li>三、请您客观真实反映情况和问题，对所反映内容的真实性负责，不得捏造歪曲事实，不得诬告、陷害他人。</li>
+            </ul>
+            <div class="h_f4_con">
+               
+        <div>
+        <input name="userType" type="hidden" value="0" />
+        <input name="isSendMsg" type="hidden" value="1" />
+        <input name="isSendEmail" type="hidden" value="0" />
+        </div>
+        
+
+        <div>
+        
+        <!-- <input type="hidden" name="__VIEWSTATEGENERATOR" id="__VIEWSTATEGENERATOR" value="70BD2E14" /> -->
+        <!-- <input type="hidden" name="__EVENTVALIDATION" id="__EVENTVALIDATION" /> -->
+        </div>
+                 <form  class="form-horizontal layui-form" action="javascript" id="infoForm" role="form" >
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label h_f4_txttitle"><font>*</font><span>信件标题  ：</span></label>
+                        <div class="col-sm-9">
+                            <input name="title" type="text" id="title" class="form-control" placeholder="请输入信件标题" lay-verify="required" />
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="firstname" class="col-sm-3 control-label h_f4_txttitle"><font>*</font><span>您的姓名 ：</span></label>
+                        <div class="col-sm-9">
+                            <input type="text" id="userName" class="form-control" placeholder="请输入名字" lay-verify="required|name" />
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label h_f4_txttitle"><font>*</font><span>性        别 ：</span></label>
+                        <div class="col-sm-9">
+                            <input id="sex" type="radio" name="sex" value="1" checked="checked" style="display:inline-block" /><label for="nan">男士</label>
+                            <input id="sex" type="radio" name="sex" value="2" style="display:inline-block"/><label for="nv">女士</label>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="email" class="col-sm-3 control-label h_f4_txttitle"><span>电子邮箱 ：</span></label>
+                        <div class="col-sm-9">
+                            <input name="email" type="text" id="email" class="form-control" placeholder="请输入电子邮箱" lay-verify="required|email" />
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="number" class="col-sm-3 control-label h_f4_txttitle"><font>*</font><span>联系电话 ：</span></label>
+                        <div class="col-sm-9">
+                           <input name="phone" type="text" id="phone" class="form-control" placeholder="请输入联系电话" lay-verify="required|mobile" />
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="area" class="col-sm-3 control-label h_f4_txttitle"><span>所在地区 ：</span></label>
+                        <div class="col-sm-9">
+                           <input name="address" type="text" id="address" class="form-control" placeholder="请输入所在地区" lay-verify="required" />
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="lettercon" class="col-sm-3 control-label h_f4_txttitle"><font>*</font><span>信件内容 ：</span></label>
+                        <div class="col-sm-9">
+                           <textarea name="content" rows="4" cols="20" id="content" class="form-control" lay-verify="required|content">
+        </textarea>
+                        </div>
+                    </div>
+                                <div class="form-group">
+            <label for="letter" class="col-sm-3 control-label h_f4_txttitle"><font>*</font><span>图片验证码  ：</span></label>
+            <div class="editor-field imgArea"> <img src="" id="rndimg" alt="" class="img-captcha" /> 
+                <div class="col-sm-4">
+                <input class="text-box single-line input-validation-error form-control" data-val="true" data-val-required="必需的" id="captcha" maxlength="4" name="captcha" type="text" value="" />
+</div>
+                <span class="field-validation-valid" data-valmsg-for="captcha" data-valmsg-replace="false">*</span> 
+                
+                [<a href="javascript:void(-1)" onclick="getImgCaptcha()">看不清，换一张</a>]
+                        
+            </div>
+</div>
+                    <div class="form-group">
+                        <label  class="col-sm-3 control-label h_f4_txttitle"></label>
+                        <div class="col-sm-9">
+                            <button type="button" value="提交" onclick="saveData()" lay-submit lay-filter="ysqgkFormSubmit" class="btn btn-primary h_c_btn1" />提交</button>
+                            <input type="reset" class="btn btn-primary" value="重置" />
+                        </div>
+                    </div>
+               
+                </form>
+               
+                </div>
+        </section>
+        
+        <ul class="h_f5_ul1 h_f4_ul1" id="qw" >
+             
+         </ul>
+
+</article>
+<script></script>
+<script>
+
+    function saveData() {
+        var title = $("#title").val();
+        var content = $("#content").val();
+        var govmsgboxType = '3'; //1 建议 2 表扬 3 咨询 4投诉							
+        var userName = $("#userName").val();
+        var sex = $("input[name='sex']:checked").val();
+        var phone = $("#phone").val();
+        //var location = $("#location").val();
+        var email = $("#email").val();
+        var htmlContent = $("#content").val();
+        // var area = $("#area option:selected").val();
+        // var govmsgboxType1 = $("#govmsgboxType1 option:selected").val();									
+        var captcha = $('#captcha').val();
+        var siteId = "57";
+
+        $.ajax({
+        url: '/IGI/nbhd/openGovmsgbox.do', 
+        type: 'POST',
+        cache:false,
+        data: {
+            method: "openSaveGovmsgbox",
+            title: title,
+            content: content,
+            govmsgboxType: "3",
+            userName: userName,
+            sex: sex,
+            phone: phone,
+            // location: "",
+            email: email,
+            // cardType: '',
+            // cardId: '',
+            arePublic: '1', // 0 不公开   1 公开
+            isAnonymous: '0', //0 不匿名  1 匿名
+            htmlContent: content,
+            siteId: siteId,
+            appId: '33',
+            province: '420000',
+            city: '420100',
+            area:'420103',
+            govmsgboxType1:"水利",
+            captcha: captcha
+        },
+        dataType: "json",
+        error: function(error) {            
+            alert(error.responseJSON.message);
+        },
+        success: function(data) {
+            alert(data.message);
+            // $("#userName").attr("disabled","disabled");
+            // $("#userName").attr("disabled","disabled");
+            // $("#title").val('');
+            // $("#content").val('');
+            // $('#captcha').val('')
+             location.reload() 
+
+        }
+    });
+    }
+    
+getImgCaptcha()
+
+$(".img-captcha").click(function () {
+    getImgCaptcha();
+});
+
+// 刷新验证码
+function getImgCaptcha() {
+    $(".img-captcha").attr('src', '/IGI/appadmin/image?randName=loginCaptcha&' + Math.random());
+}
+
+
+</script>
+<script>
+            // 自定义验证规则
+layui.use(['form'], function () {
+            var form = layui.form;
+            form .verify({
+                va: function (value, item) {
+                    if ($.trim(value).length === 0) {
+                        var hideen = $(item).is(':hidden');
+
+                        if (!hideen) {
+                            return "必填项不能为空";
+                        }
+                    }
+                },
+                certificate: function (value, item) {
+                    if ($.trim(value).length === 0) {
+                        var hideen = $(item).is(':hidden');
+
+                        if (!hideen) {
+                            return "必填项不能为空";
+                        }
+                    } else {
+                        var val = $('select[name="cardType"]').val();
+
+                        if (val === '0') {// 选择证件名称为身份证
+                            if (!/^(^[1-9]\d{7}((0\d)|(1[0-2]))(([0|1|2]\d)|3[0-1])\d{3}$)|(^[1-9]\d{5}[1-9]\d{3}((0\d)|(1[0-2]))(([0|1|2]\d)|3[0-1])((\d{4})|\d{3}[Xx])$)$/.test(value)) {
+                                return '请输入正确的身份证号'
+                            }
+                        }
+                    }
+                },
+                idCard: function (value, item) {
+                    if ($.trim(value).length === 0) {
+                        var hideen = $(item).is(':hidden');
+
+                        if (!hideen) {
+                            return "必填项不能为空";
+                        }
+                    } else {
+                        if (!/^(^[1-9]\d{7}((0\d)|(1[0-2]))(([0|1|2]\d)|3[0-1])\d{3}$)|(^[1-9]\d{5}[1-9]\d{3}((0\d)|(1[0-2]))(([0|1|2]\d)|3[0-1])((\d{4})|\d{3}[Xx])$)$/.test(value)) {
+                            return '请输入正确的身份证号'
+                        }
+                    }
+                },
+                idCardFront: function (value, item) {
+                    if ($.trim(value).length === 0) {
+                        return "请上传证件正面文件";
+                    }
+                },
+                idCardBack: function (value, item) {
+                    if ($.trim(value).length === 0) {
+                        return "请上传证件反面文件";
+
+                        if (!hideen) {
+
+                        }
+                    }
+                },
+                netAttachIds: function (value, item) {
+                    if ($.trim(value).length === 0) {
+                        return "请上传材料附件";
+                    }
+                },
+                name:[/^[\u4E00-\u9FA5\uf900-\ufa2d·s]{2,20}$/,"请输入正确的名称"],
+                number:[/^[0-9]*$/,"请输入正确的数字" ],
+                tyxydm:[/[0-9A-HJ-NPQRTUWXY]{2}\d{6}[0-9A-HJ-NPQRTUWXY]{10}/,"请输入社会信用代码"],
+                zzjgdm:[/^[a-zA-Z0-9]{9}$/,"请输入正确的组织机构代码" ],
+                gzdw:[/^[\u4e00-\u9fa5]+$/,"请输入正确的工作单位"],
+                zipCode: [/^[1-9]\d{5}(?!\d)$/, "请输入正确的邮政编码"],
+                mobile: [/^(13[0-9]|14[5-9]|15[012356789]|166|17[0-8]|18[0-9]|19[8-9])[0-9]{8}$/, "请输入正确的手机号"],
+                mail: [/^([a-zA-Z0-9_-]{2,9})@(([a-zA-Z0-9\-])+\.)([a-zA-Z0-9]{2,4})$/, "请输入正确的电子邮箱"],
+                requiredRadioB3: function (value, item) { //bootstrap 3 单选按钮必选
+                    var val = $(item).parent().parent().parent().find("input[type='radio']:checked").val();
+                    //返回值为true表示不是空字符串
+                    if (val == null || val == undefined || /^\s*$/.test(val)) {//正则表达式用于判斷字符串是否全部由空格或换行符组成
+                        return $(item).attr("lay-verify-msg");
+                    }
+                },
+                requiredRadio: function (value, item) { //bootstrap 4 单选按钮必选
+                    var val = $(item).parent().parent().find("input[type='radio']:checked").val();
+                    //返回值为true表示不是空字符串
+                    if (val == null || val == undefined || /^\s*$/.test(val)) {//正则表达式用于判斷字符串是否全部由空格或换行符组成
+                        return $(item).attr("lay-verify-msg");
+                    }
+                },
+                requiredCheck: function (value, item) { //复选框必选
+                    var val = $(item).parent().parent().find("input[type='checkbox']:checked").val();
+                    if (val == null || val == undefined || /^\s*$/.test(val)) {//正则表达式用于判斷字符串是否全部由空格或换行符组成
+                        return $(item).attr("lay-verify-msg");
+                    }
+                },
+                requiredCheckB3: function (value, item) { //bootstrap 4 复选框按钮必选
+                    var val = $(item).parent().parent().parent().find("input[type='checkbox']:checked").val();
+                    //返回值为true表示不是空字符串
+                    if (val == null || val == undefined || /^\s*$/.test(val)) {//正则表达式用于判斷字符串是否全部由空格或换行符组成
+                        return $(item).attr("lay-verify-msg");
+                    }
+                },
+                captcha: [/^[a-zA-Z0-9]{4}$/, "请输入正确的图片验证码"],
+            });
+ });
+</script>
+<script>
+            
+                $("#search").click(function () {
+                    var queryNumber = $("#queryNumber").val();
+                    var queryPwd= $("#queryPwd").val();
+                     
+                    $.ajax({
+                        type: "POST",
+                          dataType: 'json',
+                        url: "/IGI/nbhd/openGovmsgbox.do",
+                        data:{ 
+                     queryNumber:queryNumber,
+                      queryPwd:queryPwd,
+                      siteId:57,
+                      
+                         },
+                        contentType: "application/json",
+                       
+                        success: function (result) {
+                                     console.log(result);             
+                            var data = eval(result.d);
+
+                            if (data != null && data != undefined && data != "") {
+                                var str = "";
+                                if (data[0].queryNumber == -1) {
+                                  $("#qw").html("<h1 style='color:Red;font-size: 16px;font-weight: bold;text-align:center;'>您提交的信件内容不合法，已移除！</h1>");
+                                }
+                                else {
+                                    str += "<li>";
+                                    str += "<font>来信:</font>";
+                                    str += "<span>" + dataMaker(data.datas.SUBMITTIME) + "</span>";
+                                    str += "</li>";
+                                    str += "<li>";
+                                    str += "<font>回复:</font>";
+                                    if (data.datas.REPLYS[0].REPLYCONTENT != "")
+                                        str += "<span>" + data.datas.REPLYS[0].REPLYCONTENT + "</span>";
+                                    else
+                                        str += "<span>未回复</span>";
+                                    str += "</li>";
+                                    $("#qw").html(str);
+                                }
+                            }
+                            else {
+                                $("#qw").html("<h1 style='color:Red;font-size: 16px;font-weight: bold;text-align:center;'>您输入的查询码有误！请重新输入</h1>");
+                            }
+                        },
+                        error: function (msg) {
+console.log(queryNumber,queryPwd)
+                           console.log(msg)
+                            //alert(msg);
+                        }
+                    });
+})
+</script>

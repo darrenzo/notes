@@ -6,4 +6,8 @@
   - `npm rebuild --runtime=electron --target=6.1.5 --disturl=https://atom.io/download/atom-shell --abi=73`
     - target 是指 electron的版本
     - abi 是指所要的NODE_MODULE_VERSION值
+- 制作web动画的插件和软件
+  - https://lottiefiles.com/
+  - https://www.live2d.com/
+  - http://zh.esotericsoftware.com/spine-videos
 <!-- TODO 待续 -->

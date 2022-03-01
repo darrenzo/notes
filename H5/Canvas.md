@@ -761,7 +761,7 @@ if (ctx.isPointInPath(20,50)){
       ```js
       window.requestAnimationFrame(function(time){
           //显示屏刷新的时候被执行
-      })；
+      });
       ```
 
       - 兼容写法
