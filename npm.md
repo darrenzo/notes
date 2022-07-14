@@ -25,7 +25,10 @@
       - 如果当前项目找不到，会去全局查找 create-react-app
       - 如果全局还找不到，会帮我们临时从 npm 包仓库安装 create-react-app，不会污染到当前项目，也不会装到全局
 - [windows-build-tools](https://github.com/felixrieseberg/windows-build-tools)
+  - 高版本的node.js自带这类构建工具，不需要额外安装此工具
   - 需要使用VC环境编译原生node模块包时使用的工具（普通编译会出现node-gyp报错）
+  - npm config list //查看基本配置
+  - npm config list -l //查看所有配置
   - npm install --global windows-build-tools
   - yarn global add windows-build-tools
 - npm 设置淘宝镜像

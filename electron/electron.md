@@ -4,6 +4,24 @@
 - [VSCode使用教程](https://code.visualstudio.com/docs/)
 - [Chromium的开发者工具集](https://developer.chrome.com/devtools)
 
+## macos 环境配置步骤
+
+1. nvm 配置，直接在github上nvm库的readme查看
+2. npm上全局下载 node-gyp  yarn 等
+3. npm config 配置
+
+```shell
+registry=https://registry.npmmirror.com
+electron_mirror=https://cdn.npmmirror.com/binaries/electron/
+electron_builder_binaries_mirror=https://npmmirror.com/mirrors/electron-builder-binaries/
+```
+
+4. 如果需要登录npm仓库账号，则进行登录
+5. python下载：旧版mac系统自带python2,新版mac系统自带python3,使用which python查看
+6. 下载xcode软件，下载后，打开命令行工具查看是否有异常打印，如果有，自行百度异常信息解决
+7. 打开xcode软件，在左上角xcode项的菜单中找到preferences,打开并进入locations项，给Command Line Tools 设置 xcode版本
+8. 下载并安装证书，一般双击 p12或cer文件进行安装。钥匙串中的证书显示不受信任的时候，双击证书，点击弹窗的信任一行，改为始终信任
+
 ## Electron应用结构
 
 ### 进程

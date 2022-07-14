@@ -1,6 +1,8 @@
 # electron-builder
 
 - [Guides](https://www.electron.build/code-signing)
+- macos 分为intel和M系两种芯片，分别对应x64系统和arm64系统，electron-builder 在 23+ 版本以上才支持arm64系统
+- node-ffi-napi 在 4+ 版本才支持macos arm64系统, 但是对于高频数据传输，只有2.5.0版本才不会比旧的ffi库cpu高太多
 
 ## build
 
