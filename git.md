@@ -14,6 +14,13 @@
 - git remote -v 查看当前关联的远端仓库
   - 以http:开头的均为http操作方式
   - 以git@开头的均为ssh操作方式
+- git rm -r --cached 文件/文件夹名字 取消文件被版本控制
+  - add过的文件，通过.gitignore， 无法取消跟踪，必须要先取消版本控制后才能生效
+  - 切分支后，不被跟踪的文件会被删除
+- git update-index --assume-unchanged /path/to/file #忽略跟踪
+  - git update-index --no-assume-unchanged /path/to/file #恢复跟踪
+  - 可以强制本地不跟踪指定文件
+  - 相对路径必须要 ./ 开头
 - git remote rm origin 删除当前关联的远端仓库
 - git remote add origin [url] 添加关联的远端仓库
 - git remote prune origin
@@ -38,6 +45,8 @@
   - 将origin dev合并到当前分支,冲突以当前分支为准, 合并时即使没有冲突也不会自动合并打commit，此时可以手动检查差异
 - git tag
   - 查看tag
+- git tag -l "*-production*" --sort=-creatordate | head -n 1
+  - 返回最新的带'-production'字段的tag,例如 v3.6.17-20181219-production
 - git tag v1.0.0
   - 给当前分支添加 tag v1.0.1
 - git push --tag
@@ -46,14 +55,14 @@
   - 删除本地分支 tag v1.0.1
 - git push origin tag -d v1.0.1
   - 删除远端对应分支 tag v1.0.1
-- git tag -l "*-production*" --sort=-creatordate | head -n 1
-  - 返回最新的带'-production'字段的tag,例如 v3.6.17-20181219-production
 - git branch
   - 查看本地工作空间的分支
 - git branch -r
   - 查看本地远端仓库的分支
 - git branch -v
   - 查看本地工作空间的分支及对应的最新commit记录
+- git branch -vv
+  - 查看本地所有的分支及对应的远端分只
 - git branch -rv
   - 查看本地远端仓库的分支及对应的最新commit记录
 - git branch -av
