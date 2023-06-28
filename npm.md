@@ -5,6 +5,8 @@
 - [参考地址](https://www.cnblogs.com/yulinlewis/p/10441180.html)
 - [nvm下npm安装相关设置](https://www.cnblogs.com/ejll/p/11229557.html)
 - 装32位的node和使用32位的node， 都得在版本后空格加 32
+- 装 node 16.15.x以上版本时，nvm需要1.1.19版本以上
+- 当nvm命令出现 exit错误时，可能是因为权限不够，需要打开管理员权限运行
 
 ## npm
 
@@ -33,9 +35,9 @@
   - yarn global add windows-build-tools
 - npm 设置淘宝镜像
   - npm get registry
-  - npm config set registry http://registry.npm.taobao.org/
-  - npm config set disturl https://npm.taobao.org/dist
-  - npm config set electron_mirror https://npm.taobao.org/mirrors/electron/
+  - npm config set registry https://registry.npmmirror.com/
+  - npm config set electron_mirror https://cdn.npmmirror.com/binaries/electron/
+  - npm config set electron_builder_binaries_mirror https://npmmirror.com/mirrors/electron-builder-binaries/
   - 还原
     - npm config set registry https://registry.npmjs.org/
   - 安装 cnpm
@@ -54,9 +56,9 @@ yarn global bin ## 查看yarn的安装目录
 yarn config get registry
 
 ## 设置淘宝镜像
-yarn config set registry https://registry.npm.taobao.org
-yarn config set electron_mirror https://npm.taobao.org/mirrors/electron/
-yarn config set disturl https://npm.taobao.org/dist
+yarn config set registry https://registry.npmmirror.com/
+yarn config set electron_mirror https://cdn.npmmirror.com/binaries/electron/
+yarn config set electron_builder_binaries_mirror https://npmmirror.com/mirrors/electron-builder-binaries/
 
 npm init ## 需要用npm初始化得到package.json
 
@@ -137,7 +139,10 @@ serve .
 // 开发环境 tsconfig.json 的 sourceMap 和 declarationMap 要设置true, 生产环境的设置false
 // 执行 yarn rebuild 生成 运行时代码
 // 执行 npm publish --dry-run 模仿 publish 过程但不会实际发布，查看会发布的东西是否正确
-// 执行 npm login --registry 'https://npm.reolink.dev' 填写登录信息登录（此步需要账户有登录的权限）
+// 执行 npm login --registry 'https://npm.reolink.dev' --auth-type=legacy 填写登录信息登录（此步需要账户有登录的权限）
 // 执行 npm publish --tag dev 发布dev 开发版本，项目中使用，可以 npm i @reolink/cli.ref@dev 使用开发版 (tag概念类似于分支，version不能与已有的重复)
 // 执行 npm publish 发布正式版
+
+// NPM v9.x 版本对登录&认证协议进行了改版，如果要登陆基于旧版认证协议的私有的 NPM 服务器，应当增加 --auth-type=legacy 参数。如
+// npm login --auth-type=legacy --registry 'https://npm.reolink.dev'
 ```
