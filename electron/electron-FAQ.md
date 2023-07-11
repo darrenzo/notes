@@ -39,3 +39,6 @@
     }
   ```
 <!-- TODO 待续 -->
+
+- electron-updater 在查询yml时，yml资源的url会默认带上 ?noCache=${hash:5} 查询字段，导致原url的cdn效果失效
+  - 可以通过设置 autoUpdater.requestHeaders = { authorization: '' } 方式去除 ?noCache=${hash:5} 字段
