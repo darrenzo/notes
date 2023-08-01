@@ -100,10 +100,14 @@
             <div class="static" :class="{ active: isActive, 'text-danger': hasError }"></div>
 
             <!-- 对象语法 -->
-            <div class="static" :class="classObj"></div>
+            <div class="static" :class="text1"></div>
+
+            <div class="static" :class="{ text: textActive }"></div>
 
             <!-- 对象语法结合计算属性 -->
             <div class="static" :class="classObj2"></div>
+            
+            <button @click="changeClass"></button>
 
             <!-- 数组语法：  字符串， 变量， 对象， 三元运算式-->
             <div :class="['static', errorClass, { active: isActive }, isActive ? activeClass : '']"></div>
@@ -114,16 +118,26 @@
                 el: '#app',
                 data() {
                     return {
+                        text1: {
+                            text: textActive
+                        },
+                        textActive: true
                         classObj: {
                             active: true,
                             'text-danger': false
                         }，
                         isActive: true,
+                        hasError: false,
                         error: null,
                         activeClass: 'active',
                         errorClass: 'text-danger'
                     }
-                }，
+                },
+                methods: {
+                    changeClass() {
+                        this.isActive = !this.isActive; 
+                    }
+                },
                 computed: {
                     classObj2: function () {
                         return {
@@ -476,6 +490,7 @@ computed: {
 - key属性 禁止相同元素被高效的复用，区分相同的元素, 声明“这两个元素是完全独立的——不要复用它们”
 
 ```html
+
     <!-- 切换 loginType 将不会清除用户已经输入的内容。因为两个模板使用了相同的元素，<input> 不会被替换掉——仅仅是替换了它的 placeholder -->
     <template v-if="loginType === 'username'">
         <label>Username</label>
