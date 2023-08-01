@@ -144,6 +144,13 @@ var kkk = Array.prototype.slice.call(obj); // ['prop0','prop1','prop2','prop3']
 
 ### arrayObject.unshift(newelement1,newelement2,....,newelementX) 向数组的开头添加一个或多个元素，并返回新的长度
 
+### 打乱数组
+
+``` javascript
+[1,2,3,4,5].sort(() => Math.random() - 0.5);
+// 面试可能问不使用sort实现
+```
+
 ### 数组排序
 
 - 直接改变原数组，返回新的数组
