@@ -75,7 +75,7 @@ export CSC_KEY_PASSWORD=bbb
 - [网上mac案例](https://segmentfault.com/a/1190000012904543)
 - 当检测的目标url上没有latest.yml文件时，检测会直接跳到error
 - 当启动程序完毕后，更改检测的目标url上的文件，此时调用程序的检查更新接口，结果和刚启动时调用的结果一样
-- build的options选项中的nsis属性可以用来设置自定义安装，如果未undefined，则默认为一键安装
+- build的options选项中的nsis属性可以用来设置自定义安装，如果为undefined，则默认为一键安装
   - 一键安装默认只安装在C盘
 
 ### [设置publish参数](https://www.electron.build/configuration/publish)
@@ -86,7 +86,7 @@ export CSC_KEY_PASSWORD=bbb
   - 如果设置了**GH_TOKEN**环境变量，则默认为github, 值为github仓库指定为repo建的token
   - 如果设置了**BT_TOKEN**,并且没有设置**GH_TOKEN**，则默认为bintray
 - publish属性可以设置在vue.config.js的pluginOptions.electronBuilder.builderOptions对象的直接子级，或者给每个系统（mac、win、linux）设置一个
-- 使用github用作自动更新平台，可以参考[readme](https://github.com/web-pencil/electron-updater-example)
+- 使用github用作自动更新平台，可以参考[readme](https://github.com/darrenzo/electron-updater-example)
 
 ```js
 // 自定义一个平台，手动/自己写脚本上传最新文件到目标服务器
