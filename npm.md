@@ -27,6 +27,7 @@
 - [windows-build-tools](https://github.com/felixrieseberg/windows-build-tools)
   - 需要使用VC环境编译原生node模块包时使用的工具（普通编译会出现node-gyp报错）
   - npm install --global windows-build-tools
+    - 最好使用powershell 管理员模式
   - yarn global add windows-build-tools
 - npm 设置淘宝镜像
   - npm get registry
