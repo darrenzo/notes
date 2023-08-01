@@ -42,3 +42,7 @@
 
 - electron-updater 在查询yml时，yml资源的url会默认带上 ?noCache=${hash:5} 查询字段，导致原url的cdn效果失效
   - 可以通过设置 autoUpdater.requestHeaders = { authorization: '' } 方式去除 ?noCache=${hash:5} 字段
+
+- 即时查看electron-log的方法
+  - windows: exe运行文件拖到bash运行
+  - macos需要右键启动文件，选择显示内容，双击macos文件夹里的bin文件即可
