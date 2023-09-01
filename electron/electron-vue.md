@@ -1,5 +1,6 @@
 # electron-vue
 
+- 此插件的作者已断更，推荐新版本使用electron + vite + vue3方案
 - [官方文档](https://simulatedgreg.gitbooks.io/electron-vue/content/cn/)
 - 该样板文档基于 **vue-cli** 版本
   - 如果项目需要基于 **vue-cli 3** 版本，可查看 **electron-vue-cli3.md** 或 [Vue CLI Plugin Electron Builder 官方文档](https://nklayman.github.io/vue-cli-plugin-electron-builder/guide/#installation)

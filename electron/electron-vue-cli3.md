@@ -1,5 +1,6 @@
 # electron-vue-cli3
 
+- 此插件的作者已断更，推荐新版本使用electron + vite + vue3方案
 - 使用 [Vue CLI Plugin Electron Builder](https://nklayman.github.io/vue-cli-plugin-electron-builder/guide/#installation) 进行构建
   - 不支持macos arm64系统，即带m系芯片的电脑（需要将electron-builder版本升至23+）
 - 本文档基于 **vue-cli3** 和 **vue-cli-plugin-electron-builder v1.0.0**
