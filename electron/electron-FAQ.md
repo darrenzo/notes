@@ -39,3 +39,76 @@
 - 即时查看electron-log的方法
   - windows: 把exe运行文件拖到bash运行
   - macos需要右键启动软件文件，选择“显示内容”，双击macos文件夹里的bin文件即可
+
+- 加快构建非上线版本速度的配置
+  - 关闭代码签名
+  ```js
+    // window
+    delete process.env.CSC_LINK;
+    delete process.env.CSC_KEY_PASSWORD;
+
+    // mac  electron-builder
+    mac.identity = null
+    // 如果有公证流程，可以关闭公证notarize
+  ```
+
+  - 压缩等级
+  ```js
+    // electron-builder
+    compression: IS_PROD ? 'normal' : 'store'
+  ```
+
+  - mac构建只需要dmg
+  ```js
+    target: ['dmg']
+  ```
+
+  - 不生成blockMap
+  ```js
+    // windows
+    nsis.differentialPackage = false
+
+    // mac
+    dmg.writeUpdateInfo = false
+  ```
+
+  - mac添加公证的配置
+
+```js
+afterSign: async (context) => {
+
+    const {
+        electronPlatformName,
+        appOutDir
+    } = context;
+
+    if (!IS_PROD || electronPlatformName !== 'darwin') {
+        return;
+    }
+
+    const appName = context.packager.appInfo.productFilename;
+
+    return await notarize({
+        appBundleId: process.env.VUE_APP_APP_ID,
+        appPath: `${appOutDir}/${appName}.app`,
+        appleId: 'xxx',
+        appleIdPassword: 'xxx'
+    });
+
+},
+
+mac: {
+    ...{
+        icon: process.env.VUE_APP_PLATFORM_ICON,
+        entitlements: path.join(process.env.VUE_APP_DIR_PLATFORM, 'entitlements.mac.plist'),
+        entitlementsInherit: path.join(process.env.VUE_APP_DIR_PLATFORM, 'entitlements.mac.plist'), // 授予Electron在内部访问权限文件时相同的权限
+        identity: IS_PROD ? process.env.VUE_APP_IDENTITY_NAME : null
+    },
+    ...(IS_PROD ? {
+        hardenedRuntime: true, // 在添加公证时，苹果偷偷加入了一项要求，即App的 runtime 必须是 hardened runtime ，这在默认情况下会减少应用程序的权限
+        gatekeeperAssess: false // MacOS 10.14.5 后进行完整性检查以验证签名是否成功会返回false,因为虽然签名进行完毕了，但应用程序还没有公证信息，所以会返回错False
+    } : {
+        target: ['dmg']
+    })
+},
+```
