@@ -116,3 +116,50 @@ mac: {
 ## ffi-napi 在 arm64 电脑上安装的问题
 
 - 4.0.1+ 才能在arm64 mac电脑上顺利安装，否则会出现ffi.h或 ffiConfig.h找不到的报错
+
+## mac上架app store
+
+- [electron上架说明](https://www.electronjs.org/zh/docs/latest/tutorial/mac-app-store-submission-guide)
+- [electron-builder配置说明](https://www.electron.build/configuration/mac.html)
+- 需要的keychain文件，在apple 账户中生成，[apple 账号](https://developer.apple.com/account)
+  - Apple Root CA.cer (苹果根证书)
+  - Apple Worldwide Developer Relations Certification Authority.cer (XCODE生成)
+  - developerID_application.cer (apple 账号生成)
+  - development.cer (apple 账号生成)
+  - distribution.cer (apple 账号生成)
+  - mac_installer.cer (apple 账号生成)
+  - xxx.provisionprofile (profile项中生成)
+- electron-builder配置
+
+```js
+mac: {
+      icon: process.env.VUE_APP_PLATFORM_ICON,
+      entitlements: path.join(process.env.VUE_APP_DIR_PLATFORM, 'entitlements.mac.plist'),
+      entitlementsInherit: path.join(process.env.VUE_APP_DIR_PLATFORM, 'entitlements.mac.plist'), // 授予Electron在内部访问权限文件时相同的权限
+      identity: IS_PROD ? process.env.VUE_APP_IDENTITY_NAME : null
+      hardenedRuntime: true, // 在添加公证时，苹果偷偷加入了一项要求，即App的 runtime 必须是 hardened runtime ，这在默认情况下会减少应用程序的权限
+      gatekeeperAssess: false // MacOS 10.14.5 后进行完整性检查以验证签名是否成功会返回false,因为虽然签名进行完毕了，但应用程序还没有公证信息，所以会返回错False
+      target: ['mas'] // 需要上架app store时开启
+},
+mas: {
+  hardenedRuntime: false,
+  provisioningProfile: path.join(process.env.VUE_APP_DIR_PLATFORM, 'XXX.provisionprofile'),
+  entitlements: path.join(process.env.VUE_APP_DIR_PLATFORM, 'entitlements.mas.plist'),
+  entitlementsInherit: path.join(process.env.VUE_APP_DIR_PLATFORM, 'entitlements.mas.inherit.plist'),
+  gatekeeperAssess: false,
+  asarUnpack: []
+}
+
+// plist 用来配置权限，对应apple账号中的 证书里的 identifiers =》 Capabilities, sandbox能力必须要
+
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+    <dict>
+        <key>com.apple.security.app-sandbox</key>
+        <true/>
+    </dict>
+</plist>
+```
+
+- 构建成功后，把pkg文件 放入到 transport软件中进行上传并交付，交付成功后可以在[app store connect](https://appstoreconnect.apple.com/apps) 中找到自己的app信息（要提前建好项目，才能交付成功，appid要一致）
+- 配置对应的信息，配置好后，可以在TestFlight项目中进行设置，macos上下载testFlight软件，进行测试
