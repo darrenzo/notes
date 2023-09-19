@@ -121,17 +121,23 @@ mac: {
 
 - [electron上架说明](https://www.electronjs.org/zh/docs/latest/tutorial/mac-app-store-submission-guide)
 - [electron-builder配置说明](https://www.electron.build/configuration/mac.html)
-- 需要的keychain文件，在apple 账户中生成，[apple 账号](https://developer.apple.com/account)
+- [apple 账号 登录地址](https://developer.apple.com/account)
+- 在本机生成 证书请求文件:  打开钥匙串 -> 点击左上角钥匙串访问 -> 证书助理 -> 从证书颁发机构申请 -> 填写 邮箱和名字（不会真正发邮件）-> 存储到磁盘
+- 创建软件的appIds, 在apple账户中的 Identifiers 项创建
+- 需要的keychain文件，在apple 账户中 Certificates项 生成，过程中需要选择上述的证书请求文件才能成功生成
   - Apple Root CA.cer (苹果根证书)
   - Apple Worldwide Developer Relations Certification Authority.cer (XCODE生成)
-  - developerID_application.cer (apple 账号生成)
-  - development.cer (apple 账号生成)
-  - distribution.cer (apple 账号生成)
-  - mac_installer.cer (apple 账号生成)
+  - developerID_application.cer
+  - distribution.cer
+  - mac_installer.cer
   - xxx.provisionprofile (profile项中生成)
+  - development.cer (需要在本地验证mas包时才需要) 
+- 下载和安装生成的 cer 证书。如果是在本机安装的，自动会带上密钥，钥匙串中对应证书可以下拉显示密钥信息。如果要导出给别的电脑使用，需要导出 P12 和 cer 两份文件。
+  - P12文件包含 cer 文件和密钥文件，有些mac电脑使用P12打开后没有cer文件，所以需要额外导出一份cer文件
 - electron-builder配置
 
 ```js
+//  ***** plist 文件尽量由mac电脑生成，否则windows生成的plist文件部分情况下不能被mac电脑成功解析
 mac: {
       icon: process.env.VUE_APP_PLATFORM_ICON,
       entitlements: path.join(process.env.VUE_APP_DIR_PLATFORM, 'entitlements.mac.plist'),
@@ -161,5 +167,5 @@ mas: {
 </plist>
 ```
 
-- 构建成功后，把pkg文件 放入到 transport软件中进行上传并交付，交付成功后可以在[app store connect](https://appstoreconnect.apple.com/apps) 中找到自己的app信息（要提前建好项目，才能交付成功，appid要一致）
+- 构建成功后，把pkg文件 放入到 transport软件中进行上传并交付，交付成功后可以在[app store connect](https://appstoreconnect.apple.com/apps) 中找到自己的app信息
 - 配置对应的信息，配置好后，可以在TestFlight项目中进行设置，macos上下载testFlight软件，进行测试
