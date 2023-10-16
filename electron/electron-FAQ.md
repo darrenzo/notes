@@ -127,7 +127,7 @@ mac: {
 - 需要的keychain文件，在apple 账户中 Certificates项 生成，过程中需要选择上述的证书请求文件才能成功生成
   - Apple Root CA.cer (苹果根证书)
   - Apple Worldwide Developer Relations Certification Authority.cer (XCODE生成)
-  - developerID_application.cer
+  - developerID_application.cer （此证书只能由owner账户进行生成，生成时选择 G2 Sub-CA）
   - distribution.cer
   - mac_installer.cer
   - xxx.provisionprofile (profile项中生成)
