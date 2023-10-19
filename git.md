@@ -213,7 +213,21 @@ fi
 
 # ~/.bashrc 中
 
-# Check if ~/.pid_ssh_agent exists.
+# ---此为electron windows设置代码签名证书路径的配置，注释是oem的配置，看情况修改
+
+export CSC_LINK="~/reolink.pfx"
+
+export CSC_KEY_PASSWORD=82Fj#^f28fWk836ll
+
+# export CSC_LINK="~/uniden_solo.pfx"
+
+# export CSC_KEY_PASSWORD=qmNi66pA7F30x#JK
+
+# export CSC_LINK="~/ludafarm.pfx"
+
+# export CSC_KEY_PASSWORD=
+
+# -----Check if ~/.pid_ssh_agent exists.
 if [ -f ~/.pid_ssh_agent ]; then
 
     source ~/.pid_ssh_agent
@@ -230,10 +244,25 @@ fi
 
 # Try start ssh-agent.
 if [ ! -z "$NEED_INIT" ]; then
-    # save the PID to file. | 删除agent启动时出现的echo打印，否则传输文件时会报错
-    echo $(ssh-agent -s) | sed -e 's/echo[ A-Za-z0-9]*;//g' > ~/.pid_ssh_agent
+    echo $(ssh-agent -s) | sed -e 's/echo[ A-Za-z0-9]*;//g' > ~/.pid_ssh_agent # save the PID to file.
     source ~/.pid_ssh_agent
 fi
+
+
+# ---以下为bash上启用vpn的快捷方法
+proxy () {
+  export http_proxy="http://127.0.0.1:10801"
+  export https_proxy=$http_proxy
+  export socks5_proxy="socks5://127.0.0.1:10800"
+  echo "HTTP Proxy on"
+}
+
+# noproxy
+noproxy () {
+  unset http_proxy
+  unset https_proxy
+  echo "HTTP Proxy off"
+}
 ```
 
 ### ssh-add的一些指令
