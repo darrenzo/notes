@@ -297,6 +297,10 @@ noproxy () {
   - git config  --global --unset user.name
 - 修改配置
   - git config  --global user.name 真随便
+- 文件换行符推荐全部改为LF
+  - git config  --global core.autocrlf input
+  - git config  --global core.safecrlf true
+  - vscode settings 中 搜索 EOL，设置为LF
 
 ## git 自定义命令
 
