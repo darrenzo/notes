@@ -122,22 +122,39 @@ mac: {
 - [electron上架说明](https://www.electronjs.org/zh/docs/latest/tutorial/mac-app-store-submission-guide)
 - [electron-builder配置说明](https://www.electron.build/configuration/mac.html)
 - [apple 账号 登录地址](https://developer.apple.com/account)
+- [Apple PKI](https://www.apple.com/certificateauthority/)
 - 在本机生成 证书请求文件:  打开钥匙串 -> 点击左上角钥匙串访问 -> 证书助理 -> 从证书颁发机构申请 -> 填写 邮箱和名字（不会真正发邮件）-> 存储到磁盘
 - 创建软件的appIds, 在apple账户中的 Identifiers 项创建
 - 需要的keychain文件，在apple 账户中 Certificates项 生成，过程中需要选择上述的证书请求文件才能成功生成
-  - Apple Root CA.cer (苹果根证书)
-  - Apple Worldwide Developer Relations Certification Authority.cer (XCODE生成)
-  - developerID_application.cer （此证书只能由owner账户进行生成，生成时选择 G2 Sub-CA）
-  - distribution.cer
-  - mac_installer.cer
-  - xxx.provisionprofile (profile项中生成)
-  - development.cer (需要在本地验证mas包时才需要) 
+  - 公证
+    - Apple Root CA.cer
+      - 苹果根证书
+    - DevAuthCA.cer
+      - Apple PKI 中搜索 Developer Authentication 项下载，安装后钥匙串中显示为 Developer Authentication Certification Authority
+    - developerID_application.cer
+      - 网站中显示为 Developer ID Application, 安装后钥匙串中显示为 Developer ID Application: xxxx
+      - 此证书只能由owner账户进行生成，如果xcode版本符合G2 Sub-CA要求就选它，否则就选通用版本
+  - mas
+    - mac_app.cer
+      - 网站中显示为 Mac App Distribution, 安装后钥匙串中显示为 3rd Party Mac Developer Application
+    - mac_installer.cer
+      - 网站中显示为 Mac Installer Distribution, 安装后钥匙串中显示为 3rd Party Mac Developer Installer
+    - Apple Worldwide Developer Relations Certification Authority.cer
+      - XCODE生成
+    - xxx.provisionprofile 
+      - profile项中生成
+      - 生成时选择 Mac App Distribution，即 mac_app.cer 证书，如果此证书有变动，需要重新生成 provisionprofile
+  - mas-dev
+    - development.cer
+      - 网站中显示为 Mac Development
+      - 需要在本地验证mas包时才需要
 - 下载和安装生成的 cer 证书。如果是在本机安装的，自动会带上密钥，钥匙串中对应证书可以下拉显示密钥信息。如果要导出给别的电脑使用，需要导出 P12 和 cer 两份文件。
   - P12文件包含 cer 文件和密钥文件，有些mac电脑使用P12打开后没有cer文件，所以需要额外导出一份cer文件
 - electron-builder配置
 
 ```js
 //  ***** plist 文件尽量由mac电脑生成，否则windows生成的plist文件部分情况下不能被mac电脑成功解析
+// ***** plist 文件必须是 LF 换行符格式！！！！！！！！！！！！！！！！！否则签名公证后的文件，运行时在intel电脑上会强制退出并提示签名无效
 mac: {
       icon: process.env.VUE_APP_PLATFORM_ICON,
       entitlements: path.join(process.env.VUE_APP_DIR_PLATFORM, 'entitlements.mac.plist'),
